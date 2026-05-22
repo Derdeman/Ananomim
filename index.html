@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sipariş ve Stok Otomasyon Sistemi</title>
+    <title>Gelişmiş Sipariş, Stok ve Görsel Otomasyon Sistemi</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -34,15 +34,21 @@
             background: white;
             overflow: hidden;
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
         }
         .product-card .img-wrapper {
-            height: 160px;
-            background-color: #f0fdf4;
+            height: 180px;
+            background-color: #f8fafc;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #198754;
+            color: #94a3b8;
             overflow: hidden;
+            border-bottom: 1px solid #f1f5f9;
         }
         .product-card .img-wrapper img {
             width: 100%;
@@ -50,51 +56,38 @@
             object-fit: cover;
         }
         
-        .about-section {
-            background-color: #ffffff;
-            border-top: 1px solid #f1f5f9;
-            border-bottom: 1px solid #f1f5f9;
+        .preview-box {
+            width: 100%;
+            height: 150px;
+            border: 2px dashed #cbd5e1;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background-color: #f8fafc;
+            color: #64748b;
         }
-        .about-badge {
-            background-color: #e8f5e9;
-            color: #198754;
-            font-weight: 600;
-            padding: 6px 16px;
-            border-radius: 50px;
-            display: inline-block;
-        }
-        .feature-box {
-            padding: 20px;
-            border-radius: 10px;
-            background: #fdfbf7;
-            border-left: 4px solid #198754;
-            transition: transform 0.2s;
-        }
-        .feature-box:hover {
-            transform: translateY(-3px);
+        .preview-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
 
-        /* ARAYÜZLERİN GÖRÜNÜRLÜK KONTROLLERİ */
+        /* ARAYÜZ GÖRÜNÜRLÜK KONTROLLERİ */
         #client-interface { display: block; }
         #admin-panel { display: none; background-color: #f4f6f9; min-height: 100vh; }
         #corporate-panel { display: none; background-color: #f0fdf4; min-height: 100vh; }
         #service-panel { display: none; background-color: #fffbeb; min-height: 100vh; }
 
-        .sidebar {
+        .sidebar, .corp-sidebar, .service-sidebar {
             background-color: #1e293b;
             color: white;
             padding: 20px 15px;
         }
-        .corp-sidebar {
-            background-color: #115e3b;
-            color: white;
-            padding: 20px 15px;
-        }
-        .service-sidebar {
-            background-color: #d97706;
-            color: white;
-            padding: 20px 15px;
-        }
+        .corp-sidebar { background-color: #115e3b; }
+        .service-sidebar { background-color: #d97706; }
+        
         @media (min-width: 768px) {
             .sidebar, .corp-sidebar, .service-sidebar { min-height: 100vh; }
         }
@@ -107,18 +100,10 @@
             display: block;
             text-decoration: none;
         }
-        .sidebar .nav-link:hover, .sidebar .nav-link.active {
-            background-color: #334155;
-            color: white !important;
-        }
-        .corp-sidebar .nav-link:hover, .corp-sidebar .nav-link.active {
-            background-color: #198754;
-            color: white !important;
-        }
-        .service-sidebar .nav-link:hover, .service-sidebar .nav-link.active {
-            background-color: #b45309;
-            color: white !important;
-        }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active { background-color: #334155; color: white !important; }
+        .corp-sidebar .nav-link:hover, .corp-sidebar .nav-link.active { background-color: #198754; color: white !important; }
+        .service-sidebar .nav-link:hover, .service-sidebar .nav-link.active { background-color: #b45309; color: white !important; }
+        
         .panel-content { display: none; }
         .panel-content.active { display: block; }
     </style>
@@ -129,7 +114,7 @@
         <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm">
             <div class="container">
                 <a class="navbar-brand fw-bold" href="#">
-                    <span class="text-success"><i class="fa-solid fa-industry me-2"></i>Örnek Gıda</span> <span class="text-secondary">A.Ş.</span>
+                    <span class="text-success"><i class="fa-solid fa-boxes-packing me-2"></i>SmartStock</span> <span class="text-secondary">Pro</span>
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                     <span class="navbar-toggler-icon"></span>
@@ -137,11 +122,10 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto fw-semibold align-items-center pt-2 pt-lg-0">
                         <li class="nav-item"><a class="nav-link text-success active" href="#home">Ana Sayfa</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#about">Hakkımızda</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#products">Ürünlerimiz & Stoklar</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#products">Katalog & Canlı Stok</a></li>
                         <li class="nav-item ms-lg-3 mt-2 mt-lg-0 w-100 w-lg-auto">
                             <button class="btn btn-success fw-bold text-white w-100" data-bs-toggle="modal" data-bs-target="#loginModal">
-                                <i class="fa-solid fa-right-to-bracket me-1"></i> Sistem Girişi
+                                <i class="fa-solid fa-right-to-bracket me-1"></i> Yönetim Girişi
                             </button>
                         </li>
                     </ul>
@@ -151,43 +135,23 @@
 
         <section id="home" class="hero-section">
             <div class="container">
-                <h1 class="display-6 fw-bold mb-3">B2B Sipariş & Stok Yönetim Portalı</h1>
-                <p class="lead mb-4 text-white-50 small">Kurumsal Bayi Altyapısı, Canlı Stok Takibi, Kurye ve Yönetici Paneli.</p>
-            </div>
-        </section>
-
-        <section id="about" class="py-5 about-section">
-            <div class="container">
-                <div class="text-center mb-5">
-                    <span class="about-badge mb-2"><i class="fa-solid fa-circle-info me-1"></i> Kurumsal</span>
-                    <h2 class="fw-bold text-dark">Hakkımızda</h2>
-                    <p class="text-muted col-md-8 mx-auto">Gelişmiş lojistik ağımız ve dijital otomasyon altyapımızla, iş ortaklarımıza en güvenilir ve hızlı tedarik sürecini sunmak için çalışıyoruz.</p>
-                </div>
-                <div class="row g-4 align-items-center">
-                    <div class="col-md-6">
-                        <h4 class="fw-bold text-success mb-3"><i class="fa-solid fa-gears me-2"></i>Modern ve Entegre Üretim Altyapısı</h4>
-                        <p class="text-secondary" style="line-height: 1.8;">
-                            Şirketimiz, sektördeki uzun yıllara dayanan tecrübesini dijital çağın getirdiği yeniliklerle birleştirerek yüksek hijyen ve kalite standartlarında üretim yapmaktadır.
-                        </p>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="row g-3">
-                            <div class="col-12">
-                                <div class="feature-box shadow-sm">
-                                    <h6 class="fw-bold text-dark"><i class="fa-solid fa-shield-halved text-success me-2"></i> Güvenilir Üretim Standartları</h6>
-                                    <p class="text-muted small mb-0">Üretim süreçlerimizin tamamında güncel kalite standartlarına eksiksiz uyum sağlıyoruz.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <h1 class="display-6 fw-bold mb-3">Gelişmiş Görsel Destekli Stok Yönetimi</h1>
+                <p class="lead mb-4 text-white-50 small">Gerçek zamanlı veri senkronizasyonu, akıllı resim optimizasyonu ve bayi portalı.</p>
             </div>
         </section>
 
         <section id="products" class="py-5 bg-light">
             <div class="container">
-                <div class="text-center mb-4">
-                    <h3 class="fw-bold text-dark">Ürün Kataloğu ve Canlı Stok Durumu</h3>
+                <div class="row mb-4 align-items-center">
+                    <div class="col-md-6">
+                        <h3 class="fw-bold text-dark m-0">Ürün Kataloğu</h3>
+                    </div>
+                    <div class="col-md-6 mt-3 mt-md-0">
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
+                            <input type="text" id="clientSearchInput" class="form-control border-start-0" placeholder="Ürün adı veya açıklama ile ara..." oninput="renderClientProducts()">
+                        </div>
+                    </div>
                 </div>
                 <div class="row g-4 justify-content-center" id="client-products-grid"></div>
             </div>
@@ -199,18 +163,17 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow">
                 <div class="modal-header bg-success text-white">
-                    <h5 class="modal-title fw-bold"><i class="fa-solid fa-lock me-2"></i>Güvenli Giriş Paneli</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-close="modal" id="closeModalBtn"></button>
+                    <h5 class="modal-title fw-bold"><i class="fa-solid fa-lock me-2"></i>Sistem Girişi</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-close="modal"></button>
                 </div>
                 <div class="modal-body p-4 bg-white">
-                    <div id="loginError" class="alert alert-danger d-none">Kullanıcı adı veya şifre hatalı!</div>
-                    
+                    <div id="loginError" class="alert alert-danger d-none">Hatalı kimlik bilgileri!</div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold text-dark">Giriş Türü</label>
                         <select id="loginType" class="form-select">
-                            <option value="admin">Sistem Yöneticisi / Personel</option>
-                            <option value="corporate">Kurumsal Şirket Sahibi / Bayi</option>
-                            <option value="service">Servisçi / Sevkiyat Kuryesi</option>
+                            <option value="admin">Sistem Yöneticisi (admin / 123)</option>
+                            <option value="corporate">Kurumsal Bayi</option>
+                            <option value="service">Dağıtım / Sevkiyat (servis / 123)</option>
                         </select>
                     </div>
                     <div class="mb-3">
@@ -221,12 +184,6 @@
                         <label class="form-label fw-semibold text-dark">Şifre</label>
                         <input type="password" id="password" class="form-control text-dark" placeholder="••••••••">
                     </div>
-
-                    <div class="mb-3 form-check">
-                        <input type="checkbox" class="form-check-input" id="rememberMe">
-                        <label class="form-check-label text-dark small user-select-none" for="rememberMe">Beni Hatırla</label>
-                    </div>
-                    
                     <button type="button" class="btn btn-success w-100 fw-bold py-2 text-white" onclick="unifiedLoginEngine()">Giriş Yap</button>
                 </div>
             </div>
@@ -240,56 +197,51 @@
                 <div class="col-md-3 col-lg-2 sidebar">
                     <h4 class="text-center text-success fw-bold mb-4"><i class="fa-solid fa-user-shield me-2"></i>YÖNETİCİ</h4>
                     <ul class="nav flex-column mb-4">
-                        <li class="nav-item"><a class="nav-link active" id="link-stock" onclick="switchAdminTab('tab-stock')"><i class="fa-solid fa-boxes-stacked me-2"></i> Stok Kontrolü</a></li>
-                        <li class="nav-item"><a class="nav-link" id="link-corporate" onclick="switchAdminTab('tab-corporate')"><i class="fa-solid fa-building me-2"></i> Kurumsal Firmalar</a></li>
-                        <li class="nav-item"><a class="nav-link" id="link-orders" onclick="switchAdminTab('tab-orders')"><i class="fa-solid fa-file-invoice-dollar me-2"></i> Tüm Siparişler</a></li>
+                        <li class="nav-item"><a class="nav-link active" id="link-stock" onclick="switchAdminTab('tab-stock')"><i class="fa-solid fa-boxes-stacked me-2"></i> Stok Listesi</a></li>
+                        <li class="nav-item"><a class="nav-link" id="link-corporate" onclick="switchAdminTab('tab-corporate')"><i class="fa-solid fa-building me-2"></i> Bayi Yönetimi</a></li>
+                        <li class="nav-item"><a class="nav-link" id="link-orders" onclick="switchAdminTab('tab-orders')"><i class="fa-solid fa-list-check me-2"></i> Siparişler</a></li>
                     </ul>
                     <button class="btn btn-danger w-100 fw-bold" onclick="logoutSystem()"><i class="fa-solid fa-right-from-bracket me-1"></i> Çıkış</button>
                 </div>
 
                 <div class="col-md-9 col-lg-10 p-4">
                     <div id="tab-stock" class="panel-content active">
-                        <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h3 class="fw-bold text-success">Depo Stok Alanı</h3>
-                            <button class="btn btn-success btn-sm fw-bold" data-bs-toggle="modal" data-bs-target="#addProductModal">Yeni Ürün Ekle</button>
+                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+                            <h3 class="fw-bold text-success m-0">Gelişmiş Depo Envanteri</h3>
+                            <button class="btn btn-success fw-bold" data-bs-toggle="modal" data-bs-target="#addProductModal" onclick="clearPreview()"><i class="fa-solid fa-plus me-1"></i> Yeni Ürün Ekle</button>
                         </div>
                         <div class="card border-0 shadow-sm p-3 bg-white">
-                            <table class="table align-middle mb-0">
-                                <thead class="table-dark">
-                                    <tr><th>Görsel</th><th>Ürün</th><th>Açıklama</th><th>Stok</th><th class="text-end">İşlem</th></tr>
-                                </thead>
-                                <tbody id="admin-stock-table-body"></tbody>
-                            </table>
+                            <div class="table-responsive">
+                                <table class="table align-middle mb-0">
+                                    <thead class="table-dark">
+                                        <tr><th>Görsel</th><th>Ürün Bilgisi</th><th>Kategori</th><th>Stok Durumu</th><th class="text-end">İşlemler</th></tr>
+                                    </thead>
+                                    <tbody id="admin-stock-table-body"></tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
 
                     <div id="tab-corporate" class="panel-content">
                         <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h3 class="fw-bold text-primary">Kayıtlı Kurumsal Şirketler / Bayiler</h3>
-                            <button class="btn btn-primary btn-sm fw-bold" data-bs-toggle="modal" data-bs-target="#addCorporateModal">Yeni Firma Ekle</button>
+                            <h3 class="fw-bold text-primary m-0">Kayıtlı Bayiler</h3>
+                            <button class="btn btn-primary fw-bold" data-bs-toggle="modal" data-bs-target="#addCorporateModal">Yeni Bayi Tanımla</button>
                         </div>
                         <div class="card border-0 shadow-sm p-3 bg-white">
                             <table class="table table-striped align-middle mb-0">
-                                <thead class="table-primary"><tr><th>Firma Adı</th><th>Yetkili</th><th>Telefon</th><th>Kullanıcı Adı</th><th>Şifre</th><th class="text-end">İşlem</th></tr></thead>
+                                <thead class="table-primary"><tr><th>Firma Adı</th><th>Yetkili</th><th>Kullanıcı Adı</th><th>Şifre</th><th class="text-end">İşlem</th></tr></thead>
                                 <tbody id="corporate-table-body"></tbody>
                             </table>
                         </div>
                     </div>
 
                     <div id="tab-orders" class="panel-content">
-                        <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h3 class="fw-bold text-dark">Gelen Tüm Kurumsal Siparişler</h3>
-                            <button class="btn btn-warning btn-sm fw-bold text-dark" data-bs-toggle="modal" data-bs-target="#createOrderModal" onclick="populateOrderDropdowns()">Yeni Sipariş Oluştur</button>
-                        </div>
+                        <h3 class="fw-bold text-dark mb-4">Gelen Sipariş Yönetimi</h3>
                         <div class="card border-0 shadow-sm p-3 bg-white">
-                            <div class="table-responsive">
-                                <table class="table table-hover align-middle mb-0">
-                                    <thead class="table-warning">
-                                        <tr><th>Firma Adı</th><th>Ürün</th><th>Miktar</th><th>Not</th><th>Mevcut Durum</th><th class="text-end">Durum Değiştir</th></tr>
-                                    </thead>
-                                    <tbody id="orders-table-body"></tbody>
-                                </table>
-                            </div>
+                            <table class="table align-middle mb-0">
+                                <thead class="table-warning"><tr><th>Firma</th><th>Ürün</th><th>Miktar</th><th>Durum</th><th class="text-end">Eylem</th></tr></thead>
+                                <tbody id="orders-table-body"></tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -297,45 +249,42 @@
         </div>
     </div>
 
-
     <div id="corporate-panel">
         <div class="container-fluid px-0">
             <div class="row g-0">
                 <div class="col-md-3 col-lg-2 corp-sidebar">
                     <h4 class="text-center text-white fw-bold mb-2"><i class="fa-solid fa-building me-2"></i>BAYİ PANELİ</h4>
-                    <p class="text-center text-white-50 small mb-4" id="logged-corp-name">Firma Adı</p>
+                    <p class="text-center text-white-50 small mb-4" id="logged-corp-name">Firma</p>
                     <ul class="nav flex-column mb-4">
                         <li class="nav-item"><a class="nav-link active" id="link-corp-orders" onclick="switchCorpTab('tab-corp-orders')"><i class="fa-solid fa-file-invoice me-2"></i> Siparişlerimiz</a></li>
                         <li class="nav-item"><a class="nav-link" id="link-corp-new" onclick="switchCorpTab('tab-corp-new')"><i class="fa-solid fa-cart-plus me-2"></i> Yeni Sipariş Ver</a></li>
                     </ul>
-                    <button class="btn btn-danger w-100 fw-bold" onclick="logoutSystem()"><i class="fa-solid fa-right-from-bracket me-1"></i> Çıkış Yap</button>
+                    <button class="btn btn-danger w-100 fw-bold" onclick="logoutSystem()">Çıkış</button>
                 </div>
-
                 <div class="col-md-9 col-lg-10 p-4">
                     <div id="tab-corp-orders" class="panel-content active">
-                        <h3 class="fw-bold text-success mb-4">Geçmiş ve Aktif Siparişleriniz</h3>
+                        <h3 class="fw-bold text-success mb-4">Sipariş Geçmişiniz</h3>
                         <div class="card border-0 shadow-sm p-3 bg-white">
-                            <table class="table table-hover align-middle mb-0"><thead class="table-success"><tr><th>Ürün</th><th>Miktar</th><th>Sipariş Notunuz</th><th>Durum</th></tr></thead><tbody id="my-orders-table-body"></tbody></table>
+                            <table class="table align-middle mb-0"><thead class="table-success"><tr><th>Ürün</th><th>Miktar</th><th>Not</th><th>Durum</th></tr></thead><tbody id="my-orders-table-body"></tbody></table>
                         </div>
                     </div>
-
                     <div id="tab-corp-new" class="panel-content">
                         <h3 class="fw-bold text-success mb-4">Hızlı Sipariş Formu</h3>
                         <div class="card border-0 shadow-sm p-4 bg-white" style="max-width: 600px;">
                             <form id="corpSelfOrderForm">
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold">Sipariş Vermek İstediğiniz Ürün</label>
+                                    <label class="form-label fw-bold">Ürün Seçimi</label>
                                     <select id="corpSelfProductSelect" class="form-select" required></select>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold">Miktar / Paket / Koli</label>
-                                    <input type="text" id="corpSelfQuantity" class="form-control" placeholder="Örn: 50 Paket" required>
+                                    <label class="form-label fw-bold">Miktar / Paket</label>
+                                    <input type="text" id="corpSelfQuantity" class="form-control" placeholder="Örn: 100 Adet" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold">Varsa Özel Notunuz</label>
+                                    <label class="form-label fw-bold">Sipariş Notu</label>
                                     <textarea id="corpSelfNote" class="form-control" rows="3"></textarea>
                                 </div>
-                                <button type="submit" class="btn btn-success w-100 fw-bold py-2 text-white">Siparişi Fabrikaya İlet</button>
+                                <button type="submit" class="btn btn-success w-100 fw-bold text-white">Siparişi Gönder</button>
                             </form>
                         </div>
                     </div>
@@ -344,31 +293,17 @@
         </div>
     </div>
 
-
     <div id="service-panel">
         <div class="container-fluid px-0">
             <div class="row g-0">
                 <div class="col-md-3 col-lg-2 service-sidebar">
-                    <h4 class="text-center text-white fw-bold mb-4"><i class="fa-solid fa-truck text-warning me-2"></i>SERVİS / LOJİSTİK</h4>
-                    <ul class="nav flex-column mb-4">
-                        <li class="nav-item"><a class="nav-link active"><i class="fa-solid fa-boxes-packing me-2"></i> Dağıtılacak İşler</a></li>
-                    </ul>
-                    <button class="btn btn-danger w-100 fw-bold" onclick="logoutSystem()"><i class="fa-solid fa-right-from-bracket me-1"></i> Çıkış Yap</button>
+                    <h4 class="text-center text-white fw-bold mb-4"><i class="fa-solid fa-truck me-2"></i>LOJİSTİK</h4>
+                    <button class="btn btn-danger w-100 fw-bold" onclick="logoutSystem()">Çıkış Yap</button>
                 </div>
-
                 <div class="col-md-9 col-lg-10 p-4">
-                    <h3 class="fw-bold text-warning mb-2">Teslimata Hazır Siparişler Listesi</h3>
-                    <p class="text-muted small mb-4">Aşağıdaki listede sadece yönetimin "Hazır" olarak işaretlediği ve dağıtıma çıkması gereken siparişler görünür.</p>
-                    
+                    <h3 class="fw-bold text-warning mb-4">Teslim Edilecek Siparişler</h3>
                     <div class="card border-0 shadow-sm p-3 bg-white">
-                        <div class="table-responsive">
-                            <table class="table table-hover align-middle mb-0">
-                                <thead class="table-dark">
-                                    <tr><th>Teslim Edilecek Firma</th><th>Ürün</th><th>Miktar</th><th>Firma Notu</th><th>Durum</th><th class="text-end">Eylem</th></tr>
-                                </thead>
-                                <tbody id="service-orders-table-body"></tbody>
-                            </table>
-                        </div>
+                        <table class="table align-middle mb-0"><thead class="table-dark"><tr><th>Alıcı Firma</th><th>Ürün</th><th>Miktar</th><th class="text-end">Eylem</th></tr></thead><tbody id="service-orders-table-body"></tbody></table>
                     </div>
                 </div>
             </div>
@@ -378,62 +313,82 @@
 
     <div class="modal fade" id="addProductModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content p-4">
-                <h5 class="fw-bold mb-3">Yeni Ürün Ekle</h5>
+            <div class="modal-content p-4 border-0 shadow">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold m-0 text-success">Gelişmiş Ürün Tanımlama</h5>
+                    <button type="button" class="btn-close" data-bs-close="modal" id="closeProductModalBtn"></button>
+                </div>
                 <form id="addProductForm">
                     <div class="mb-3">
-                        <input type="text" id="newProdName" class="form-control" placeholder="Ürün Adı" required>
+                        <label class="form-label small fw-bold">Ürün Adı</label>
+                        <input type="text" id="newProdName" class="form-control" placeholder="Örn: Klasik Un 1 Kg" required>
                     </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label small fw-bold">Kategori</label>
+                            <select id="newProdCategory" class="form-select">
+                                <option value="Unlu Mamüller">Unlu Mamüller</option>
+                                <option value="Bakliyat">Bakliyat</option>
+                                <option value="Sıvı Yağlar">Sıvı Yağlar</option>
+                                <option value="Diğer">Diğer</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label small fw-bold">Açıklama</label>
+                            <input type="text" id="newProdDesc" class="form-control" placeholder="Örn: İnce elenmiş paket" required>
+                        </div>
+                    </div>
+                    
                     <div class="mb-3">
-                        <input type="text" id="newProdDesc" class="form-control" placeholder="Açıklama" required>
+                        <label class="form-label small fw-bold text-success"><i class="fa-solid fa-camera me-1"></i> Ürün Görseli Yükle</label>
+                        <input type="file" id="newProdImgFile" class="form-control mb-2" accept="image/*" onchange="previewAndOptimizeImage(event)">
+                        
+                        <div class="small text-muted mb-2" style="font-size: 11px;">
+                            * Yüklenen yüksek çözünürlüklü görseller sistem tarafından otomatik optimize edilerek sıkıştırılır.
+                        </div>
+                        
+                        <div class="preview-box" id="imagePreviewContainer">
+                            <span id="previewPlaceholder"><i class="fa-solid fa-image fa-2x d-block mb-1"></i>Görsel Seçilmedi</span>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold text-success"><i class="fa-solid fa-image me-1"></i> Ürün Fotoğrafı Seçin</label>
-                        <input type="file" id="newProdImgFile" class="form-control" accept="image/*">
-                    </div>
+                    
+                    <button type="button" class="btn btn-success w-100 fw-bold text-white py-2" onclick="submitOptimizedProduct()">Sisteme Güvenle Kaydet</button>
                 </form>
-                <button type="button" class="btn btn-success w-100 fw-bold text-white" onclick="handleNewProductSubmit()">Kaydet</button>
             </div>
         </div>
     </div>
-    
-    <div class="modal fade" id="addCorporateModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content p-4"><h5 class="fw-bold mb-3">Yeni Bayi Tanımla</h5><form id="addCorporateForm"><div class="mb-3"><input type="text" id="corpCompany" class="form-control" placeholder="Şirket Adı" required></div><div class="mb-3"><input type="text" id="corpName" class="form-control" placeholder="Yetkili" required></div><div class="mb-3"><input type="text" id="corpPhone" class="form-control" placeholder="Telefon" required></div><hr><div class="mb-2"><input type="text" id="corpUser" class="form-control" placeholder="Giriş Kullanıcı Adı" required></div><div class="mb-3"><input type="text" id="corpPass" class="form-control" placeholder="Şifre" required></div><button type="submit" class="btn btn-primary w-100 fw-bold">Firmayı Kaydet</button></form></div></div></div>
-    
-    <div class="modal fade" id="createOrderModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content p-4"><h5 class="fw-bold mb-3">Firmaya Sipariş Oluştur</h5><form id="createOrderForm"><div class="mb-3"><select id="orderCompanySelect" class="form-select" required></select></div><div class="mb-3"><select id="orderProductSelect" class="form-select" required></select></div><div class="mb-3"><input type="text" id="orderQuantity" class="form-control" placeholder="Miktar" required></div><div class="mb-3"><textarea id="orderNote" class="form-control" placeholder="Sipariş Notu"></textarea></div><button type="submit" class="btn btn-warning w-100 fw-bold text-dark">Siparişi Kaydet</button></form></div></div></div>
+
+    <div class="modal fade" id="addCorporateModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content p-4"><h5 class="fw-bold mb-3">Yeni Bayi Hesabı</h5><form id="addCorporateForm"><div class="mb-3"><input type="text" id="corpCompany" class="form-control" placeholder="Şirket / Bayi Adı" required></div><div class="mb-3"><input type="text" id="corpName" class="form-control" placeholder="Yetkili Kişi" required></div><div class="mb-2"><input type="text" id="corpUser" class="form-control" placeholder="Giriş Kullanıcı Adı" required></div><div class="mb-3"><input type="text" id="corpPass" class="form-control" placeholder="Şifre" required></div><button type="submit" class="btn btn-primary w-100 fw-bold">Bayiyi Kaydet</button></form></div></div></div>
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        if(!localStorage.getItem('system_v7_initialized')) {
-            localStorage.setItem('system_v7_initialized', 'true');
-        }
+        // Optimize edilmiş Base64 verisini geçici tutacak değişken
+        let globalOptimizedImageBase64 = "";
 
-        // İlk açılışta güzel görünmesi için örnek varsayılan görseller (Değiştirilebilir)
         const defaultProducts = [
-            { id: '1', name: 'Premium Un Paket A', desc: '1000 gr fırınlık un paketleme.', image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400', inStock: true },
-            { id: '2', name: 'Özel Bakliyat Serisi B', desc: '700 gr korumalı ambalajlı kuru gıda.', image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400', inStock: true }
+            { id: '1', name: 'Premium Fırınlık Un', category: 'Unlu Mamüller', desc: '1000 gr yüksek proteinli un.', image: '', inStock: true },
+            { id: '2', name: 'Yerli Kırmızı Mercimek', category: 'Bakliyat', desc: '1 Kg organik sıra mercimek.', image: '', inStock: true }
         ];
 
         const defaultCorporates = [
-            { id: 'c1', company: 'Örnek Dağıtım Marketleri', name: 'Ahmet Yılmaz', phone: '0212 000 00 00', user: 'demo_bayi1', pass: '1234' }
+            { id: 'c1', company: 'Merkez Dağıtım Ltd.', name: 'Can Yılmaz', user: 'demo_bayi', pass: '1234' }
         ];
 
         const defaultOrders = [
-            { id: 'o1', company: 'Örnek Dağıtım Marketleri', product: 'Premium Un Paket A', quantity: '150 Paket', note: 'İlk sevkiyat dönemi teslim.', status: 'Hazırlanıyor' },
-            { id: 'o2', company: 'Örnek Dağıtım Marketleri', product: 'Özel Bakliyat Serisi B', quantity: '40 Koli', note: 'Acil teslimat kurye bekliyor.', status: 'Hazır' }
+            { id: 'o1', company: 'Merkez Dağıtım Ltd.', product: 'Premium Fırınlık Un', quantity: '200 Paket', note: 'Hızlı teslimat ricası.', status: 'Hazırlanıyor' }
         ];
 
-        let products = JSON.parse(localStorage.getItem('ym_products')) || defaultProducts;
-        let corporateAccounts = JSON.parse(localStorage.getItem('ym_corporates')) || defaultCorporates;
-        let orders = JSON.parse(localStorage.getItem('ym_orders')) || defaultOrders;
-
+        let products = JSON.parse(localStorage.getItem('adv_products')) || defaultProducts;
+        let corporateAccounts = JSON.parse(localStorage.getItem('adv_corporates')) || defaultCorporates;
+        let orders = JSON.parse(localStorage.getItem('adv_orders')) || defaultOrders;
         let currentLoggedCorporate = null;
 
         function saveToLocalStorage() {
-            localStorage.setItem('ym_products', JSON.stringify(products));
-            localStorage.setItem('ym_corporates', JSON.stringify(corporateAccounts));
-            localStorage.setItem('ym_orders', JSON.stringify(orders));
+            localStorage.setItem('adv_products', JSON.stringify(products));
+            localStorage.setItem('adv_corporates', JSON.stringify(corporateAccounts));
+            localStorage.setItem('adv_orders', JSON.stringify(orders));
         }
 
         function renderAll() {
@@ -444,41 +399,152 @@
             renderServiceOrdersTable();
         }
 
+        // AKILLI RESİM ÖNİZLEME VE BOYUT OPTİMİZASYON MOTORU
+        function previewAndOptimizeImage(event) {
+            const file = event.target.files[0];
+            const container = document.getElementById('imagePreviewContainer');
+            
+            if (!file) {
+                clearPreview();
+                return;
+            }
+
+            // Önizleme yükleniyor efekti
+            container.innerHTML = `<div class="spinner-border text-success spinner-border-sm" role="status"></div><span class="ms-2 small">Görsel işleniyor...</span>`;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    // Maksimum çözünürlük sınırı belirleme (En-Boy oranını koruyarak küçültür)
+                    const max_width = 500;
+                    const max_height = 500;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > max_width) {
+                            height *= max_width / width;
+                            width = max_width;
+                        }
+                    } else {
+                        if (height > max_height) {
+                            width *= max_height / height;
+                            height = max_height;
+                        }
+                    }
+
+                    // Görseli Canvas ile yeniden çizip sıkıştırma
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    // %70 kalite oranıyla JPEG formatına dönüştürerek boyutu inanılmaz derecede düşürür
+                    globalOptimizedImageBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                    
+                    // Ekrana önizlemeyi basar
+                    container.innerHTML = `<img src="${globalOptimizedImageBase64}" alt="Önizleme">`;
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function clearPreview() {
+            globalOptimizedImageBase64 = "";
+            document.getElementById('imagePreviewContainer').innerHTML = `<span id="previewPlaceholder"><i class="fa-solid fa-image fa-2x d-block mb-1"></i>Görsel Seçilmedi</span>`;
+            document.getElementById('addProductForm').reset();
+        }
+
+        // MÜŞTERİ / VİTRİN ÜRÜNLERİNİ RESİMLİ LİSTELEME VE ARAMA
         function renderClientProducts() {
             const grid = document.getElementById('client-products-grid');
             if(!grid) return; grid.innerHTML = '';
-            products.forEach(p => {
+            
+            const searchVal = document.getElementById('clientSearchInput').value.toLowerCase();
+            
+            const filtered = products.filter(p => 
+                p.name.toLowerCase().includes(searchVal) || 
+                p.desc.toLowerCase().includes(searchVal) || 
+                p.category.toLowerCase().includes(searchVal)
+            );
+
+            if(filtered.length === 0) {
+                grid.innerHTML = `<div class="text-center text-muted my-5"><i class="fa-solid fa-box-open fa-3x mb-3"></i><p>Aradığınız kriterlere uygun ürün bulunamadı.</p></div>`;
+                return;
+            }
+
+            filtered.forEach(p => {
                 const col = document.createElement('div'); col.className = 'col-12 col-sm-6 col-md-4';
-                const badge = p.inStock ? `<span class="badge bg-success small">Stokta Var</span>` : `<span class="badge bg-danger small">Tükendi</span>`;
-                
-                const imgTag = p.image ? `<img src="${p.image}" alt="${p.name}">` : `<i class="fa-solid fa-box fa-3x"></i>`;
+                const badge = p.inStock ? `<span class="badge bg-success">Stokta Var</span>` : `<span class="badge bg-danger">Tükendi</span>`;
+                const imgContent = p.image ? `<img src="${p.image}" alt="${p.name}">` : `<i class="fa-solid fa-box fa-3x text-light-dark"></i>`;
                 
                 col.innerHTML = `
-                    <div class="card h-100 product-card shadow-sm border-0">
-                        <div class="img-wrapper">${imgTag}</div>
-                        <div class="card-body p-3 text-center">
+                    <div class="card h-100 product-card border-0">
+                        <div class="img-wrapper">${imgContent}</div>
+                        <div class="card-body p-3">
+                            <span class="badge bg-secondary mb-2" style="font-size:10px;">${p.category}</span>
                             <h5 class="fw-bold text-dark mb-1" style="font-size:16px;">${p.name}</h5>
-                            <p class="text-muted small mb-2">${p.desc}</p>
-                            ${badge}
+                            <p class="text-muted small mb-3">${p.desc}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                ${badge}
+                            </div>
                         </div>
                     </div>`;
                 grid.appendChild(col);
             });
         }
 
+        // YÖNETİCİ ENVANTER TABLOSU
         function renderAdminStockTable() {
             const tbody = document.getElementById('admin-stock-table-body');
             if(!tbody) return; tbody.innerHTML = '';
             products.forEach(p => {
-                const imgContent = p.image ? `<img src="${p.image}" style="width:40px; height:40px; object-fit:cover; border-radius:4px;">` : `<i class="fa-solid fa-box fa-lg text-secondary"></i>`;
+                const imgContent = p.image ? `<img src="${p.image}" style="width:50px; height:50px; object-fit:cover; border-radius:6px; border:1px solid #ddd;">` : `<div style="width:50px; height:50px; background:#f1f5f9; display:flex; align-items:center; justify-content:center; border-radius:6px;"><i class="fa-solid fa-box text-muted"></i></div>`;
                 tbody.innerHTML += `<tr>
                     <td>${imgContent}</td>
-                    <td><b class="small">${p.name}</b></td>
-                    <td class="small text-muted">${p.desc}</td>
-                    <td>${p.inStock?'<span class="badge bg-success">Var</span>':'<span class="badge bg-danger">Yok</span>'}</td>
-                    <td class="text-end"><button class="btn btn-sm btn-dark p-1 px-2" style="font-size:11px;" onclick="toggleStock('${p.id}')">Durum Değiştir</button></td>
+                    <td>
+                        <div class="fw-bold text-dark small">${p.name}</div>
+                        <div class="text-muted" style="font-size:11px;">${p.desc}</div>
+                    </td>
+                    <td><span class="badge bg-light text-dark">${p.category}</span></td>
+                    <td>${p.inStock?'<span class="badge bg-success">Stok Aktif</span>':'<span class="badge bg-danger">Stok Yok</span>'}</td>
+                    <td class="text-end">
+                        <button class="btn btn-sm btn-outline-secondary me-1" onclick="toggleStock('${p.id}')">Durum</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteProduct('${p.id}')"><i class="fa-solid fa-trash"></i></button>
+                    </td>
                 </tr>`;
             });
+        }
+
+        // ENVANTERE YENİ ÜRÜNÜ KAYDETME
+        function submitOptimizedProduct() {
+            const name = document.getElementById('newProdName').value.trim();
+            const category = document.getElementById('newProdCategory').value;
+            const desc = document.getElementById('newProdDesc').value.trim();
+
+            if (!name || !desc) {
+                alert("Lütfen tüm zorunlu alanları doldurunuz.");
+                return;
+            }
+
+            products.push({
+                id: 'p_' + Date.now(),
+                name: name,
+                category: category,
+                desc: desc,
+                image: globalOptimizedImageBase64, // Sıkıştırılmış güvenli base64 verisi
+                inStock: true
+            });
+
+            saveToLocalStorage();
+            renderAll();
+            
+            // Modalı Kapat ve Formu Temizle
+            document.getElementById('closeProductModalBtn').click();
+            clearPreview();
         }
 
         function toggleStock(id) {
@@ -486,16 +552,23 @@
             if(idx !== -1) { products[idx].inStock = !products[idx].inStock; saveToLocalStorage(); renderAll(); }
         }
 
+        function deleteProduct(id) {
+            if(confirm('Bu ürünü silmek istediğinize emin misiniz?')) {
+                products = products.filter(p => p.id !== id);
+                saveToLocalStorage(); renderAll();
+            }
+        }
+
         function renderCorporateTable() {
             const tbody = document.getElementById('corporate-table-body');
             if(!tbody) return; tbody.innerHTML = '';
             corporateAccounts.forEach(c => {
-                tbody.innerHTML += `<tr><td class="fw-bold small">${c.company}</td><td class="small">${c.name}</td><td class="small">${c.phone}</td><td><span class="badge bg-primary">${c.user}</span></td><td><code>${c.pass}</code></td><td class="text-end"><button class="btn btn-sm btn-danger p-1 px-2" style="font-size:11px;" onclick="deleteCorporate('${c.id}')">Sil</button></td></tr>`;
+                tbody.innerHTML += `<tr><td class="fw-bold small">${c.company}</td><td class="small">${c.name}</td><td><span class="badge bg-primary">${c.user}</span></td><td><code>${c.pass}</code></td><td class="text-end"><button class="btn btn-sm btn-danger" onclick="deleteCorporate('${c.id}')">Sil</button></td></tr>`;
             });
         }
 
         function deleteCorporate(id) {
-            if(confirm('Şirket hesabını silmek istediğinize emin misiniz?')) {
+            if(confirm('Bayi hesabını silmek istiyor musunuz?')) {
                 corporateAccounts = corporateAccounts.filter(c => c.id !== id);
                 saveToLocalStorage(); renderAll();
             }
@@ -505,22 +578,13 @@
             const tbody = document.getElementById('orders-table-body');
             if(!tbody) return; tbody.innerHTML = '';
             orders.forEach(o => {
-                let badgeColor = 'bg-warning text-dark';
-                if(o.status === 'Hazır') badgeColor = 'bg-primary text-white';
-                if(o.status === 'Teslim Edildi') badgeColor = 'bg-success text-white';
-                
                 tbody.innerHTML += `<tr>
-                    <td class="fw-bold small text-primary">${o.company}</td>
+                    <td class="small fw-bold">${o.company}</td>
                     <td class="small">${o.product}</td>
-                    <td class="small fw-bold">${o.quantity}</td>
-                    <td class="small text-muted">${o.note}</td>
-                    <td><span class="badge ${badgeColor}">${o.status}</span></td>
+                    <td class="small fw-bold text-success">${o.quantity}</td>
+                    <td><span class="badge bg-warning text-dark">${o.status}</span></td>
                     <td class="text-end">
-                        <div class="btn-group btn-group-sm" role="group">
-                            <button type="button" class="btn btn-warning fw-bold text-dark" style="font-size:11px;" onclick="changeOrderStatus('${o.id}', 'Hazırlanıyor')">Hazırlanıyor</button>
-                            <button type="button" class="btn btn-primary fw-bold text-white" style="font-size:11px;" onclick="changeOrderStatus('${o.id}', 'Hazır')">Hazır</button>
-                            <button type="button" class="btn btn-success fw-bold text-white" style="font-size:11px;" onclick="changeOrderStatus('${o.id}', 'Teslim Edildi')">Teslim Edildi</button>
-                        </div>
+                        <button class="btn btn-sm btn-primary py-0" onclick="changeOrderStatus('${o.id}', 'Hazır')">Hazırla</button>
                     </td>
                 </tr>`;
             });
@@ -529,122 +593,63 @@
         function renderServiceOrdersTable() {
             const tbody = document.getElementById('service-orders-table-body');
             if(!tbody) return; tbody.innerHTML = '';
-            
-            const readyOrders = orders.filter(o => o.status === 'Hazır');
-            
-            if(readyOrders.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted p-4 fw-bold">Şu anda dağıtıma çıkacak "Hazır" sipariş yok.</td></tr>`;
+            const ready = orders.filter(o => o.status === 'Hazır');
+            if(ready.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted small p-3">Dağıtılacak iş bulunmuyor.</td></tr>`;
                 return;
             }
-
-            readyOrders.forEach(o => {
-                tbody.innerHTML += `<tr>
-                    <td class="fw-bold small text-dark">${o.company}</td>
-                    <td class="small">${o.product}</td>
-                    <td class="small fw-bold">${o.quantity}</td>
-                    <td class="small text-muted">${o.note}</td>
-                    <td><span class="badge bg-primary">Hazır (Dağıtılacak)</span></td>
-                    <td class="text-end">
-                        <button class="btn btn-sm btn-success fw-bold py-1 px-3" onclick="changeOrderStatus('${o.id}', 'Teslim Edildi')">
-                            <i class="fa-solid fa-check me-1"></i> Teslim Et
-                        </button>
-                    </td>
-                </tr>`;
+            ready.forEach(o => {
+                tbody.innerHTML += `<tr><td>${o.company}</td><td>${o.product}</td><td>${o.quantity}</td><td class="text-end"><button class="btn btn-sm btn-success" onclick="changeOrderStatus('${o.id}', 'Teslim Edildi')">Teslim Et</button></td></tr>`;
             });
         }
 
-        function changeOrderStatus(orderId, newStatus) {
-            const idx = orders.findIndex(o => o.id === orderId);
+        function changeOrderStatus(id, status) {
+            const idx = orders.findIndex(o => o.id === id);
             if(idx !== -1) {
-                orders[idx].status = newStatus;
-                saveToLocalStorage();
-                renderAll();
-                if(currentLoggedCorporate) { renderCorporateSelfPanel(); }
+                if(status === 'Teslim Edildi') { orders = orders.filter(o => o.id !== id); } 
+                else { orders[idx].status = status; }
+                saveToLocalStorage(); renderAll();
+                if(currentLoggedCorporate) renderCorporateSelfPanel();
             }
         }
 
         function renderCorporateSelfPanel() {
             if(!currentLoggedCorporate) return;
             document.getElementById('logged-corp-name').innerText = currentLoggedCorporate.company;
-            
-            const tbody = document.getElementById('my-orders-table-body');
-            tbody.innerHTML = '';
+            const tbody = document.getElementById('my-orders-table-body'); tbody.innerHTML = '';
             orders.filter(o => o.company === currentLoggedCorporate.company).forEach(o => {
-                let badgeColor = 'bg-warning text-dark';
-                if(o.status === 'Hazır') badgeColor = 'bg-primary text-white';
-                if(o.status === 'Teslim Edildi') badgeColor = 'bg-success text-white';
-                tbody.innerHTML += `<tr><td class="fw-bold small">${o.product}</td><td class="small fw-bold text-success">${o.quantity}</td><td class="small text-muted">${o.note}</td><td><span class="badge ${badgeColor}">${o.status}</span></td></tr>`;
+                tbody.innerHTML += `<tr><td>${o.product}</td><td class="fw-bold">${o.quantity}</td><td class="small text-muted">${o.note}</td><td><span class="badge bg-warning text-dark">${o.status}</span></td></tr>`;
             });
-
-            const select = document.getElementById('corpSelfProductSelect');
-            select.innerHTML = '';
-            products.forEach(p => { select.innerHTML += `<option value="${p.name}">${p.name}</option>`; });
+            const select = document.getElementById('corpSelfProductSelect'); select.innerHTML = '';
+            products.filter(p=>p.inStock).forEach(p => { select.innerHTML += `<option value="${p.name}">${p.name}</option>`; });
         }
 
         function unifiedLoginEngine() {
             const type = document.getElementById('loginType').value;
             const u = document.getElementById('username').value.trim();
             const p = document.getElementById('password').value.trim();
-            const rememberMe = document.getElementById('rememberMe').checked;
             const err = document.getElementById('loginError');
+            let success = false;
 
-            let isSuccess = false;
-
-            if (type === 'admin') {
-                if (u === 'admin' && p === '123') {
-                    isSuccess = true;
-                    document.getElementById('client-interface').style.display = 'none';
-                    document.getElementById('admin-panel').style.display = 'block';
-                    renderAll();
+            if(type === 'admin' && u === 'admin' && p === '123') {
+                success = true; document.getElementById('client-interface').style.display = 'none'; document.getElementById('admin-panel').style.display = 'block'; renderAll();
+            } else if(type === 'corporate') {
+                const matched = corporateAccounts.find(c => c.user === u && c.pass === p);
+                if(matched) {
+                    success = true; currentLoggedCorporate = matched;
+                    document.getElementById('client-interface').style.display = 'none'; document.getElementById('corporate-panel').style.display = 'block'; renderCorporateSelfPanel();
                 }
-            } else if (type === 'corporate') {
-                const matchedCorp = corporateAccounts.find(acc => acc.user === u && acc.pass === p);
-                if (matchedCorp) {
-                    isSuccess = true;
-                    currentLoggedCorporate = matchedCorp;
-                    document.getElementById('client-interface').style.display = 'none';
-                    document.getElementById('corporate-panel').style.display = 'block';
-                    renderCorporateSelfPanel();
-                }
-            } else if (type === 'service') {
-                if (u === 'servis' && p === '123') {
-                    isSuccess = true;
-                    document.getElementById('client-interface').style.display = 'none';
-                    document.getElementById('service-panel').style.display = 'block';
-                    renderAll();
-                }
+            } else if(type === 'service' && u === 'servis' && p === '123') {
+                success = true; document.getElementById('client-interface').style.display = 'none'; document.getElementById('service-panel').style.display = 'block'; renderAll();
             }
 
-            if (isSuccess) {
+            if(success) {
                 err.classList.add('d-none');
-                
-                if (rememberMe) {
-                    localStorage.setItem('remembered_user', u);
-                    localStorage.setItem('remembered_type', type);
-                    localStorage.setItem('remembered_check', 'true');
-                } else {
-                    localStorage.removeItem('remembered_user');
-                    localStorage.removeItem('remembered_type');
-                    localStorage.removeItem('remembered_check');
-                }
-
                 document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
                 document.body.className = ''; document.body.style = '';
-                document.getElementById('loginModal').style.display = 'none';
-                window.scrollTo(0, 0);
-            } else {
-                err.classList.remove('d-none');
-                bootstrap.Modal.getOrCreateInstance(document.getElementById('loginModal')).show();
-            }
-        }
-
-        function checkRememberedUser() {
-            const isChecked = localStorage.getItem('remembered_check');
-            if (isChecked === 'true') {
-                document.getElementById('username').value = localStorage.getItem('remembered_user') || "";
-                document.getElementById('loginType').value = localStorage.getItem('remembered_type') || "admin";
-                document.getElementById('rememberMe').checked = true;
-            }
+                bootstrap.Modal.getInstance(document.getElementById('loginModal')).hide();
+                window.scrollTo(0,0);
+            } else { err.classList.remove('d-none'); }
         }
 
         document.getElementById('corpSelfOrderForm').addEventListener('submit', function(e) {
@@ -657,56 +662,10 @@
                 note: document.getElementById('corpSelfNote').value || "-",
                 status: 'Hazırlanıyor'
             });
-            saveToLocalStorage(); alert('Siparişiniz fabrikaya iletildi!');
+            saveToLocalStorage(); alert('Sipariş merkeze iletildi.');
             document.getElementById('corpSelfOrderForm').reset();
             switchCorpTab('tab-corp-orders');
         });
-
-        // BİLGİSAYARDAN VEYA TELEFONDAN RESİM SEÇİLİP YÜKLENMESİNİ SAĞLAYAN ASENKRON FONKSİYON
-        function handleNewProductSubmit() {
-            const name = document.getElementById('newProdName').value.trim();
-            const desc = document.getElementById('newProdDesc').value.trim();
-            const fileInput = document.getElementById('newProdImgFile');
-
-            if (!name || !desc) {
-                alert("Lütfen ürün adı ve açıklama alanlarını doldurun.");
-                return;
-            }
-
-            const file = fileInput.files[0];
-            
-            if (file) {
-                // Eğer bir dosya seçildiyse base64 formatına çevirip yerel hafızaya kaydeder
-                const reader = new FileReader();
-                reader.onloadend = function() {
-                    products.push({
-                        id: 'p_' + Date.now(),
-                        name: name,
-                        desc: desc,
-                        image: reader.result, // Resmin kendisi buraya kaydedilir
-                        inStock: true
-                    });
-                    saveToLocalStorage();
-                    renderAll();
-                    document.getElementById('addProductForm').reset();
-                    closeModal('addProductModal');
-                };
-                reader.readAsDataURL(file);
-            } else {
-                // Dosya seçilmediyse resimsiz (varsayılan kutu ikonuyla) ekler
-                products.push({
-                    id: 'p_' + Date.now(),
-                    name: name,
-                    desc: desc,
-                    image: "",
-                    inStock: true
-                });
-                saveToLocalStorage();
-                renderAll();
-                document.getElementById('addProductForm').reset();
-                closeModal('addProductModal');
-            }
-        }
 
         document.getElementById('addCorporateForm').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -714,41 +673,12 @@
                 id: 'c_' + Date.now(),
                 company: document.getElementById('corpCompany').value,
                 name: document.getElementById('corpName').value,
-                phone: document.getElementById('corpPhone').value,
                 user: document.getElementById('corpUser').value.trim(),
                 pass: document.getElementById('corpPass').value.trim()
             });
             saveToLocalStorage(); renderAll(); document.getElementById('addCorporateForm').reset();
-            closeModal('addCorporateModal');
+            bootstrap.Modal.getInstance(document.getElementById('addCorporateModal')).hide();
         });
-
-        document.getElementById('createOrderForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            orders.push({
-                id: 'o_' + Date.now(),
-                company: document.getElementById('orderCompanySelect').value,
-                product: document.getElementById('orderProductSelect').value,
-                quantity: document.getElementById('orderQuantity').value,
-                note: document.getElementById('orderNote').value || "-",
-                status: 'Hazırlanıyor'
-            });
-            saveToLocalStorage(); renderAll(); document.getElementById('createOrderForm').reset();
-            closeModal('createOrderModal');
-        });
-
-        function populateOrderDropdowns() {
-            const compSelect = document.getElementById('orderCompanySelect');
-            const pSelect = document.getElementById('orderProductSelect');
-            compSelect.innerHTML = ''; pSelect.innerHTML = '';
-            corporateAccounts.forEach(c => { compSelect.innerHTML += `<option value="${c.company}">${c.company}</option>`; });
-            products.forEach(p => { pSelect.innerHTML += `<option value="${p.name}">${p.name}</option>`; });
-        }
-
-        function closeModal(id) {
-            const modalEl = document.getElementById(id);
-            const modalInstance = bootstrap.Modal.getInstance(modalEl);
-            if(modalInstance) modalInstance.hide();
-        }
 
         function switchAdminTab(id) {
             document.querySelectorAll('#admin-panel .panel-content').forEach(el => el.classList.remove('active'));
@@ -770,18 +700,12 @@
             document.getElementById('corporate-panel').style.display = 'none';
             document.getElementById('service-panel').style.display = 'none';
             document.getElementById('client-interface').style.display = 'block';
-            
             document.getElementById('password').value = '';
-            checkRememberedUser();
-            
             renderAll();
-            window.scrollTo(0, 0);
+            window.scrollTo(0,0);
         }
 
-        window.onload = function() {
-            renderAll();
-            checkRememberedUser();
-        };
+        window.onload = function() { renderAll(); };
     </script>
 </body>
 </html>
