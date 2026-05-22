@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gelişmiş Sipariş, Stok ve Görsel Otomasyon Sistemi</title>
+    <title>B2B Sipariş & Stok Yönetim Sistemi</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -13,7 +12,7 @@
         body {
             font-family: 'Poppins', sans-serif;
             color: #333;
-            background-color: #fdfbf7;
+            background-color: #f8fafc;
             margin: 0;
             padding: 0;
         }
@@ -21,10 +20,10 @@
             transition: color 0.3s ease;
         }
         .navbar-nav .nav-link:hover, .navbar-nav .nav-link.active {
-            color: #198754 !important;
+            color: #0f766e !important;
         }
         .hero-section {
-            background: linear-gradient(135deg, #198754 0%, #115e3b 100%);
+            background: linear-gradient(135deg, #0f766e 0%, #115e59 100%);
             padding: 60px 0;
             color: white;
             text-align: center;
@@ -43,13 +42,13 @@
         }
         .product-card .img-wrapper {
             height: 180px;
-            background-color: #f8fafc;
+            background-color: #f1f5f9;
             display: flex;
             align-items: center;
             justify-content: center;
             color: #94a3b8;
             overflow: hidden;
-            border-bottom: 1px solid #f1f5f9;
+            border-bottom: 1px solid #e2e8f0;
         }
         .product-card .img-wrapper img {
             width: 100%;
@@ -86,7 +85,7 @@
             color: white;
             padding: 20px 15px;
         }
-        .corp-sidebar { background-color: #115e3b; }
+        .corp-sidebar { background-color: #115e59; }
         .service-sidebar { background-color: #d97706; }
         
         @media (min-width: 768px) {
@@ -102,7 +101,7 @@
             text-decoration: none;
         }
         .sidebar .nav-link:hover, .sidebar .nav-link.active { background-color: #334155; color: white !important; }
-        .corp-sidebar .nav-link:hover, .corp-sidebar .nav-link.active { background-color: #198754; color: white !important; }
+        .corp-sidebar .nav-link:hover, .corp-sidebar .nav-link.active { background-color: #0f766e; color: white !important; }
         .service-sidebar .nav-link:hover, .service-sidebar .nav-link.active { background-color: #b45309; color: white !important; }
         
         .panel-content { display: none; }
@@ -115,18 +114,18 @@
         <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm">
             <div class="container">
                 <a class="navbar-brand fw-bold" href="#">
-                    <span class="text-success"><i class="fa-solid fa-boxes-packing me-2"></i>SmartStock</span> <span class="text-secondary">Pro</span>
+                    <span class="text-dark"><i class="fa-solid fa-cubes text-teal me-2" style="color: #0f766e;"></i>B2B Portal</span>
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto fw-semibold align-items-center pt-2 pt-lg-0">
-                        <li class="nav-item"><a class="nav-link text-success active" href="#home">Ana Sayfa</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#about">Hakkımızda</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#products">Katalog & Canlı Stok</a></li>
+                        <li class="nav-item"><a class="nav-link active" href="#home">Ana Sayfa</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#about">Sistem Hakkında</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#products">Ürünler & Canlı Stok</a></li>
                         <li class="nav-item ms-lg-3 mt-2 mt-lg-0 w-100 w-lg-auto">
-                            <button class="btn btn-success fw-bold text-white w-100" data-bs-toggle="modal" data-bs-target="#loginModal">
+                            <button class="btn fw-bold text-white w-100" style="background-color: #0f766e;" data-bs-toggle="modal" data-bs-target="#loginModal">
                                 <i class="fa-solid fa-right-to-bracket me-1"></i> Yönetim Girişi
                             </button>
                         </li>
@@ -137,48 +136,48 @@
 
         <section id="home" class="hero-section">
             <div class="container">
-                <h1 class="display-6 fw-bold mb-3">Gelişmiş Görsel Destekli Stok Yönetimi</h1>
-                <p class="lead mb-4 text-white-50 small">Gerçek zamanlı veri senkronizasyonu, akıllı resim optimizasyonu ve bayi portalı.</p>
+                <h1 class="display-6 fw-bold mb-3">Dijital Tedarik & Akıllı Stok Yönetimi</h1>
+                <p class="lead mb-4 text-white-50 small">Gerçek zamanlı bayi sipariş portalı ve entegre lojistik yönetim ağı.</p>
             </div>
         </section>
 
         <section id="about" class="py-5 bg-white border-bottom">
             <div class="container">
                 <div class="row align-items-center">
-                    <div class="col-md-6 mb-4 mb-md-0">
-                        <span class="text-success fw-bold text-uppercase small">Biz Kimiz?</span>
-                        <h2 class="fw-bold text-dark mt-1 mb-3">Yenilikçi Stok ve Dağıtım Otomasyonu</h2>
-                        <p class="text-muted">SmartStock Pro, işletmenizin envanter süreçlerini dijitalleştirmek, bayilerinizle olan sipariş ağını kusursuzlaştırmak ve lojistik operasyonlarınızı anlık olarak takip edebilmeniz için geliştirilmiş akıllı bir otomasyon sistemidir.</p>
-                        <p class="text-muted">Yüksek çözünürlüklü ürün görsellerini arka planda otomatik olarak optimize eden gelişmiş motorumuz sayesinde, veri tasarrufu sağlarken hızdan ödün vermeden operasyonlarınızı sürdürebilirsiniz.</p>
+                    <div class="col-lg-6 mb-4 mb-lg-0">
+                        <span class="fw-bold text-uppercase small" style="color: #0f766e;">Sistem Özellikleri</span>
+                        <h2 class="fw-bold text-dark mt-1 mb-3">Güvenli ve Entegre Toptan Dağıtım Ağı</h2>
+                        <p class="text-muted">Bu platform, kayıtlı bayilerin ve distribütörlerin sipariş süreçlerini optimize etmek amacıyla geliştirilmiş kapalı devre bir B2B otomasyonudur. Üretim bandından lojistik birimine kadar tüm süreçlerin takibi, şeffaf fiyatlandırma, dinamik KDV hesaplamalı sepet yapısı ve canlı stok verileriyle anlık olarak yönetilmektedir.</p>
+                        <p class="text-muted m-0">Bayilik başvuruları ve entegrasyon talepleri için sistem yöneticinizle doğrudan iletişime geçebilirsiniz.</p>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-lg-6">
                         <div class="row g-3">
                             <div class="col-6">
                                 <div class="p-3 bg-light rounded shadow-sm text-center">
-                                    <i class="fa-solid fa-bolt fa-2x text-success mb-2"></i>
-                                    <h5 class="fw-bold mb-1">Anlık Takip</h5>
-                                    <p class="text-muted small mb-0">Canlı stok güncellemeleri</p>
+                                    <i class="fa-solid fa-receipt fa-2x text-teal mb-2" style="color: #0f766e;"></i>
+                                    <h6 class="fw-bold mb-1">KDV Dahil Hesap</h6>
+                                    <p class="text-muted small mb-0">%10 KDV detaylı sepet yapısı</p>
                                 </div>
                             </div>
                             <div class="col-6">
                                 <div class="p-3 bg-light rounded shadow-sm text-center">
-                                    <i class="fa-solid fa-cloud fa-2x text-primary mb-2"></i>
-                                    <h5 class="fw-bold mb-1">Bayi Portalı</h5>
-                                    <p class="text-muted small mb-0">Hızlı sipariş entegrasyonu</p>
+                                    <i class="fa-solid fa-chart-line fa-2x text-primary mb-2"></i>
+                                    <h6 class="fw-bold mb-1">Canlı Envanter</h6>
+                                    <p class="text-muted small mb-0">Anlık stok durumu takibi</p>
                                 </div>
                             </div>
                             <div class="col-6">
                                 <div class="p-3 bg-light rounded shadow-sm text-center">
-                                    <i class="fa-solid fa-image fa-2x text-warning mb-2"></i>
-                                    <h5 class="fw-bold mb-1">Optimizasyon</h5>
-                                    <p class="text-muted small mb-0">Akıllı görsel sıkıştırma</p>
+                                    <i class="fa-solid fa-user-lock fa-2x text-warning mb-2"></i>
+                                    <h6 class="fw-bold mb-1">Gizli Altyapı</h6>
+                                    <p class="text-muted small mb-0">Bayilere özel kapalı erişim</p>
                                 </div>
                             </div>
                             <div class="col-6">
                                 <div class="p-3 bg-light rounded shadow-sm text-center">
                                     <i class="fa-solid fa-truck-ramp-box fa-2x text-danger mb-2"></i>
-                                    <h5 class="fw-bold mb-1">Lojistik</h5>
-                                    <p class="text-muted small mb-0">Sevkiyat ve teslimat kontrolü</p>
+                                    <h6 class="fw-bold mb-1">Lojistik Takip</h6>
+                                    <p class="text-muted small mb-0">Sevkiyat durum yönetimi</p>
                                 </div>
                             </div>
                         </div>
@@ -196,7 +195,7 @@
                     <div class="col-md-6 mt-3 mt-md-0">
                         <div class="input-group">
                             <span class="input-group-text bg-white border-end-0"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
-                            <input type="text" id="clientSearchInput" class="form-control border-start-0" placeholder="Ürün adı veya açıklama ile ara..." oninput="renderClientProducts()">
+                            <input type="text" id="clientSearchInput" class="form-control border-start-0" placeholder="Ürün veya kategori ara..." oninput="renderClientProducts()">
                         </div>
                     </div>
                 </div>
@@ -209,7 +208,7 @@
     <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow">
-                <div class="modal-header bg-success text-white">
+                <div class="modal-header text-white" style="background-color: #0f766e;">
                     <h5 class="modal-title fw-bold"><i class="fa-solid fa-lock me-2"></i>Sistem Girişi</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-close="modal"></button>
                 </div>
@@ -218,9 +217,9 @@
                     <div class="mb-3">
                         <label class="form-label fw-semibold text-dark">Giriş Türü</label>
                         <select id="loginType" class="form-select">
-                            <option value="admin">Sistem Yöneticisi (admin / 123)</option>
-                            <option value="corporate">Kurumsal Bayi</option>
-                            <option value="service">Dağıtım / Sevkiyat (servis / 123)</option>
+                            <option value="admin">Sistem Yöneticisi</option>
+                            <option value="corporate">Kayıtlı Bayi</option>
+                            <option value="service">Dağıtım / Sevkiyat Personeli (servis / 123)</option>
                         </select>
                     </div>
                     <div class="mb-3">
@@ -231,7 +230,7 @@
                         <label class="form-label fw-semibold text-dark">Şifre</label>
                         <input type="password" id="password" class="form-control text-dark" placeholder="••••••••">
                     </div>
-                    <button type="button" class="btn btn-success w-100 fw-bold py-2 text-white" onclick="unifiedLoginEngine()">Giriş Yap</button>
+                    <button type="button" class="btn w-100 fw-bold py-2 text-white" style="background-color: #0f766e;" onclick="unifiedLoginEngine()">Giriş Yap</button>
                 </div>
             </div>
         </div>
@@ -242,9 +241,9 @@
         <div class="container-fluid px-0">
             <div class="row g-0">
                 <div class="col-md-3 col-lg-2 sidebar">
-                    <h4 class="text-center text-success fw-bold mb-4"><i class="fa-solid fa-user-shield me-2"></i>YÖNETİCİ</h4>
+                    <h4 class="text-center fw-bold mb-4" style="color: #2dd4bf;"><i class="fa-solid fa-user-shield me-2"></i>YÖNETİCİ</h4>
                     <ul class="nav flex-column mb-4">
-                        <li class="nav-item"><a class="nav-link active" id="link-stock" onclick="switchAdminTab('tab-stock')"><i class="fa-solid fa-boxes-stacked me-2"></i> Stok Listesi</a></li>
+                        <li class="nav-item"><a class="nav-link active" id="link-stock" onclick="switchAdminTab('tab-stock')"><i class="fa-solid fa-boxes-stacked me-2"></i> Stok Envanteri</a></li>
                         <li class="nav-item"><a class="nav-link" id="link-corporate" onclick="switchAdminTab('tab-corporate')"><i class="fa-solid fa-building me-2"></i> Bayi Yönetimi</a></li>
                         <li class="nav-item"><a class="nav-link" id="link-orders" onclick="switchAdminTab('tab-orders')"><i class="fa-solid fa-list-check me-2"></i> Siparişler</a></li>
                     </ul>
@@ -254,14 +253,14 @@
                 <div class="col-md-9 col-lg-10 p-4">
                     <div id="tab-stock" class="panel-content active">
                         <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
-                            <h3 class="fw-bold text-success m-0">Gelişmiş Depo Envanteri</h3>
-                            <button class="btn btn-success fw-bold" data-bs-toggle="modal" data-bs-target="#addProductModal" onclick="clearPreview()"><i class="fa-solid fa-plus me-1"></i> Yeni Ürün Ekle</button>
+                            <h3 class="fw-bold m-0" style="color: #0f766e;">Gelişmiş Depo Envanteri</h3>
+                            <button class="btn text-white fw-bold" style="background-color: #0f766e;" data-bs-toggle="modal" data-bs-target="#addProductModal" onclick="clearPreview()"><i class="fa-solid fa-plus me-1"></i> Yeni Ürün Ekle</button>
                         </div>
                         <div class="card border-0 shadow-sm p-3 bg-white">
                             <div class="table-responsive">
                                 <table class="table align-middle mb-0">
                                     <thead class="table-dark">
-                                        <tr><th>Görsel</th><th>Ürün Bilgisi</th><th>Kategori</th><th>Stok Durumu</th><th class="text-end">İşlemler</th></tr>
+                                        <tr><th>Görsel</th><th>Ürün Bilgisi</th><th>Kategori</th><th>Fiyat (KDV Hariç)</th><th>Stok Durumu</th><th class="text-end">İşlemler</th></tr>
                                     </thead>
                                     <tbody id="admin-stock-table-body"></tbody>
                                 </table>
@@ -286,7 +285,7 @@
                         <h3 class="fw-bold text-dark mb-4">Gelen Sipariş Yönetimi</h3>
                         <div class="card border-0 shadow-sm p-3 bg-white">
                             <table class="table align-middle mb-0">
-                                <thead class="table-warning"><tr><th>Firma</th><th>Ürün</th><th>Miktar</th><th>Durum</th><th class="text-end">Eylem</th></tr></thead>
+                                <thead class="table-warning"><tr><th>Firma</th><th>Ürün</th><th>Miktar</th><th>Matrah / KDV / Toplam Tutar</th><th>Durum</th><th class="text-end">Eylem</th></tr></thead>
                                 <tbody id="orders-table-body"></tbody>
                             </table>
                         </div>
@@ -310,28 +309,45 @@
                 </div>
                 <div class="col-md-9 col-lg-10 p-4">
                     <div id="tab-corp-orders" class="panel-content active">
-                        <h3 class="fw-bold text-success mb-4">Sipariş Geçmişiniz</h3>
+                        <h3 class="fw-bold mb-4" style="color: #0f766e;">Sipariş Geçmişiniz</h3>
                         <div class="card border-0 shadow-sm p-3 bg-white">
-                            <table class="table align-middle mb-0"><thead class="table-success"><tr><th>Ürün</th><th>Miktar</th><th>Not</th><th>Durum</th></tr></thead><tbody id="my-orders-table-body"></tbody></table>
+                            <table class="table align-middle mb-0"><thead class="table-success"><tr><th>Ürün</th><th>Miktar</th><th>Hesap Özeti (KDV Dahil)</th><th>Not</th><th>Durum</th></tr></thead><tbody id="my-orders-table-body"></tbody></table>
                         </div>
                     </div>
                     <div id="tab-corp-new" class="panel-content">
-                        <h3 class="fw-bold text-success mb-4">Hızlı Sipariş Formu</h3>
+                        <h3 class="fw-bold mb-4" style="color: #0f766e;">Hızlı Sipariş & Sepet Formu</h3>
                         <div class="card border-0 shadow-sm p-4 bg-white" style="max-width: 600px;">
                             <form id="corpSelfOrderForm">
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">Ürün Seçimi</label>
-                                    <select id="corpSelfProductSelect" class="form-select" required></select>
+                                    <select id="corpSelfProductSelect" class="form-select" onchange="calculateOrderTotalPreview()" required></select>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold">Miktar / Paket</label>
-                                    <input type="text" id="corpSelfQuantity" class="form-control" placeholder="Örn: 100 Adet" required>
+                                    <label class="form-label fw-bold">Miktar / Adet</label>
+                                    <input type="number" id="corpSelfQuantity" class="form-control" placeholder="Örn: 100" min="1" oninput="calculateOrderTotalPreview()" required>
                                 </div>
+                                
+                                <div class="mb-3 p-3 bg-light rounded border">
+                                    <div class="d-flex justify-content-between small text-secondary mb-1">
+                                        <span>Ara Toplam (Matrah):</span>
+                                        <span id="basketSubtotal">0.00 ₺</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between small text-secondary mb-2">
+                                        <span>Hesaplanan KDV (%10):</span>
+                                        <span id="basketTax">0.00 ₺</span>
+                                    </div>
+                                    <hr class="my-2">
+                                    <div class="d-flex justify-content-between fw-bold text-dark">
+                                        <span>Sepet Toplam Tutarı:</span>
+                                        <span id="basketGrandTotal" style="color: #0f766e;">0.00 ₺</span>
+                                    </div>
+                                </div>
+
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">Sipariş Notu</label>
                                     <textarea id="corpSelfNote" class="form-control" rows="3"></textarea>
                                 </div>
-                                <button type="submit" class="btn btn-success w-100 fw-bold text-white">Siparişi Gönder</button>
+                                <button type="submit" class="btn text-white w-100 fw-bold" style="background-color: #0f766e;">Siparişi Gönder</button>
                             </form>
                         </div>
                     </div>
@@ -350,7 +366,7 @@
                 <div class="col-md-9 col-lg-10 p-4">
                     <h3 class="fw-bold text-warning mb-4">Teslim Edilecek Siparişler</h3>
                     <div class="card border-0 shadow-sm p-3 bg-white">
-                        <table class="table align-middle mb-0"><thead class="table-dark"><tr><th>Alıcı Firma</th><th>Ürün</th><th>Miktar</th><th class="text-end">Eylem</th></tr></thead><tbody id="service-orders-table-body"></tbody></table>
+                        <table class="table align-middle mb-0"><thead class="table-dark"><tr><th>Alıcı Firma</th><th>Ürün</th><th>Miktar</th><th>Eylem</th></tr></thead><tbody id="service-orders-table-body"></tbody></table>
                     </div>
                 </div>
             </div>
@@ -362,44 +378,43 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content p-4 border-0 shadow">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="fw-bold m-0 text-success">Gelişmiş Ürün Tanımlama</h5>
+                    <h5 class="fw-bold m-0" style="color: #0f766e;">Gelişmiş Ürün Tanımlama</h5>
                     <button type="button" class="btn-close" data-bs-close="modal" id="closeProductModalBtn"></button>
                 </div>
                 <form id="addProductForm">
                     <div class="mb-3">
                         <label class="form-label small fw-bold">Ürün Adı</label>
-                        <input type="text" id="newProdName" class="form-control" placeholder="Örn: Klasik Un 1 Kg" required>
+                        <input type="text" id="newProdName" class="form-control" placeholder="Örn: Standart Ürün Tanımı" required>
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label small fw-bold">Kategori</label>
                             <select id="newProdCategory" class="form-select">
-                                <option value="Unlu Mamüller">Unlu Mamüller</option>
-                                <option value="Bakliyat">Bakliyat</option>
-                                <option value="Sıvı Yağlar">Sıvı Yağlar</option>
+                                <option value="A Kategori">A Kategori</option>
+                                <option value="B Kategori">B Kategori</option>
+                                <option value="C Kategori">C Kategori</option>
                                 <option value="Diğer">Diğer</option>
                             </select>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label class="form-label small fw-bold">Açıklama</label>
-                            <input type="text" id="newProdDesc" class="form-control" placeholder="Örn: İnce elenmiş paket" required>
+                            <label class="form-label small fw-bold">Birim Fiyat (₺)</label>
+                            <input type="number" id="newProdPrice" class="form-control" placeholder="Örn: 50.00" step="0.01" min="0" required>
                         </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Açıklama</label>
+                        <input type="text" id="newProdDesc" class="form-control" placeholder="Örn: Ürün kısa teknik açıklaması" required>
                     </div>
                     
                     <div class="mb-3">
                         <label class="form-label small fw-bold text-success"><i class="fa-solid fa-camera me-1"></i> Ürün Görseli Yükle</label>
                         <input type="file" id="newProdImgFile" class="form-control mb-2" accept="image/*" onchange="previewAndOptimizeImage(event)">
-                        
-                        <div class="small text-muted mb-2" style="font-size: 11px;">
-                            * Yüklenen yüksek çözünürlüklü görseller sistem tarafından otomatik optimize edilerek sıkıştırılır.
-                        </div>
-                        
                         <div class="preview-box" id="imagePreviewContainer">
                             <span id="previewPlaceholder"><i class="fa-solid fa-image fa-2x d-block mb-1"></i>Görsel Seçilmedi</span>
                         </div>
                     </div>
                     
-                    <button type="button" class="btn btn-success w-100 fw-bold text-white py-2" onclick="submitOptimizedProduct()">Sisteme Güvenle Kaydet</button>
+                    <button type="button" class="btn text-white w-100 fw-bold py-2" style="background-color: #0f766e;" onclick="submitOptimizedProduct()">Sisteme Güvenle Kaydet</button>
                 </form>
             </div>
         </div>
@@ -412,29 +427,30 @@
 
     <script>
         let globalOptimizedImageBase64 = "";
+        const TAX_RATE = 0.10; // %10 KDV oranı
 
         const defaultProducts = [
-            { id: '1', name: 'Premium Fırınlık Un', category: 'Unlu Mamüller', desc: '1000 gr yüksek proteinli un.', image: '', inStock: true },
-            { id: '2', name: 'Yerli Kırmızı Mercimek', category: 'Bakliyat', desc: '1 Kg organik sıra mercimek.', image: '', inStock: true }
+            { id: '1', name: 'Premium Unlu Mamul Paketi', category: 'A Kategori', desc: 'Endüstriyel taze üretim toptan paket.', price: 55.00, image: '', inStock: true },
+            { id: '2', name: 'Standart Mantı Grubu', category: 'B Kategori', desc: 'Sözleşmeli tesis standart dolgulu ürün.', price: 110.00, image: '', inStock: true }
         ];
 
         const defaultCorporates = [
-            { id: 'c1', company: 'Merkez Dağıtım Ltd.', name: 'Can Yılmaz', user: 'demo_bayi', pass: '1234' }
+            { id: 'c1', company: 'Test Dağıtım A.Ş.', name: 'Yönetici Bayi', user: 'demo_bayi', pass: '1234' }
         ];
 
         const defaultOrders = [
-            { id: 'o1', company: 'Merkez Dağıtım Ltd.', product: 'Premium Fırınlık Un', quantity: '200 Paket', note: 'Hızlı teslimat ricası.', status: 'Hazırlanıyor' }
+            { id: 'o1', company: 'Test Dağıtım A.Ş.', product: 'Premium Unlu Mamul Paketi', quantity: 150, price: 55.00, subtotal: 8250.00, tax: 825.00, total: 9075.00, note: 'Ana depo teslimatlı.', status: 'Hazırlanıyor' }
         ];
 
-        let products = JSON.parse(localStorage.getItem('adv_products')) || defaultProducts;
-        let corporateAccounts = JSON.parse(localStorage.getItem('adv_corporates')) || defaultCorporates;
-        let orders = JSON.parse(localStorage.getItem('adv_orders')) || defaultOrders;
+        let products = JSON.parse(localStorage.getItem('anon_products')) || defaultProducts;
+        let corporateAccounts = JSON.parse(localStorage.getItem('anon_corporates')) || defaultCorporates;
+        let orders = JSON.parse(localStorage.getItem('anon_orders')) || defaultOrders;
         let currentLoggedCorporate = null;
 
         function saveToLocalStorage() {
-            localStorage.setItem('adv_products', JSON.stringify(products));
-            localStorage.setItem('adv_corporates', JSON.stringify(corporateAccounts));
-            localStorage.setItem('adv_orders', JSON.stringify(orders));
+            localStorage.setItem('anon_products', JSON.stringify(products));
+            localStorage.setItem('anon_corporates', JSON.stringify(corporateAccounts));
+            localStorage.setItem('anon_orders', JSON.stringify(orders));
         }
 
         function renderAll() {
@@ -454,7 +470,7 @@
                 return;
             }
 
-            container.innerHTML = `<div class="spinner-border text-success spinner-border-sm" role="status"></div><span class="ms-2 small">Görsel işleniyor...</span>`;
+            container.innerHTML = `<div class="spinner-border spinner-border-sm text-teal" role="status"></div><span class="ms-2 small">İşleniyor...</span>`;
 
             const reader = new FileReader();
             reader.onload = function(e) {
@@ -502,7 +518,6 @@
             if(!grid) return; grid.innerHTML = '';
             
             const searchVal = document.getElementById('clientSearchInput').value.toLowerCase();
-            
             const filtered = products.filter(p => 
                 p.name.toLowerCase().includes(searchVal) || 
                 p.desc.toLowerCase().includes(searchVal) || 
@@ -510,14 +525,15 @@
             );
 
             if(filtered.length === 0) {
-                grid.innerHTML = `<div class="text-center text-muted my-5"><i class="fa-solid fa-box-open fa-3x mb-3"></i><p>Aradığınız kriterlere uygun ürün bulunamadı.</p></div>`;
+                grid.innerHTML = `<div class="text-center text-muted my-5"><i class="fa-solid fa-box-open fa-3x mb-3"></i><p>Ürün bulunamadı.</p></div>`;
                 return;
             }
 
             filtered.forEach(p => {
                 const col = document.createElement('div'); col.className = 'col-12 col-sm-6 col-md-4';
                 const badge = p.inStock ? `<span class="badge bg-success">Stokta Var</span>` : `<span class="badge bg-danger">Tükendi</span>`;
-                const imgContent = p.image ? `<img src="${p.image}" alt="${p.name}">` : `<i class="fa-solid fa-box fa-3x text-light-dark"></i>`;
+                const imgContent = p.image ? `<img src="${p.image}" alt="${p.name}">` : `<i class="fa-solid fa-box fa-3x text-muted"></i>`;
+                const productPrice = p.price ? parseFloat(p.price).toFixed(2) : "0.00";
                 
                 col.innerHTML = `
                     <div class="card h-100 product-card border-0">
@@ -527,6 +543,7 @@
                             <h5 class="fw-bold text-dark mb-1" style="font-size:16px;">${p.name}</h5>
                             <p class="text-muted small mb-3">${p.desc}</p>
                             <div class="d-flex justify-content-between align-items-center">
+                                <span class="fw-bold fs-5" style="color: #0f766e;">${productPrice} ₺ <small class="text-muted" style="font-size:10px;">+KDV</small></span>
                                 ${badge}
                             </div>
                         </div>
@@ -540,6 +557,7 @@
             if(!tbody) return; tbody.innerHTML = '';
             products.forEach(p => {
                 const imgContent = p.image ? `<img src="${p.image}" style="width:50px; height:50px; object-fit:cover; border-radius:6px; border:1px solid #ddd;">` : `<div style="width:50px; height:50px; background:#f1f5f9; display:flex; align-items:center; justify-content:center; border-radius:6px;"><i class="fa-solid fa-box text-muted"></i></div>`;
+                const priceFormatted = p.price ? parseFloat(p.price).toFixed(2) : "0.00";
                 tbody.innerHTML += `<tr>
                     <td>${imgContent}</td>
                     <td>
@@ -547,6 +565,7 @@
                         <div class="text-muted" style="font-size:11px;">${p.desc}</div>
                     </td>
                     <td><span class="badge bg-light text-dark">${p.category}</span></td>
+                    <td class="fw-bold text-success">${priceFormatted} ₺</td>
                     <td>${p.inStock?'<span class="badge bg-success">Stok Aktif</span>':'<span class="badge bg-danger">Stok Yok</span>'}</td>
                     <td class="text-end">
                         <button class="btn btn-sm btn-outline-secondary me-1" onclick="toggleStock('${p.id}')">Durum</button>
@@ -559,10 +578,11 @@
         function submitOptimizedProduct() {
             const name = document.getElementById('newProdName').value.trim();
             const category = document.getElementById('newProdCategory').value;
+            const price = parseFloat(document.getElementById('newProdPrice').value);
             const desc = document.getElementById('newProdDesc').value.trim();
 
-            if (!name || !desc) {
-                alert("Lütfen tüm zorunlu alanları doldurunuz.");
+            if (!name || isNaN(price) || !desc) {
+                alert("Lütfen alanları doğru şekilde doldurunuz.");
                 return;
             }
 
@@ -570,6 +590,7 @@
                 id: 'p_' + Date.now(),
                 name: name,
                 category: category,
+                price: price,
                 desc: desc,
                 image: globalOptimizedImageBase64,
                 inStock: true
@@ -615,10 +636,19 @@
             const tbody = document.getElementById('orders-table-body');
             if(!tbody) return; tbody.innerHTML = '';
             orders.forEach(o => {
+                const subtotal = o.subtotal ? parseFloat(o.subtotal).toFixed(2) : "0.00";
+                const tax = o.tax ? parseFloat(o.tax).toFixed(2) : "0.00";
+                const total = o.total ? parseFloat(o.total).toFixed(2) : "0.00";
+                
                 tbody.innerHTML += `<tr>
                     <td class="small fw-bold">${o.company}</td>
                     <td class="small">${o.product}</td>
-                    <td class="small fw-bold text-success">${o.quantity}</td>
+                    <td class="small fw-bold text-secondary">${o.quantity} Adet</td>
+                    <td class="small">
+                        <div style="font-size: 11px; color:#666;">Matrah: ${subtotal} ₺</div>
+                        <div style="font-size: 11px; color:#cf6a17;">KDV (%10): ${tax} ₺</div>
+                        <div class="fw-bold text-success" style="font-size: 13px;">Toplam: ${total} ₺</div>
+                    </td>
                     <td><span class="badge bg-warning text-dark">${o.status}</span></td>
                     <td class="text-end">
                         <button class="btn btn-sm btn-primary py-0" onclick="changeOrderStatus('${o.id}', 'Hazır')">Hazırla</button>
@@ -642,7 +672,7 @@
             const ready = orders.filter(o => o.status === 'Hazır');
             
             if(ready.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted small py-3">Teslim edilecek sipariş bulunmuyor.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted small py-3">Sevkiyat listesi boş.</td></tr>`;
                 return;
             }
             
@@ -650,7 +680,7 @@
                 tbody.innerHTML += `<tr>
                     <td class="small fw-bold">${o.company}</td>
                     <td class="small">${o.product}</td>
-                    <td class="small text-success fw-bold">${o.quantity}</td>
+                    <td class="small text-secondary fw-bold">${o.quantity} Adet</td>
                     <td class="text-end">
                         <button class="btn btn-sm btn-success" onclick="changeOrderStatus('${o.id}', 'Teslim Edildi')">Teslim Et</button>
                     </td>
@@ -665,7 +695,7 @@
             
             const myOrders = orders.filter(o => o.company === currentLoggedCorporate.company);
             if(myOrders.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted small py-3">Henüz siparişiniz bulunmuyor.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted small py-3">Kayıtlı siparişiniz yok.</td></tr>`;
                 return;
             }
             
@@ -674,9 +704,18 @@
                 if(o.status === 'Hazır') badgeClass = "bg-primary text-white";
                 if(o.status === 'Teslim Edildi') badgeClass = "bg-success text-white";
                 
+                const subtotal = o.subtotal ? parseFloat(o.subtotal).toFixed(2) : "0.00";
+                const tax = o.tax ? parseFloat(o.tax).toFixed(2) : "0.00";
+                const total = o.total ? parseFloat(o.total).toFixed(2) : "0.00";
+                
                 tbody.innerHTML += `<tr>
                     <td class="small fw-bold">${o.product}</td>
-                    <td class="small">${o.quantity}</td>
+                    <td class="small fw-bold">${o.quantity} Adet</td>
+                    <td class="small">
+                        <div style="font-size: 11px; color:#555;">Matrah: ${subtotal} ₺</div>
+                        <div style="font-size: 11px; color:#555;">KDV: ${tax} ₺</div>
+                        <div class="fw-bold text-success">Genel Toplam: ${total} ₺</div>
+                    </td>
                     <td class="small text-muted">${o.note || '-'}</td>
                     <td><span class="badge ${badgeClass}">${o.status}</span></td>
                 </tr>`;
@@ -688,9 +727,40 @@
             if(!select) return; select.innerHTML = '';
             products.forEach(p => {
                 if(p.inStock) {
-                    select.innerHTML += `<option value="${p.name}">${p.name} (${p.category})</option>`;
+                    select.innerHTML += `<option value="${p.name}" data-price="${p.price}">${p.name} (${parseFloat(p.price).toFixed(2)} ₺ + KDV)</option>`;
                 }
             });
+            calculateOrderTotalPreview();
+        }
+
+        function calculateOrderTotalPreview() {
+            const select = document.getElementById('corpSelfProductSelect');
+            const qtyInput = document.getElementById('corpSelfQuantity');
+            
+            const subtotalSpan = document.getElementById('basketSubtotal');
+            const taxSpan = document.getElementById('basketTax');
+            const grandTotalSpan = document.getElementById('basketGrandTotal');
+            
+            if(!select || !qtyInput || !subtotalSpan || !taxSpan || !grandTotalSpan) return;
+            
+            const selectedOption = select.options[select.selectedIndex];
+            if(!selectedOption) {
+                subtotalSpan.innerText = "0.00 ₺";
+                taxSpan.innerText = "0.00 ₺";
+                grandTotalSpan.innerText = "0.00 ₺";
+                return;
+            }
+            
+            const price = parseFloat(selectedOption.getAttribute('data-price')) || 0;
+            const qty = parseInt(qtyInput.value) || 0;
+            
+            const subtotal = price * qty;
+            const tax = subtotal * TAX_RATE;
+            const grandTotal = subtotal + tax;
+            
+            subtotalSpan.innerText = subtotal.toFixed(2) + " ₺";
+            taxSpan.innerText = tax.toFixed(2) + " ₺";
+            grandTotalSpan.innerText = grandTotal.toFixed(2) + " ₺";
         }
 
         function unifiedLoginEngine() {
@@ -792,18 +862,37 @@
             e.preventDefault();
             if(!currentLoggedCorporate) return;
             
+            const select = document.getElementById('corpSelfProductSelect');
+            const selectedOption = select.options[select.selectedIndex];
+            const productName = select.value;
+            const productPrice = parseFloat(selectedOption.getAttribute('data-price')) || 0;
+            const quantity = parseInt(document.getElementById('corpSelfQuantity').value);
+            
+            const subtotalCost = productPrice * quantity;
+            const taxCost = subtotalCost * TAX_RATE;
+            const grandTotalCost = subtotalCost + taxCost;
+
             orders.push({
                 id: 'o_' + Date.now(),
                 company: currentLoggedCorporate.company,
-                product: document.getElementById('corpSelfProductSelect').value,
-                quantity: document.getElementById('corpSelfQuantity').value.trim(),
+                product: productName,
+                quantity: quantity,
+                price: productPrice,
+                subtotal: subtotalCost,
+                tax: taxCost,
+                total: grandTotalCost,
                 note: document.getElementById('corpSelfNote').value.trim(),
                 status: 'Hazırlanıyor'
             });
             saveToLocalStorage();
             renderMyOrdersTable();
             this.reset();
-            alert('Siparişiniz başarıyla alındı.');
+            
+            document.getElementById('basketSubtotal').innerText = "0.00 ₺";
+            document.getElementById('basketTax').innerText = "0.00 ₺";
+            document.getElementById('basketGrandTotal').innerText = "0.00 ₺";
+            
+            alert('Siparişiniz KDV hesaplamaları ile birlikte sepetinizden başarıyla sisteme iletildi.');
         });
 
         window.onload = function() {
@@ -812,5 +901,3 @@
     </script>
 </body>
 </html>
-
-```
