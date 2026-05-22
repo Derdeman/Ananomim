@@ -163,7 +163,7 @@
                         <select id="loginType" class="form-select">
                             <option value="admin">Sistem Yöneticisi (Admin)</option>
                             <option value="corporate">Kayıtlı Anlaşmalı Firma</option>
-                            <option value="service">Lojistik & Dağıtım Personeli</option>
+                            <option value="service">Lojistik & Dağıtım Personeli (Servisçi)</option>
                         </select>
                     </div>
                     <div class="mb-3">
@@ -188,7 +188,8 @@
                     <ul class="nav flex-column mb-4">
                         <li class="nav-item"><a class="nav-link active" id="link-stock" onclick="switchAdminTab('tab-stock')"><i class="fa-solid fa-boxes-stacked me-2"></i> Ürün & Stok</a></li>
                         <li class="nav-item"><a class="nav-link" id="link-corporate" onclick="switchAdminTab('tab-corporate')"><i class="fa-solid fa-building me-2"></i> Firma Kayıtları</a></li>
-                        <li class="nav-item"><a class="nav-link" id="link-logistics" onclick="switchAdminTab('tab-logistics')"><i class="fa-solid fa-truck me-2"></i> Lojistik Personeli</a></li>
+                        <li class="nav-item"><a class="nav-link" id="link-logistics" onclick="switchAdminTab('tab-logistics')"><i class="fa-solid fa-truck me-2"></i> Lojistik / Servisçi</a></li>
+                        <li class="nav-item"><a class="nav-link" id="link-sysadmin" onclick="switchAdminTab('tab-sysadmin')"><i class="fa-solid fa-user-gear me-2"></i> Sistem Yöneticileri</a></li>
                         <li class="nav-item"><a class="nav-link" id="link-orders" onclick="switchAdminTab('tab-orders')"><i class="fa-solid fa-list-check me-2"></i> Gelen Siparişler</a></li>
                     </ul>
                     <button class="btn btn-danger w-100 fw-bold" onclick="logoutSystem()"><i class="fa-solid fa-right-from-bracket me-1"></i> Çıkış Yap</button>
@@ -227,13 +228,26 @@
 
                     <div id="tab-logistics" class="panel-content">
                         <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h3 class="fw-bold text-warning m-0">Lojistik & Dağıtım Personeli</h3>
-                            <button class="btn btn-warning fw-bold text-dark" data-bs-toggle="modal" data-bs-target="#addLogisticsModal"><i class="fa-solid fa-user-plus me-1"></i> Yeni Kurye Ekle</button>
+                            <h3 class="fw-bold text-warning m-0">Lojistik & Servisçi Personel Listesi</h3>
+                            <button class="btn btn-warning fw-bold text-dark" data-bs-toggle="modal" data-bs-target="#addLogisticsModal"><i class="fa-solid fa-user-plus me-1"></i> Yeni Servisçi (Kurye) Ekle</button>
                         </div>
                         <div class="card border-0 shadow-sm p-3 bg-white">
                             <table class="table table-striped align-middle mb-0">
-                                <thead class="table-dark"><tr><th>Adı Soyadı</th><th>Görevi</th><th>Giriş Kullanıcı Adı</th><th>Şifre</th><th class="text-end">İşlem</th></tr></thead>
+                                <thead class="table-dark"><tr><th>Adı Soyadı</th><th>Görevi</th><th>Kullanıcı Adı</th><th>Şifre</th><th class="text-end">İşlem</th></tr></thead>
                                 <tbody id="logistics-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div id="tab-sysadmin" class="panel-content">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h3 class="fw-bold text-danger m-0">Sistem Yöneticileri (Adminler)</h3>
+                            <button class="btn btn-danger fw-bold" data-bs-toggle="modal" data-bs-target="#addAdminModal"><i class="fa-solid fa-user-shield me-1"></i> Yeni Yönetici (Admin) Ekle</button>
+                        </div>
+                        <div class="card border-0 shadow-sm p-3 bg-white">
+                            <table class="table table-striped align-middle mb-0">
+                                <thead class="table-danger"><tr><th>Adı Soyadı</th><th>Yetki Derecesi</th><th>Kullanıcı Adı</th><th>Şifre</th><th class="text-end">İşlem</th></tr></thead>
+                                <tbody id="sysadmin-table-body"></tbody>
                             </table>
                         </div>
                     </div>
@@ -268,7 +282,7 @@
                     <div id="tab-corp-orders" class="panel-content active">
                         <h3 class="fw-bold mb-4 text-green-prime">Kurumsal Cari & Sipariş Kayıtları</h3>
                         <div class="card border-0 shadow-sm p-3 bg-white">
-                            <table class="table align-middle mb-0"><thead class="table-success"><tr><th>Sipariş Edilen Ürün</th><th>Miktar</th><th>Toplam Tutar (KDV Dahil)</th><th>Özel Not</th><th>Teslimat Durumu</th></tr></thead><tbody id="my-orders-table-body"></tbody></table>
+                            <table class="table align-middle mb-0"><thead class="table-success"><tr><th>Sipariş Edilen Ürün</th><th>Miktar</th><th>Toplam Tutar</th><th>Özel Not</th><th>Teslimat Durumu</th></tr></thead><tbody id="my-orders-table-body"></tbody></table>
                         </div>
                     </div>
                     <div id="tab-corp-new" class="panel-content">
@@ -363,12 +377,26 @@
     <div class="modal fade" id="addLogisticsModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content p-4">
-                <h5 class="fw-bold mb-3 text-warning">Yeni Lojistik Personeli Kaydı</h5>
+                <h5 class="fw-bold mb-3 text-warning">Yeni Servisçi (Kurye) Kaydı</h5>
                 <form id="addLogisticsForm" onsubmit="createNewLogistics(event)">
                     <div class="mb-3"><input type="text" id="logName" class="form-control" placeholder="Adı Soyadı" required></div>
                     <div class="mb-3"><input type="text" id="logUser" class="form-control" placeholder="Giriş Kullanıcı Adı" required></div>
                     <div class="mb-3"><input type="text" id="logPass" class="form-control" placeholder="Giriş Şifresi" required></div>
-                    <button type="submit" class="btn btn-warning w-100 fw-bold text-dark">Kurye Personelini Kaydet</button>
+                    <button type="submit" class="btn btn-warning w-100 fw-bold text-dark">Servisçi Personelini Kaydet</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="addAdminModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content p-4">
+                <h5 class="fw-bold mb-3 text-danger">Yeni Sistem Yöneticisi (Admin) Tanımlama</h5>
+                <form id="addAdminForm" onsubmit="createNewAdmin(event)">
+                    <div class="mb-3"><input type="text" id="admName" class="form-control" placeholder="Adı Soyadı" required></div>
+                    <div class="mb-3"><input type="text" id="admUser" class="form-control" placeholder="Giriş Kullanıcı Adı" required></div>
+                    <div class="mb-3"><input type="text" id="admPass" class="form-control" placeholder="Giriş Şifresi" required></div>
+                    <button type="submit" class="btn btn-danger w-100 fw-bold">Yöneticiyi Kaydet</button>
                 </form>
             </div>
         </div>
@@ -380,43 +408,47 @@
         let globalOptimizedImageBase64 = "";
         const TAX_RATE = 0.10;
 
-        // SABİT SİSTEM YÖNETİCİSİ (ADMIN) GİRİŞ BİLGİSİ
-        const ADMIN_CREDENTIALS = { user: "admin", pass: "admin123" };
+        // VARSAYILAN KULLANICI LİSTELERİ (EĞER LOCALSTORAGE BOŞSA GELİR)
+        const defaultAdmins = [
+            { id: 'a1', name: 'Sistem Yöneticisi', user: 'admin', pass: 'admin123' }
+        ];
 
-        const defaultProducts = [
-            { id: '1', name: 'Özel Ev Mantısı (1 KG)', category: 'Mantı Grubu', desc: 'Dondurulmuş paket mantı.', price: 95.00, image: '', inStock: true },
-            { id: '2', name: 'Premium Böreklik Yufka (Koli)', category: 'Yufka Grubu', desc: 'Günlük taze ince yufka.', price: 140.00, image: '', inStock: true }
+        const defaultLogistics = [
+            { id: 'l1', name: 'Mehmet Demir', user: 'servis', pass: '123' }
         ];
 
         const defaultCorporates = [
             { id: 'c1', company: 'Anadolu Dağıtım Ltd.', name: 'Ahmet Yılmaz', user: 'meram_firma', pass: '1234' }
         ];
 
-        // Varsayılan kurye personeli listesi
-        const defaultLogistics = [
-            { id: 'l1', name: 'Mehmet Demir', user: 'servis', pass: '123' }
+        const defaultProducts = [
+            { id: '1', name: 'Özel Ev Mantısı (1 KG)', category: 'Mantı Grubu', desc: 'Dondurulmuş paket mantı.', price: 95.00, image: '', inStock: true },
+            { id: '2', name: 'Premium Böreklik Yufka (Koli)', category: 'Yufka Grubu', desc: 'Günlük taze ince yufka.', price: 140.00, image: '', inStock: true }
         ];
 
         const defaultOrders = [
-            { id: 'o1', company: 'Anadolu Dağıtım Ltd.', product: 'Özel Ev Mantısı (1 KG)', quantity: 50, price: 95.00, subtotal: 4750.00, tax: 475.00, total: 5225.00, note: 'Öğleden önce gelsin.', status: 'Hazırlanıyor', courierId: '', courierName: 'Atanmadı' }
+            { id: 'o1', company: 'Anadolu Dağıtım Ltd.', product: 'Özel Ev Mantısı (1 KG)', quantity: 50, price: 95.00, subtotal: 4750.00, tax: 475.00, total: 5225.00, note: 'Öğleden önce.', status: 'Hazırlanıyor', courierId: '', courierName: 'Atanmadı' }
         ];
 
-        let products = JSON.parse(localStorage.getItem('ym_products_clean')) || defaultProducts;
-        let corporateAccounts = JSON.parse(localStorage.getItem('ym_corporates_clean')) || defaultCorporates;
-        let logisticsStaff = JSON.parse(localStorage.getItem('ym_logistics_clean')) || defaultLogistics;
-        let orders = JSON.parse(localStorage.getItem('ym_orders_clean')) || defaultOrders;
+        // LOCALSTORAGE ENTEGRASYONU
+        let adminAccounts = JSON.parse(localStorage.getItem('ym_admins_v3')) || defaultAdmins;
+        let logisticsStaff = JSON.parse(localStorage.getItem('ym_logistics_v3')) || defaultLogistics;
+        let corporateAccounts = JSON.parse(localStorage.getItem('ym_corporates_v3')) || defaultCorporates;
+        let products = JSON.parse(localStorage.getItem('ym_products_v3')) || defaultProducts;
+        let orders = JSON.parse(localStorage.getItem('ym_orders_v3')) || defaultOrders;
 
         let currentLoggedCorporate = null;
         let currentLoggedService = null;
 
         function saveToLocalStorage() {
-            localStorage.setItem('ym_products_clean', JSON.stringify(products));
-            localStorage.setItem('ym_corporates_clean', JSON.stringify(corporateAccounts));
-            localStorage.setItem('ym_logistics_clean', JSON.stringify(logisticsStaff));
-            localStorage.setItem('ym_orders_clean', JSON.stringify(orders));
+            localStorage.setItem('ym_admins_v3', JSON.stringify(adminAccounts));
+            localStorage.setItem('ym_logistics_v3', JSON.stringify(logisticsStaff));
+            localStorage.setItem('ym_corporates_v3', JSON.stringify(corporateAccounts));
+            localStorage.setItem('ym_products_v3', JSON.stringify(products));
+            localStorage.setItem('ym_orders_v3', JSON.stringify(orders));
         }
 
-        // AKILLI GİRİŞ SİSTEMİ
+        // AKILLI VE DİNAMİK GİRİŞ SİSTEMİ
         function unifiedLoginEngine() {
             const loginType = document.getElementById('loginType').value;
             const userInp = document.getElementById('username').value.trim();
@@ -426,12 +458,14 @@
             errorDiv.classList.add('d-none');
 
             if (loginType === 'admin') {
-                if (userInp === ADMIN_CREDENTIALS.user && passInp === ADMIN_CREDENTIALS.pass) {
+                // Eklenen tüm adminlerin listesinden arama yapılıyor
+                const foundAdmin = adminAccounts.find(a => a.user === userInp && a.pass === passInp);
+                if (foundAdmin) {
                     successfulLogin('admin-panel');
                 } else { errorDiv.classList.remove('d-none'); }
             } 
             else if (loginType === 'service') {
-                // Dinamik kurye listesinden kontrol et
+                // Eklenen tüm servisçilerin listesinden arama yapılıyor
                 const foundService = logisticsStaff.find(l => l.user === userInp && l.pass === passInp);
                 if (foundService) {
                     currentLoggedService = foundService;
@@ -440,7 +474,7 @@
                 } else { errorDiv.classList.remove('d-none'); }
             } 
             else if (loginType === 'corporate') {
-                // Dinamik firma listesinden kontrol et
+                // Eklenen tüm firmaların listesinden arama yapılıyor
                 const foundCorp = corporateAccounts.find(c => c.user === userInp && c.pass === passInp);
                 if (foundCorp) {
                     currentLoggedCorporate = foundCorp;
@@ -483,6 +517,7 @@
             if(tabId === 'tab-stock') document.getElementById('link-stock').classList.add('active');
             if(tabId === 'tab-corporate') document.getElementById('link-corporate').classList.add('active');
             if(tabId === 'tab-logistics') document.getElementById('link-logistics').classList.add('active');
+            if(tabId === 'tab-sysadmin') document.getElementById('link-sysadmin').classList.add('active');
             if(tabId === 'tab-orders') document.getElementById('link-orders').classList.add('active');
         }
 
@@ -494,7 +529,96 @@
             if(tabId === 'tab-corp-new') document.getElementById('link-corp-new').classList.add('active');
         }
 
-        // --- ADMIN: ÜRÜN YÖNETİMİ ---
+        // --- ADMIN: YÖNETİCİ (ADMIN) EKLEME/SİLME (YENİ EKLENDİ) ---
+        function renderSysAdminTable() {
+            const tbody = document.getElementById('sysadmin-table-body');
+            if(!tbody) return; tbody.innerHTML = '';
+            adminAccounts.forEach(a => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${a.name}</strong></td>
+                    <td><span class="badge bg-danger">Tam Yetkili</span></td>
+                    <td><code>${a.user}</code></td>
+                    <td><code>${a.pass}</code></td>
+                    <td class="text-end">
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteAdmin('${a.id}')" ${adminAccounts.length === 1 ? 'disabled' : ''}>Sil</button>
+                    </td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function createNewAdmin(e) {
+            e.preventDefault();
+            const name = document.getElementById('admName').value.trim();
+            const user = document.getElementById('admUser').value.trim();
+            const pass = document.getElementById('admPass').value.trim();
+
+            adminAccounts.push({ id: Date.now().toString(), name, user, pass });
+            saveToLocalStorage(); renderAll();
+            document.getElementById('addAdminForm').reset();
+            bootstrap.Modal.getInstance(document.getElementById('addAdminModal')).hide();
+            alert("Yeni yönetici başarıyla eklendi!");
+        }
+
+        function deleteAdmin(id) {
+            if(adminAccounts.length <= 1) return alert("Sistemde en az bir yönetici kalmalıdır!");
+            adminAccounts = adminAccounts.filter(a => a.id !== id);
+            saveToLocalStorage(); renderAll();
+        }
+
+        // --- ADMIN: SERVİSÇİ (LOJİSTİK) EKLEME/SİLME ---
+        function renderLogisticsTable() {
+            const tbody = document.getElementById('logistics-table-body');
+            if(!tbody) return; tbody.innerHTML = '';
+            logisticsStaff.forEach(l => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td><strong>${l.name}</strong></td><td><span class="badge bg-secondary">Dağıtım / Saha</span></td><td><code>${l.user}</code></td><td><code>${l.pass}</code></td><td class="text-end"><button class="btn btn-sm btn-danger" onclick="deleteLogistics('${l.id}')">Sil</button></td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function createNewLogistics(e) {
+            e.preventDefault();
+            const name = document.getElementById('logName').value.trim();
+            const user = document.getElementById('logUser').value.trim();
+            const pass = document.getElementById('logPass').value.trim();
+
+            logisticsStaff.push({ id: Date.now().toString(), name, user, pass });
+            saveToLocalStorage(); renderAll();
+            document.getElementById('addLogisticsForm').reset();
+            bootstrap.Modal.getInstance(document.getElementById('addLogisticsModal')).hide();
+            alert("Yeni servisçi personel başarıyla kaydedildi!");
+        }
+
+        function deleteLogistics(id) { logisticsStaff = logisticsStaff.filter(l => l.id !== id); saveToLocalStorage(); renderAll(); }
+
+        // --- ADMIN: FİRMA YÖNETİMİ ---
+        function renderCorporateTable() {
+            const tbody = document.getElementById('corporate-table-body');
+            if(!tbody) return; tbody.innerHTML = '';
+            corporateAccounts.forEach(c => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td><strong>${c.company}</strong></td><td>${c.name}</td><td><code>${c.user}</code></td><td><code>${c.pass}</code></td><td class="text-end"><button class="btn btn-sm btn-danger" onclick="deleteCorporate('${c.id}')">Sil</button></td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function createNewCorporate(e) {
+            e.preventDefault();
+            const company = document.getElementById('corpCompany').value.trim();
+            const name = document.getElementById('corpName').value.trim();
+            const user = document.getElementById('corpUser').value.trim();
+            const pass = document.getElementById('corpPass').value.trim();
+
+            corporateAccounts.push({ id: Date.now().toString(), company, name, user, pass });
+            saveToLocalStorage(); renderAll();
+            document.getElementById('addCorporateForm').reset();
+            bootstrap.Modal.getInstance(document.getElementById('addCorporateModal')).hide();
+            alert("Yeni firma başarıyla kaydedildi!");
+        }
+        function deleteCorporate(id) { corporateAccounts = corporateAccounts.filter(c => c.id !== id); saveToLocalStorage(); renderAll(); }
+
+        // --- ADMIN: ÜRÜN VE STOK YÖNETİMİ ---
         function renderAdminStockTable() {
             const tbody = document.getElementById('admin-stock-table-body');
             if(!tbody) return; tbody.innerHTML = '';
@@ -527,63 +651,12 @@
         function deleteProduct(id) { products = products.filter(p => p.id !== id); saveToLocalStorage(); renderAll(); }
         function toggleStock(id) { const p = products.find(x => x.id === id); if(p) p.inStock = !p.inStock; saveToLocalStorage(); renderAll(); }
 
-        // --- ADMIN: FİRMA YÖNETİMİ ---
-        function renderCorporateTable() {
-            const tbody = document.getElementById('corporate-table-body');
-            if(!tbody) return; tbody.innerHTML = '';
-            corporateAccounts.forEach(c => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td><strong>${c.company}</strong></td><td>${c.name}</td><td><code>${c.user}</code></td><td><code>${c.pass}</code></td><td class="text-end"><button class="btn btn-sm btn-danger" onclick="deleteCorporate('${c.id}')">Sil</button></td>`;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function createNewCorporate(e) {
-            e.preventDefault();
-            const company = document.getElementById('corpCompany').value.trim();
-            const name = document.getElementById('corpName').value.trim();
-            const user = document.getElementById('corpUser').value.trim();
-            const pass = document.getElementById('corpPass').value.trim();
-
-            corporateAccounts.push({ id: Date.now().toString(), company, name, user, pass });
-            saveToLocalStorage(); renderAll();
-            document.getElementById('addCorporateForm').reset();
-            bootstrap.Modal.getInstance(document.getElementById('addCorporateModal')).hide();
-        }
-        function deleteCorporate(id) { corporateAccounts = corporateAccounts.filter(c => c.id !== id); saveToLocalStorage(); renderAll(); }
-
-        // --- ADMIN: LOJİSTİK PERSONEL YÖNETİMİ (YENİ EKLENDİ) ---
-        function renderLogisticsTable() {
-            const tbody = document.getElementById('logistics-table-body');
-            if(!tbody) return; tbody.innerHTML = '';
-            logisticsStaff.forEach(l => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td><strong>${l.name}</strong></td><td><span class="badge bg-secondary">Saha Dağıtım</span></td><td><code>${l.user}</code></td><td><code>${l.pass}</code></td><td class="text-end"><button class="btn btn-sm btn-danger" onclick="deleteLogistics('${l.id}')">Sil</button></td>`;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function createNewLogistics(e) {
-            e.preventDefault();
-            const name = document.getElementById('logName').value.trim();
-            const user = document.getElementById('logUser').value.trim();
-            const pass = document.getElementById('logPass').value.trim();
-
-            logisticsStaff.push({ id: Date.now().toString(), name, user, pass });
-            saveToLocalStorage(); renderAll();
-            document.getElementById('addLogisticsForm').reset();
-            bootstrap.Modal.getInstance(document.getElementById('addLogisticsModal')).hide();
-        }
-
-        function deleteLogistics(id) { logisticsStaff = logisticsStaff.filter(l => l.id !== id); saveToLocalStorage(); renderAll(); }
-
-        // --- ADMIN: SİPARİŞ HAVUZU VE KURYE ATAMA ---
+        // --- ADMIN: SİPARİŞ KONTROL & SERVİSÇİ ATAMA ---
         function renderOrdersTable() {
             const tbody = document.getElementById('orders-table-body');
             if(!tbody) return; tbody.innerHTML = '';
             orders.forEach(o => {
-                // Kurye Seçim Seçeneklerini Hazırla
-                let courierOptions = `<option value="">Kurye Seçin...</option>`;
+                let courierOptions = `<option value="">Servisçi Seçin...</option>`;
                 logisticsStaff.forEach(l => {
                     courierOptions += `<option value="${l.id}" ${o.courierId === l.id ? 'selected' : ''}>${l.name}</option>`;
                 });
@@ -601,7 +674,7 @@
                     </td>
                     <td><span class="badge ${o.status === 'Hazırlanıyor' ? 'bg-warning text-dark' : 'bg-info'}">${o.status}</span></td>
                     <td class="text-end">
-                        ${o.status === 'Hazırlanıyor' && o.courierId ? `<button class="btn btn-sm btn-success" onclick="sendToDelivery('${o.id}')">Yola Çıkar</button>` : o.status === 'Hazırlanıyor' ? '<small class="text-muted">Kurye atayın</small>' : '<span class="text-success small">Dağıtımda</span>'}
+                        ${o.status === 'Hazırlanıyor' && o.courierId ? `<button class="btn btn-sm btn-success" onclick="sendToDelivery('${o.id}')">Yola Çıkar</button>` : o.status === 'Hazırlanıyor' ? '<small class="text-muted">Servisçi atayın</small>' : '<span class="text-success small">Dağıtımda</span>'}
                     </td>`;
                 tbody.appendChild(tr);
             });
@@ -623,7 +696,7 @@
             saveToLocalStorage(); renderAll();
         }
 
-        // --- FİRMA: SİPARİŞ İŞLEMLERİ ---
+        // --- FİRMA MODÜLLERİ ---
         function updateCorpProductSelect() {
             const select = document.getElementById('corpSelfProductSelect');
             if(!select) return; select.innerHTML = '';
@@ -680,7 +753,7 @@
             saveToLocalStorage(); renderAll();
             document.getElementById('corpSelfOrderForm').reset();
             calculateOrderTotalPreview();
-            alert("Siparişiniz başarıyla fabrikaya iletildi!");
+            alert("Siparişiniz fabrikaya iletildi!");
         }
 
         function renderMyOrdersTable() {
@@ -691,12 +764,11 @@
             });
         }
 
-        // --- LOJİSTİK: KURYE KENDİ SİPARİŞLERİNİ GÖRÜR VE TESLİM EDER ---
+        // --- LOJİSTİK / SERVİSÇİ MODÜLÜ ---
         function renderServiceOrdersTable() {
             const tbody = document.getElementById('service-orders-table-body');
             if(!tbody || !currentLoggedService) return; tbody.innerHTML = '';
             
-            // Sadece bu kuryeye atanmış ve "Yola Çıktı" durumundaki siparişleri göster
             const myDeliveries = orders.filter(o => o.courierId === currentLoggedService.id && o.status.includes('Yola Çıktı'));
             
             if(myDeliveries.length === 0) {
@@ -717,13 +789,12 @@
         }
 
         function completeOrder(id) {
-            // Teslim edilen siparişi arşivlemek için listeden silebilir veya durumunu güncelleyebilirsiniz
             orders = orders.filter(o => o.id !== id); 
             saveToLocalStorage(); renderAll();
-            alert("Sipariş teslim edildi olarak işaretlendi!");
+            alert("Sipariş başarıyla teslim edildi!");
         }
 
-        // --- ANA SAYFA ÜRÜN LİSTELEME ---
+        // --- ANA SAYFA KATALOG ---
         function renderClientProducts() {
             const grid = document.getElementById('client-products-grid');
             if(!grid) return; grid.innerHTML = '';
@@ -774,6 +845,7 @@
             renderAdminStockTable();
             renderCorporateTable();
             renderLogisticsTable();
+            renderSysAdminTable();
             renderOrdersTable();
             updateCorpProductSelect();
             renderMyOrdersTable();
