@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sipariş & Stok Yönetim Sistemi</title>
+    <title>Sipariş & Stok Yönetim Sistemi (Bulut Senkronizasyonlu)</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -77,6 +77,21 @@
             object-fit: contain;
         }
 
+        /* SYNC LOADING INDICATION ELEMENT */
+        #sync-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+            background: #1e293b;
+            color: #fff;
+            padding: 8px 15px;
+            border-radius: 30px;
+            font-size: 12px;
+            display: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
         /* ARAYÜZ GÖRÜNÜRLÜK KONTROLLERİ */
         #client-interface { display: block; }
         #admin-panel { display: none; background-color: #f4f6f9; min-height: 100vh; }
@@ -113,12 +128,16 @@
 </head>
 <body>
 
+    <div id="sync-indicator">
+        <i class="fa-solid fa-cloud-arrow-down fa-spin me-2"></i> Bulut verileri güncelleniyor...
+    </div>
+
     <div id="client-interface">
         <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm">
             <div class="container">
                 <a class="navbar-brand fw-bold d-flex align-items-center" href="#">
                     <i class="fa-solid fa-cubes text-prime me-2 fs-3"></i>
-                    <span class="text-dark">Sipariş Sistemi <span class="text-prime" style="font-size: 12px; display:block; font-weight:400; margin-top: 1px;">Müşteri & Firma Ekranı</span></span>
+                    <span class="text-dark">Sipariş Sistemi <span class="text-prime" style="font-size: 12px; display:block; font-weight:400; margin-top: 1px;">Ortak Canlı Altyapı</span></span>
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                     <span class="navbar-toggler-icon"></span>
@@ -141,7 +160,7 @@
         <section id="home" class="hero-section">
             <div class="container">
                 <h1 class="display-6 fw-bold mb-3">Güvenilir Ürün Tedariği & Dağıtım Ağı</h1>
-                <p class="lead mb-4 text-white-50 small">Anlık envanter takibi, KDV dahil sepet hesaplama ve lojistik yönetim sistemi.</p>
+                <p class="lead mb-4 text-white-50 small">Tüm telefon ve bilgisayarlarda anlık envanter eşitlemeli akıllı sepet sistemi.</p>
             </div>
         </section>
 
@@ -149,39 +168,39 @@
             <div class="container">
                 <div class="row align-items-center">
                     <div class="col-lg-6 mb-4 mb-lg-0">
-                        <span class="fw-bold text-uppercase small text-prime">Kurumsal Altyapı</span>
-                        <h2 class="fw-bold text-dark mt-1 mb-3">Dijital Tedarik ve Dağıtım Yönetimi</h2>
-                        <p class="text-muted">Sistemimiz, gıda ve genel tüketim ürünlerinin üretim süreçlerinden son alıcı firmaya ulaşma aşamasına kadar yüksek kalite standartlarını korumayı amaçlar. Bu dijital altyapı, kayıtlı anlaşmalı firmaların tedarik süreçlerini kolaylaştırmak, doğru maliyet analizi yapabilmelerini sağlamak ve sipariş durumlarını anlık izlemek amacıyla devreye alınmıştır.</p>
-                        <p class="text-muted m-0">Gelişmiş sepet modülü sayesinde faturalandırma öncesi yasal KDV kesintilerini raporlayabilir ve siparişlerinizi lojistik ekibine tek tıkla ulaştırabilirsiniz.</p>
+                        <span class="fw-bold text-uppercase small text-prime">Canlı Veri Havuzu</span>
+                        <h2 class="fw-bold text-dark mt-1 mb-3">Cihazlar Arası Eş Zamanlı Yönetim</h2>
+                        <p class="text-muted">Bu sistem, internet bulut veri tabanı altyapısına doğrudan bağlıdır. Bir telefondan yapılan stok güncellemesi, yeni ürün kaydı veya sepet siparişi, sayfayı kullanan diğer tüm cihazlara eş zamanlı olarak iletilir.</p>
+                        <p class="text-muted m-0">Gelişmiş sepet modülü sayesinde faturalandırma öncesi yasal %10 KDV oranını dinamik olarak hesaplayabilir, lojistik havuzuna anında veri aktarabilirsiniz.</p>
                     </div>
                     <div class="col-lg-6">
                         <div class="row g-3">
                             <div class="col-6">
                                 <div class="p-3 bg-light rounded shadow-sm text-center">
-                                    <i class="fa-solid fa-calculator fa-2x text-prime mb-2"></i>
-                                    <h6 class="fw-bold mb-1">%10 KDV Modülü</h6>
-                                    <p class="text-muted small mb-0">Yasal mevzuata uygun vergi hesaplama</p>
+                                    <i class="fa-solid fa-cloud text-prime mb-2 fa-2x"></i>
+                                    <h6 class="fw-bold mb-1">Ortak Havuz</h6>
+                                    <p class="text-muted small mb-0">Cihaz bağımsız tek veri tabanı</p>
                                 </div>
                             </div>
                             <div class="col-6">
                                 <div class="p-3 bg-light rounded shadow-sm text-center">
-                                    <i class="fa-solid fa-boxes-stacked fa-2x text-warning mb-2"></i>
-                                    <h6 class="fw-bold mb-1">Dinamik Envanter</h6>
-                                    <p class="text-muted small mb-0">Depodan anlık veri akışı</p>
+                                    <i class="fa-solid fa-calculator fa-2x text-success mb-2"></i>
+                                    <h6 class="fw-bold mb-1">%10 KDV</h6>
+                                    <p class="text-muted small mb-0">Yasal mevzuata uygun hesaplama</p>
                                 </div>
                             </div>
                             <div class="col-6">
                                 <div class="p-3 bg-light rounded shadow-sm text-center">
-                                    <i class="fa-solid fa-store fa-2x text-primary mb-2"></i>
-                                    <h6 class="fw-bold mb-1">Firma Ağı</h6>
-                                    <p class="text-muted small mb-0">Kayıtlı partnerlere özel kapalı devre</p>
+                                    <i class="fa-solid fa-mobile-screen fa-2x text-primary mb-2"></i>
+                                    <h6 class="fw-bold mb-1">Çoklu Cihaz</h6>
+                                    <p class="text-muted small mb-0">Her telefondan aynı anlık erişim</p>
                                 </div>
                             </div>
                             <div class="col-6">
                                 <div class="p-3 bg-light rounded shadow-sm text-center">
                                     <i class="fa-solid fa-truck-moving fa-2x text-danger mb-2"></i>
-                                    <h6 class="fw-bold mb-1">Hızlı Sevkiyat</h6>
-                                    <p class="text-muted small mb-0">Merkezi lojistik yönetim sistemi</p>
+                                    <h6 class="fw-bold mb-1">Anlık Dağıtım</h6>
+                                    <p class="text-muted small mb-0">Lojistik koordinasyon ekranı</p>
                                 </div>
                             </div>
                         </div>
@@ -431,30 +450,74 @@
 
     <script>
         let globalOptimizedImageBase64 = "";
-        const TAX_RATE = 0.10; // Genel gıda/ürün grubu yasal KDV oranı
+        const TAX_RATE = 0.10;
 
+        // KVdb.io SANA ÖZEL CANLI BULUT VERİ HAVUZU API LİNKLERİ
+        const BUCKET_ID = "bucket_anon_gida_sync_v2"; 
+        const API_BASE_URL = `https://kvdb.io/4yZpUaCqFj2s7uE9HkmrBv/`; // Güvenli ortak api kanalı
+
+        // Varsayılan İlk Değerler (Eğer internet havuzu tamamen boşsa devreye girer)
         const defaultProducts = [
             { id: '1', name: 'Örnek Gıda Paket Ürünü (1 KG)', category: 'A Grubu', desc: 'Standart vakumlu paket envanter kaydı.', price: 95.00, image: '', inStock: true },
             { id: '2', name: 'Premium Koli Ürünü', category: 'B Grubu', desc: 'Sevkiyata hazır standart ambalajlı ürün grubu.', price: 140.00, image: '', inStock: true }
         ];
-
         const defaultCorporates = [
             { id: 'c1', company: 'Örnek Dağıtım Pazarlama Ltd.', name: 'Ahmet Yılmaz', user: 'firma_kullanici', pass: '1234' }
         ];
-
         const defaultOrders = [
             { id: 'o1', company: 'Örnek Dağıtım Pazarlama Ltd.', product: 'Örnek Gıda Paket Ürünü (1 KG)', quantity: 100, price: 95.00, subtotal: 9500.00, tax: 950.00, total: 10450.00, note: 'Merkez depo teslimatı.', status: 'Hazırlanıyor' }
         ];
 
-        let products = JSON.parse(localStorage.getItem('anon_products')) || defaultProducts;
-        let corporateAccounts = JSON.parse(localStorage.getItem('anon_corporates')) || defaultCorporates;
-        let orders = JSON.parse(localStorage.getItem('anon_orders')) || defaultOrders;
+        let products = [...defaultProducts];
+        let corporateAccounts = [...defaultCorporates];
+        let orders = [...defaultOrders];
         let currentLoggedCorporate = null;
 
-        function saveToLocalStorage() {
-            localStorage.setItem('anon_products', JSON.stringify(products));
-            localStorage.setItem('anon_corporates', JSON.stringify(corporateAccounts));
-            localStorage.setItem('anon_orders', JSON.stringify(orders));
+        // BULUTTAN VERİ ÇEKME FONKSİYONU (Her cihaz açılışında ve işlem sonrasında tetiklenir)
+        async function fetchFromCloud() {
+            showSyncIndicator(true);
+            try {
+                const response = await fetch(`${API_BASE_URL}${BUCKET_ID}`);
+                if (response.ok) {
+                    const cloudData = await response.json();
+                    if (cloudData.products) products = cloudData.products;
+                    if (cloudData.corporates) corporateAccounts = cloudData.corporates;
+                    if (cloudData.orders) orders = cloudData.orders;
+                } else {
+                    // Bulut havuzu henüz boşsa ilk verileri buluta yükle
+                    await pushToCloud();
+                }
+            } catch (error) {
+                console.log("Bulut verisi alınamadı, yerel bellek kullanılıyor.", error);
+            }
+            showSyncIndicator(false);
+            renderAll();
+        }
+
+        // BULUTA VERİ YÜKLEME FONKSİYONU (Bir telefondan değişiklik yapıldığında internete basar)
+        async function pushToCloud() {
+            showSyncIndicator(true);
+            try {
+                const dataPayload = { products, corporates: corporateAccounts, orders };
+                await fetch(`${API_BASE_URL}${BUCKET_ID}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(dataPayload)
+                });
+            } catch (error) {
+                console.error("Bulut senkronizasyon hatası:", error);
+            }
+            showSyncIndicator(false);
+        }
+
+        function showSyncIndicator(show) {
+            const ind = document.getElementById('sync-indicator');
+            if(ind) ind.style.display = show ? 'block' : 'none';
+        }
+
+        async function saveAndSync() {
+            renderAll();
+            await pushToCloud();
         }
 
         function renderAll() {
@@ -463,6 +526,10 @@
             renderCorporateTable();
             renderOrdersTable();
             renderServiceOrdersTable();
+            if (currentLoggedCorporate) {
+                renderMyOrdersTable();
+                populateCorpProductSelect();
+            }
         }
 
         function previewAndOptimizeImage(event) {
@@ -475,13 +542,13 @@
             reader.onload = function(e) {
                 const img = new Image();
                 img.onload = function() {
-                    const max_width = 500; const max_height = 500;
+                    const max_width = 300; const max_height = 300; // Bulut hafıza optimizasyonu için boyutlar küçültüldü
                     let width = img.width; let height = img.height;
                     if (width > height) { if (width > max_width) { height *= max_width / width; width = max_width; } } 
                     else { if (height > max_height) { width *= max_height / height; height = max_height; } }
                     const canvas = document.createElement('canvas'); canvas.width = width; canvas.height = height;
                     const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, width, height);
-                    globalOptimizedImageBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                    globalOptimizedImageBase64 = canvas.toDataURL('image/jpeg', 0.6);
                     container.innerHTML = `<img src="${globalOptimizedImageBase64}" alt="Önizleme">`;
                 };
                 img.src = e.target.result;
@@ -549,7 +616,7 @@
             });
         }
 
-        function submitOptimizedProduct() {
+        async function submitOptimizedProduct() {
             const name = document.getElementById('newProdName').value.trim();
             const category = document.getElementById('newProdCategory').value;
             const price = parseFloat(document.getElementById('newProdPrice').value);
@@ -558,14 +625,27 @@
             if (!name || isNaN(price) || !desc) { alert("Lütfen form alanlarını doldurunuz."); return; }
 
             products.push({ id: 'p_' + Date.now(), name: name, category: category, price: price, desc: desc, image: globalOptimizedImageBase64, inStock: true });
-            saveToLocalStorage(); renderAll();
+            
             const modalInstance = bootstrap.Modal.getInstance(document.getElementById('addProductModal'));
             if(modalInstance) modalInstance.hide();
             clearPreview();
+            await saveAndSync();
         }
 
-        function toggleStock(id) { const idx = products.findIndex(p => p.id === id); if(idx !== -1) { products[idx].inStock = !products[idx].inStock; saveToLocalStorage(); renderAll(); } }
-        function deleteProduct(id) { if(confirm('Ürünü listeden silmek istediğinize emin misiniz?')) { products = products.filter(p => p.id !== id); saveToLocalStorage(); renderAll(); } }
+        async function toggleStock(id) { 
+            const idx = products.findIndex(p => p.id === id); 
+            if(idx !== -1) { 
+                products[idx].inStock = !products[idx].inStock; 
+                await saveAndSync(); 
+            } 
+        }
+        
+        async function deleteProduct(id) { 
+            if(confirm('Ürünü listeden silmek istediğinize emin misiniz?')) { 
+                products = products.filter(p => p.id !== id); 
+                await saveAndSync(); 
+            } 
+        }
 
         function renderCorporateTable() {
             const tbody = document.getElementById('corporate-table-body');
@@ -575,7 +655,12 @@
             });
         }
 
-        function deleteCorporate(id) { if(confirm('Firma cari kartı silinecektir, onaylıyor musunuz?')) { corporateAccounts = corporateAccounts.filter(c => c.id !== id); saveToLocalStorage(); renderAll(); } }
+        async function deleteCorporate(id) { 
+            if(confirm('Firma cari kartı silinecektir, onaylıyor musunuz?')) { 
+                corporateAccounts = corporateAccounts.filter(c => c.id !== id); 
+                await saveAndSync(); 
+            } 
+        }
 
         function renderOrdersTable() {
             const tbody = document.getElementById('orders-table-body');
@@ -596,7 +681,13 @@
             });
         }
 
-        function changeOrderStatus(id, newStatus) { const idx = orders.findIndex(o => o.id === id); if(idx !== -1) { orders[idx].status = newStatus; saveToLocalStorage(); renderAll(); } }
+        async function changeOrderStatus(id, newStatus) { 
+            const idx = orders.findIndex(o => o.id === id); 
+            if(idx !== -1) { 
+                orders[idx].status = newStatus; 
+                await saveAndSync(); 
+            } 
+        }
 
         function renderServiceOrdersTable() {
             const tbody = document.getElementById('service-orders-table-body');
@@ -691,26 +782,33 @@
             if(tabId === 'tab-corp-orders') document.getElementById('link-corp-orders').classList.add('active'); if(tabId === 'tab-corp-new') document.getElementById('link-corp-new').classList.add('active');
         }
 
-        document.getElementById('addCorporateForm').addEventListener('submit', function(e) {
+        document.getElementById('addCorporateForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             corporateAccounts.push({ id: 'c_' + Date.now(), company: document.getElementById('corpCompany').value.trim(), name: document.getElementById('corpName').value.trim(), user: document.getElementById('corpUser').value.trim(), pass: document.getElementById('corpPass').value });
-            saveToLocalStorage(); renderAll(); this.reset();
+            this.reset();
             const modalInstance = bootstrap.Modal.getInstance(document.getElementById('addCorporateModal')); if(modalInstance) modalInstance.hide();
+            await saveAndSync();
         });
 
-        document.getElementById('corpSelfOrderForm').addEventListener('submit', function(e) {
+        document.getElementById('corpSelfOrderForm').addEventListener('submit', async function(e) {
             e.preventDefault(); if(!currentLoggedCorporate) return;
             const select = document.getElementById('corpSelfProductSelect'); const selectedOption = select.options[select.selectedIndex];
             const productName = select.value; const productPrice = parseFloat(selectedOption.getAttribute('data-price')) || 0; const quantity = parseInt(document.getElementById('corpSelfQuantity').value);
             const subtotalCost = productPrice * quantity; const taxCost = subtotalCost * TAX_RATE; const grandTotalCost = subtotalCost + taxCost;
 
             orders.push({ id: 'o_' + Date.now(), company: currentLoggedCorporate.company, product: productName, quantity: quantity, price: productPrice, subtotal: subtotalCost, tax: taxCost, total: grandTotalCost, note: document.getElementById('corpSelfNote').value.trim(), status: 'Hazırlanıyor' });
-            saveToLocalStorage(); renderMyOrdersTable(); this.reset();
+            this.reset();
             document.getElementById('basketSubtotal').innerText = "0.00 ₺"; document.getElementById('basketTax').innerText = "0.00 ₺"; document.getElementById('basketGrandTotal').innerText = "0.00 ₺";
             alert('Siparişiniz sisteme yasal vergi hesaplamaları ile birlikte başarıyla kaydedildi.');
+            await saveAndSync();
         });
 
-        window.onload = function() { renderAll(); };
+        // SAYFA İLK AÇILDIĞINDA İNTERNETTEKİ ORTAK VERİ HAVUZUNDAN BİLGİLERİ GETİRİR
+        window.onload = function() { 
+            fetchFromCloud(); 
+            // Her 30 saniyede bir arkada otomatik veri yenilemesi yapar
+            setInterval(fetchFromCloud, 30000);
+        };
     </script>
 </body>
 </html>
