@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>anonim aş - Sipariş & Stok Yönetim Sistemi</title>
+    <title>Sipariş & Stok Yönetim Sistemi</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -118,13 +118,13 @@
             <div class="container">
                 <a class="navbar-brand fw-bold d-flex align-items-center" href="#">
                     <i class="fa-solid fa-leaf text-green-prime me-2 fs-3"></i>
-                    <span class="text-dark">anonim aş <span class="text-green-prime" style="font-size: 12px; display:block; font-weight:400; margin-top: 1px;">Sipariş Sistemi</span></span>
+                    <span class="text-dark">Sipariş Sistemi</span>
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto fw-semibold align-items-center pt-2 pt-lg-0">
+                    <div class="navbar-nav ms-auto fw-semibold align-items-center pt-2 pt-lg-0">
                         <li class="nav-item"><a class="nav-link active" href="#home">Ana Sayfa</a></li>
                         <li class="nav-item"><a class="nav-link" href="#about">Kurumsal</a></li>
                         <li class="nav-item"><a class="nav-link" href="#products">Ürün Kataloğu & Stok</a></li>
@@ -133,7 +133,7 @@
                                 <i class="fa-solid fa-right-to-bracket me-1"></i> Firma Girişi
                             </button>
                         </li>
-                    </ul>
+                    </div>
                 </div>
             </div>
         </nav>
@@ -149,10 +149,10 @@
             <div class="container">
                 <div class="row align-items-center">
                     <div class="col-lg-6 mb-4 mb-lg-0">
-                        <span class="fw-bold text-uppercase small text-green-prime">anonim aş Kurumsal</span>
+                        <span class="fw-bold text-uppercase small text-green-prime">Kurumsal</span>
                         <h2 class="fw-bold text-dark mt-1 mb-3">Geleneksel Lezzetlerin Dijital Dağıtım Altyapısı</h2>
-                        <p class="text-muted">anonim aş olarak, unlu mamuller, mantı ve yufka gruplarımızın üretim süreçlerinden son firmaya ulaşma aşamasına kadar yüksek kalite standartlarını koruyoruz. Bu dijital sistem, kayıtlı anlaşmalı firmalarımızın tedarik süreçlerini kolaylaştırmak, doğru maliyet analizi yapabilmelerini sağlamak ve sipariş durumlarını anlık izlemek amacıyla devreye alınmıştır.</p>
-                        <p class="text-muted m-0">Gelişmiş sepet modülümüz sayesinde faturalandırma öncesi yasal KDV kesintilerini raporlayabilir và siparişlerinizi lojistik ekibimize tek tıkla ulaştırabilirsiniz.</p>
+                        <p class="text-muted">Unlu mamuller, mantı ve yufka gruplarımızın üretim süreçlerinden son firmaya ulaşma aşamasına kadar yüksek kalite standartlarını koruyoruz. Bu dijital sistem, kayıtlı anlaşmalı firmalarımızın tedarik süreçlerini kolaylaştırmak, doğru maliyet analizi yapabilmelerini sağlamak ve sipariş durumlarını anlık izlemek amacıyla devreye alınmıştır.</p>
+                        <p class="text-muted m-0">Gelişmiş sepet modülümüz sayesinde faturalandırma öncesi yasal KDV kesintilerini raporlayabilir and siparişlerinizi lojistik ekibimize tek tıkla ulaştırabilirsiniz.</p>
                     </div>
                     <div class="col-lg-6">
                         <div class="row g-3">
@@ -213,7 +213,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow">
                 <div class="modal-header text-white bg-green-prime">
-                    <h5 class="modal-title fw-bold"><i class="fa-solid fa-lock me-2"></i>anonim aş Giriş Paneli</h5>
+                    <h5 class="modal-title fw-bold"><i class="fa-solid fa-lock me-2"></i>Giriş Paneli</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-close="modal"></button>
                 </div>
                 <div class="modal-body p-4 bg-white">
@@ -223,7 +223,7 @@
                         <select id="loginType" class="form-select">
                             <option value="admin">Fabrika / Sistem Yöneticisi</option>
                             <option value="corporate">Kayıtlı Anlaşmalı Firma</option>
-                            <option value="service">Lojistik & Dağıtım Personeli</option>
+                            <option value="service">Lojistik & Dağıtım Personeli (servis / 123)</option>
                         </select>
                     </div>
                     <div class="mb-3">
@@ -303,7 +303,7 @@
         <div class="container-fluid px-0">
             <div class="row g-0">
                 <div class="col-md-3 col-lg-2 corp-sidebar">
-                    <h4 class="text-center text-white fw-bold mb-2"><i class="fa-solid fa-store me-2"></i>anonim aş</h4>
+                    <h4 class="text-center text-white fw-bold mb-2"><i class="fa-solid fa-store me-2"></i>SİPARİŞ PANELİ</h4>
                     <p class="text-center text-white-50 small mb-4" id="logged-corp-name">Anlaşmalı Firma</p>
                     <ul class="nav flex-column mb-4">
                         <li class="nav-item"><a class="nav-link active" id="link-corp-orders" onclick="switchCorpTab('tab-corp-orders')"><i class="fa-solid fa-file-invoice me-2"></i> Sipariş Geçmişimiz</a></li>
@@ -382,13 +382,13 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content p-4 border-0 shadow">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="fw-bold m-0 text-green-prime">anonim aş Ürün Kayıt Sistemi</h5>
+                    <h5 class="fw-bold m-0 text-green-prime">Ürün Kayıt Sistemi</h5>
                     <button type="button" class="btn-close" data-bs-close="modal" id="closeProductModalBtn"></button>
                 </div>
                 <form id="addProductForm">
                     <div class="mb-3">
                         <label class="form-label small fw-bold">Ürün Adı</label>
-                        <input type="text" id="newProdName" class="form-control" placeholder="Örn: Mantı (1KG)" required>
+                        <input type="text" id="newProdName" class="form-control" placeholder="Örn: Ev Mantısı (1KG)" required>
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
@@ -431,30 +431,31 @@
 
     <script>
         let globalOptimizedImageBase64 = "";
-        const TAX_RATE = 0.10; // %10 KDV
+        const TAX_RATE = 0.10; // Unlu mamul / gıda sektörü için %10 KDV
 
         const defaultProducts = [
-            { id: '1', name: 'anonim aş Özel Ev Mantısı (1 KG)', category: 'Mantı Grubu', desc: 'Geleneksel yöntemlerle doldurulmuş dondurulmuş mantı.', price: 95.00, image: '', inStock: true },
+            /* LocalStorage anahtarları ve id'ler sistem bütünlüğü için clean yapıda tutulmuştur */
+            { id: '1', name: 'Özel Ev Mantısı (1 KG)', category: 'Mantı Grubu', desc: 'Geleneksel yöntemlerle doldurulmuş dondurulmuş mantı.', price: 95.00, image: '', inStock: true },
             { id: '2', name: 'Premium Böreklik Yufka (Koli)', category: 'Yufka Grubu', desc: 'Günlük taze açım, yüksek mukavemetli ince yufka.', price: 140.00, image: '', inStock: true }
         ];
 
         const defaultCorporates = [
-            { id: 'c1', company: 'Anadolu Dağıtım Gıda Ltd.', name: 'Ahmet Yılmaz', user: 'firma_kullanici', pass: '1234' }
+            { id: 'c1', company: 'Dağıtım Gıda Ltd.', name: 'Ahmet Yılmaz', user: 'firma_kullanici', pass: '1234' }
         ];
 
         const defaultOrders = [
-            { id: 'o1', company: 'Anadolu Dağıtım Gıda Ltd.', product: 'anonim aş Özel Ev Mantısı (1 KG)', quantity: 100, price: 95.00, subtotal: 9500.00, tax: 950.00, total: 10450.00, note: 'Merkez depo teslimatı.', status: 'Hazırlanıyor' }
+            { id: 'o1', company: 'Dağıtım Gıda Ltd.', product: 'Özel Ev Mantısı (1 KG)', quantity: 100, price: 95.00, subtotal: 9500.00, tax: 950.00, total: 10450.00, note: 'Merkez depo teslimatı.', status: 'Hazırlanıyor' }
         ];
 
-        let products = JSON.parse(localStorage.getItem('aa_products_clean')) || defaultProducts;
-        let corporateAccounts = JSON.parse(localStorage.getItem('aa_corporates_clean')) || defaultCorporates;
-        let orders = JSON.parse(localStorage.getItem('aa_orders_clean')) || defaultOrders;
+        let products = JSON.parse(localStorage.getItem('ym_products_clean')) || defaultProducts;
+        let corporateAccounts = JSON.parse(localStorage.getItem('ym_corporates_clean')) || defaultCorporates;
+        let orders = JSON.parse(localStorage.getItem('ym_orders_clean')) || defaultOrders;
         let currentLoggedCorporate = null;
 
         function saveToLocalStorage() {
-            localStorage.setItem('aa_products_clean', JSON.stringify(products));
-            localStorage.setItem('aa_corporates_clean', JSON.stringify(corporateAccounts));
-            localStorage.setItem('aa_orders_clean', JSON.stringify(orders));
+            localStorage.setItem('ym_products_clean', JSON.stringify(products));
+            localStorage.setItem('ym_corporates_clean', JSON.stringify(corporateAccounts));
+            localStorage.setItem('ym_orders_clean', JSON.stringify(orders));
         }
 
         function renderAll() {
@@ -463,7 +464,6 @@
             renderCorporateTable();
             renderOrdersTable();
             renderServiceOrdersTable();
-            updateCorporateProductSelect();
         }
 
         function previewAndOptimizeImage(event) {
@@ -524,308 +524,13 @@
                             </div>
                         </div>
                     </div>`;
-                grid.appendChild(col);
             });
         }
-
-        function renderAdminStockTable() {
-            const tbody = document.getElementById('admin-stock-table-body');
-            if(!tbody) return; tbody.innerHTML = '';
-            products.forEach(p => {
-                const tr = document.createElement('tr');
-                const img = p.image ? `<img src="${p.image}" style="width:50px; height:50px; object-fit:cover;" class="rounded">` : `<i class="fa-solid fa-image text-muted fs-3"></i>`;
-                tr.innerHTML = `
-                    <td>${img}</td>
-                    <td><strong>${p.name}</strong><br><small class="text-muted">${p.desc}</small></td>
-                    <td>${p.category}</td>
-                    <td>${parseFloat(p.price).toFixed(2)} ₺</td>
-                    <td>
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" ${p.inStock ? 'checked' : ''} onchange="toggleStock('${p.id}')">
-                            <label class="form-check-label small">${p.inStock ? 'Aktif' : 'Pasif'}</label>
-                        </div>
-                    </td>
-                    <td class="text-end">
-                        <button class="btn btn-sm btn-outline-danger" onclick="deleteProduct('${p.id}')"><i class="fa-solid fa-trash"></i></button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function submitOptimizedProduct() {
-            const name = document.getElementById('newProdName').value;
-            const category = document.getElementById('newProdCategory').value;
-            const price = parseFloat(document.getElementById('newProdPrice').value);
-            const desc = document.getElementById('newProdDesc').value;
-
-            if(!name || !price) return alert("Lütfen gerekli alanları doldurun.");
-
-            products.push({
-                id: Date.now().toString(),
-                name: name,
-                category: category,
-                price: price,
-                desc: desc,
-                image: globalOptimizedImageBase64,
-                inStock: true
-            });
-
-            saveToLocalStorage();
+        
+        // İlk yükleme için tetikleyici
+        document.addEventListener("DOMContentLoaded", function() {
             renderAll();
-            document.getElementById('closeProductModalBtn').click();
-        }
-
-        function toggleStock(id) {
-            const p = products.find(x => x.id === id);
-            if(p) p.inStock = !p.inStock;
-            saveToLocalStorage();
-            renderClientProducts();
-        }
-
-        function deleteProduct(id) {
-            if(confirm("Bu ürünü silmek istediğinize emin misiniz?")) {
-                products = products.filter(x => x.id !== id);
-                saveToLocalStorage();
-                renderAll();
-            }
-        }
-
-        function renderCorporateTable() {
-            const tbody = document.getElementById('corporate-table-body');
-            if(!tbody) return; tbody.innerHTML = '';
-            corporateAccounts.forEach(c => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td><strong>${c.company}</strong></td>
-                    <td>${c.name}</td>
-                    <td><code class="text-dark">${c.user}</code></td>
-                    <td><code>${c.pass}</code></td>
-                    <td class="text-end"><button class="btn btn-sm btn-danger" onclick="deleteCorp('${c.id}')">Sil</button></td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        document.getElementById('addCorporateForm')?.addEventListener('submit', function(e) {
-            e.preventDefault();
-            corporateAccounts.push({
-                id: 'c' + Date.now(),
-                company: document.getElementById('corpCompany').value,
-                name: document.getElementById('corpName').value,
-                user: document.getElementById('corpUser').value,
-                pass: document.getElementById('corpPass').value
-            });
-            saveToLocalStorage();
-            renderAll();
-            this.reset();
-            bootstrap.Modal.getInstance(document.getElementById('addCorporateModal')).hide();
         });
-
-        function deleteCorp(id) {
-            if(confirm("Firma kaydını silmek istiyor musunuz?")) {
-                corporateAccounts = corporateAccounts.filter(x => x.id !== id);
-                saveToLocalStorage();
-                renderCorporateTable();
-            }
-        }
-
-        function renderOrdersTable() {
-            const tbody = document.getElementById('orders-table-body');
-            if(!tbody) return; tbody.innerHTML = '';
-            orders.forEach(o => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td><strong>${o.company}</strong></td>
-                    <td>${o.product}</td>
-                    <td>${o.quantity} Adet</td>
-                    <td><small>Matrah: ${o.subtotal.toFixed(2)} ₺<br>KDV: ${o.tax.toFixed(2)} ₺<br><strong>Toplam: ${o.total.toFixed(2)} ₺</strong></small></td>
-                    <td><span class="badge bg-info">${o.status}</span></td>
-                    <td class="text-end">
-                        ${o.status === 'Hazırlanıyor' ? `<button class="btn btn-sm btn-success" onclick="shipOrder('${o.id}')">Lojistiğe Ver</button>` : `<span class="text-muted small">Kuryede</span>`}
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function shipOrder(id) {
-            const o = orders.find(x => x.id === id);
-            if(o) o.status = 'Dağıtımda';
-            saveToLocalStorage();
-            renderOrdersTable();
-            renderServiceOrdersTable();
-            renderMyOrdersTable();
-        }
-
-        function renderServiceOrdersTable() {
-            const tbody = document.getElementById('service-orders-table-body');
-            if(!tbody) return; tbody.innerHTML = '';
-            orders.filter(o => o.status === 'Dağıtımda').forEach(o => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td><strong>${o.company}</strong></td>
-                    <td>${o.product}</td>
-                    <td>${o.quantity} Adet</td>
-                    <td><button class="btn btn-sm btn-warning fw-bold" onclick="completeOrder('${o.id}')">Teslim Edildi</button></td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function completeOrder(id) {
-            const o = orders.find(x => x.id === id);
-            if(o) o.status = 'Teslim Edildi';
-            saveToLocalStorage();
-            renderServiceOrdersTable();
-            renderOrdersTable();
-            renderMyOrdersTable();
-        }
-
-        function updateCorporateProductSelect() {
-            const select = document.getElementById('corpSelfProductSelect');
-            if(!select) return; select.innerHTML = '<option value="">-- Ürün Seçiniz --</option>';
-            products.filter(p => p.inStock).forEach(p => {
-                select.innerHTML += `<option value="${p.id}">${p.name} (${p.price.toFixed(2)} ₺)</option>`;
-            });
-        }
-
-        function calculateOrderTotalPreview() {
-            const pid = document.getElementById('corpSelfProductSelect').value;
-            const qty = parseInt(document.getElementById('corpSelfQuantity').value) || 0;
-            const p = products.find(x => x.id === pid);
-
-            if(!p || qty <= 0) {
-                document.getElementById('basketSubtotal').innerText = "0.00 ₺";
-                document.getElementById('basketTax').innerText = "0.00 ₺";
-                document.getElementById('basketGrandTotal').innerText = "0.00 ₺";
-                return;
-            }
-
-            const subtotal = p.price * qty;
-            const tax = subtotal * TAX_RATE;
-            const total = subtotal + tax;
-
-            document.getElementById('basketSubtotal').innerText = subtotal.toFixed(2) + " ₺";
-            document.getElementById('basketTax').innerText = tax.toFixed(2) + " ₺";
-            document.getElementById('basketGrandTotal').innerText = total.toFixed(2) + " ₺";
-        }
-
-        document.getElementById('corpSelfOrderForm')?.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const pid = document.getElementById('corpSelfProductSelect').value;
-            const qty = parseInt(document.getElementById('corpSelfQuantity').value);
-            const note = document.getElementById('corpSelfNote').value;
-            const p = products.find(x => x.id === pid);
-
-            if(!p || !currentLoggedCorporate) return;
-
-            const subtotal = p.price * qty;
-            const tax = subtotal * TAX_RATE;
-            const total = subtotal + tax;
-
-            orders.push({
-                id: 'o' + Date.now(),
-                company: currentLoggedCorporate.company,
-                product: p.name,
-                quantity: qty,
-                price: p.price,
-                subtotal: subtotal,
-                tax: tax,
-                total: total,
-                note: note,
-                status: 'Hazırlanıyor'
-            });
-
-            saveToLocalStorage();
-            renderAll();
-            renderMyOrdersTable();
-            this.reset();
-            calculateOrderTotalPreview();
-            alert("Siparişiniz başarıyla fabrika havuzuna iletildi.");
-        });
-
-        function renderMyOrdersTable() {
-            const tbody = document.getElementById('my-orders-table-body');
-            if(!tbody || !currentLoggedCorporate) return; tbody.innerHTML = '';
-            orders.filter(o => o.company === currentLoggedCorporate.company).forEach(o => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${o.product}</td>
-                    <td>${o.quantity}</td>
-                    <td><strong>${o.total.toFixed(2)} ₺</strong></td>
-                    <td><small class="text-muted">${o.note || '-'}</small></td>
-                    <td><span class="badge bg-secondary">${o.status}</span></td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function unifiedLoginEngine() {
-            const type = document.getElementById('loginType').value;
-            const user = document.getElementById('username').value;
-            const pass = document.getElementById('password').value;
-            const error = document.getElementById('loginError');
-
-            error.classList.add('d-none');
-
-            if(type === 'admin' && user === 'admin' && pass === 'admin') {
-                showPanel('admin-panel');
-            } else if(type === 'service' && user === 'servis' && pass === '123') {
-                showPanel('service-panel');
-            } else if(type === 'corporate') {
-                const account = corporateAccounts.find(c => c.user === user && c.pass === pass);
-                if(account) {
-                    currentLoggedCorporate = account;
-                    document.getElementById('logged-corp-name').innerText = account.company;
-                    renderMyOrdersTable();
-                    showPanel('corporate-panel');
-                } else {
-                    error.classList.remove('d-none');
-                }
-            } else {
-                error.classList.remove('d-none');
-            }
-        }
-
-        function showPanel(id) {
-            document.getElementById('client-interface').style.display = 'none';
-            document.getElementById('admin-panel').style.display = 'none';
-            document.getElementById('corporate-panel').style.display = 'none';
-            document.getElementById('service-panel').style.display = 'none';
-            
-            document.getElementById(id).style.display = 'block';
-            bootstrap.Modal.getInstance(document.getElementById('loginModal'))?.hide();
-        }
-
-        function logoutSystem() {
-            currentLoggedCorporate = null;
-            document.getElementById('client-interface').style.display = 'block';
-            document.getElementById('admin-panel').style.display = 'none';
-            document.getElementById('corporate-panel').style.display = 'none';
-            document.getElementById('service-panel').style.display = 'none';
-        }
-
-        function switchAdminTab(tabId) {
-            document.querySelectorAll('#admin-panel .panel-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('#admin-panel .nav-link').forEach(el => el.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            if(tabId === 'tab-stock') document.getElementById('link-stock').classList.add('active');
-            if(tabId === 'tab-corporate') document.getElementById('link-corporate').classList.add('active');
-            if(tabId === 'tab-orders') document.getElementById('link-orders').classList.add('active');
-        }
-
-        function switchCorpTab(tabId) {
-            document.querySelectorAll('#corporate-panel .panel-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('#corporate-panel .nav-link').forEach(el => el.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            if(tabId === 'tab-corp-orders') document.getElementById('link-corp-orders').classList.add('active');
-            if(tabId === 'tab-corp-new') document.getElementById('link-corp-new').classList.add('active');
-        }
-
-        window.onload = function() {
-            renderAll();
-        };
     </script>
 </body>
 </html>
