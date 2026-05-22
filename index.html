@@ -3,116 +3,875 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sunucusuz Ürün Paylaşımı</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <title>Sipariş & Stok Yönetim Sistemi (Bulut Senkronizasyonlu)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
     <style>
-        body { font-family: sans-serif; max-width: 500px; margin: 20px auto; padding: 10px; }
-        input, button { padding: 10px; margin: 5px 0; width: 100%; box-sizing: border-box; }
-        button { background-color: #007bff; color: white; border: none; cursor: pointer; font-weight: bold; }
-        button:hover { background-color: #0056b3; }
-        ul { padding-left: 20px; }
-        #qrcode { display: flex; justify-content: center; margin-top: 20px; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: #333;
+            background-color: #f8fafc;
+            margin: 0;
+            padding: 0;
+        }
+        .text-prime { color: #1e40af !important; }
+        .bg-prime { background-color: #1e40af !important; }
+        
+        .navbar-nav .nav-link {
+            transition: color 0.3s ease;
+        }
+        .navbar-nav .nav-link:hover, .navbar-nav .nav-link.active {
+            color: #1e40af !important;
+        }
+        .hero-section {
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            padding: 60px 0;
+            color: white;
+            text-align: center;
+        }
+        .product-card {
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+        .product-card .img-wrapper {
+            height: 180px;
+            background-color: #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+            overflow: hidden;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .product-card .img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .preview-box {
+            width: 100%;
+            height: 150px;
+            border: 2px dashed #cbd5e1;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background-color: #f8fafc;
+            color: #64748b;
+        }
+        .preview-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        #sync-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+            background: #1e293b;
+            color: #fff;
+            padding: 8px 15px;
+            border-radius: 30px;
+            font-size: 12px;
+            display: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        #client-interface { display: block; }
+        #admin-panel { display: none; background-color: #f4f6f9; min-height: 100vh; }
+        #corporate-panel { display: none; background-color: #eff6ff; min-height: 100vh; }
+        #service-panel { display: none; background-color: #fffbeb; min-height: 100vh; }
+
+        .sidebar, .corp-sidebar, .service-sidebar {
+            background-color: #1e293b;
+            color: white;
+            padding: 20px 15px;
+        }
+        .corp-sidebar { background-color: #1e3a8a; }
+        .service-sidebar { background-color: #d97706; }
+        
+        @media (min-width: 768px) {
+            .sidebar, .corp-sidebar, .service-sidebar { min-height: 100vh; }
+        }
+        .sidebar .nav-link, .corp-sidebar .nav-link, .service-sidebar .nav-link {
+            color: #cbd5e1;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            cursor: pointer;
+            display: block;
+            text-decoration: none;
+        }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active { background-color: #334155; color: white !important; }
+        .corp-sidebar .nav-link:hover, .corp-sidebar .nav-link.active { background-color: #2563eb; color: white !important; }
+        .service-sidebar .nav-link:hover, .service-sidebar .nav-link.active { background-color: #b45309; color: white !important; }
+        
+        .panel-content { display: none; }
+        .panel-content.active { display: block; }
     </style>
 </head>
 <body>
 
-    <h2>Ürün Yönetimi (Sunucusuz)</h2>
-    
-    <input type="text" id="urunGiris" placeholder="Ürün adı yazın...">
-    <button onclick="urunEkle()">Ürünü Cihaza Ekle</button>
+    <div id="sync-indicator">
+        <i class="fa-solid fa-cloud-arrow-down fa-spin me-2"></i> Bulut verileri güncelleniyor...
+    </div>
 
-    <h3>Bu Cihazdaki Ürünler:</h3>
-    <ul id="urunListesi"></ul>
+    <div id="client-interface">
+        <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm">
+            <div class="container">
+                <a class="navbar-brand fw-bold d-flex align-items-center" href="#">
+                    <i class="fa-solid fa-cubes text-prime me-2 fs-3"></i>
+                    <span class="text-dark">Sipariş Sistemi <span class="text-prime" style="font-size: 12px; display:block; font-weight:400; margin-top: 1px;">Ortak Canlı Altyapı</span></span>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto fw-semibold align-items-center pt-2 pt-lg-0">
+                        <li class="nav-item"><a class="nav-link active" href="#home">Ana Sayfa</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#about">Hakkımızda</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#products">Ürün Kataloğu & Stok</a></li>
+                        <li class="nav-item ms-lg-3 mt-2 mt-lg-0 w-100 w-lg-auto">
+                            <button class="btn fw-bold text-white w-100 bg-prime" data-bs-toggle="modal" data-bs-target="#loginModal">
+                                <i class="fa-solid fa-right-to-bracket me-1"></i> Sistem Girişi
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
 
-    <hr>
+        <section id="home" class="hero-section">
+            <div class="container">
+                <h1 class="display-6 fw-bold mb-3">Güvenilir Ürün Tedariği & Dağıtım Ağı</h1>
+                <p class="lead mb-4 text-white-50 small">Tüm telefon ve bilgisayarlarda anlık envanter eşitlemeli akıllı sepet sistemi.</p>
+            </div>
+        </section>
 
-    <button style="background-color: #28a745;" onclick="paylasimKoduUret()">Diğer Cihazla Paylaş (QR Kod Üret)</button>
-    <div id="qrcode"></div>
+        <section id="about" class="py-5 bg-white border-bottom">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-6 mb-4 mb-lg-0">
+                        <span class="fw-bold text-uppercase small text-prime">Canlı Veri Havuzu</span>
+                        <h2 class="fw-bold text-dark mt-1 mb-3">Cihazlar Arası Eş Zamanlı Yönetim</h2>
+                        <p class="text-muted">Bu sistem, internet bulut veri tabanı altyapısına doğrudan bağlıdır. Bir telefondan yapılan stok güncellemesi, yeni ürün kaydı veya sepet siparişi, sayfayı kullanan diğer tüm cihazlara eş zamanlı olarak iletilir.</p>
+                        <p class="text-muted m-0">Gelişmiş sepet modülü sayesinde faturalandırma öncesi yasal %10 KDV oranını dinamik olarak hesaplayabilir, lojistik havuzuna anında veri aktarabilirsiniz.</p>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <div class="p-3 bg-light rounded shadow-sm text-center">
+                                    <i class="fa-solid fa-cloud text-prime mb-2 fa-2x"></i>
+                                    <h6 class="fw-bold mb-1">Ortak Havuz</h6>
+                                    <p class="text-muted small mb-0">Cihaz bağımsız tek veri tabanı</p>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="p-3 bg-light rounded shadow-sm text-center">
+                                    <i class="fa-solid fa-calculator fa-2x text-success mb-2"></i>
+                                    <h6 class="fw-bold mb-1">%10 KDV</h6>
+                                    <p class="text-muted small mb-0">Yasal mevzuata uygun hesaplama</p>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="p-3 bg-light rounded shadow-sm text-center">
+                                    <i class="fa-solid fa-mobile-screen fa-2x text-primary mb-2"></i>
+                                    <h6 class="fw-bold mb-1">Çoklu Cihaz</h6>
+                                    <p class="text-muted small mb-0">Her telefondan aynı anlık erişim</p>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="p-3 bg-light rounded shadow-sm text-center">
+                                    <i class="fa-solid fa-truck-moving fa-2x text-danger mb-2"></i>
+                                    <h6 class="fw-bold mb-1">Anlık Dağıtım</h6>
+                                    <p class="text-muted small mb-0">Lojistik koordinasyon ekranı</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="products" class="py-5 bg-light">
+            <div class="container">
+                <div class="row mb-4 align-items-center">
+                    <div class="col-md-6">
+                        <h3 class="fw-bold text-dark m-0">Ürün Kataloğu</h3>
+                    </div>
+                    <div class="col-md-6 mt-3 mt-md-0">
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
+                            <input type="text" id="clientSearchInput" class="form-control border-start-0" placeholder="Ürün adı veya kategori ara..." oninput="renderClientProducts()">
+                        </div>
+                    </div>
+                </div>
+                <div class="row g-4 justify-content-center" id="client-products-grid"></div>
+            </div>
+        </section>
+    </div>
+
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header text-white bg-prime">
+                    <h5 class="modal-title fw-bold"><i class="fa-solid fa-lock me-2"></i>Sistem Giriş Paneli</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-close="modal"></button>
+                </div>
+                <div class="modal-body p-4 bg-white">
+                    <div id="loginError" class="alert alert-danger d-none">Hatalı kullanıcı bilgileri!</div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-dark">Erişim Türü</label>
+                        <select id="loginType" class="form-select">
+                            <option value="admin">Sistem Yöneticisi / Merkez</option>
+                            <option value="corporate">Kayıtlı Anlaşmalı Firma</option>
+                            <option value="service">Lojistik & Dağıtım Görevlisi</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-dark">Kullanıcı Adı</label>
+                        <input type="text" id="username" class="form-control text-dark" placeholder="Kullanıcı adınız">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-dark">Şifre</label>
+                        <input type="password" id="password" class="form-control text-dark" placeholder="••••••••">
+                    </div>
+                    <button type="button" class="btn w-100 fw-bold py-2 text-white bg-prime" onclick="unifiedLoginEngine()">Sisteme Bağlan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="admin-panel">
+        <div class="container-fluid px-0">
+            <div class="row g-0">
+                <div class="col-md-3 col-lg-2 sidebar">
+                    <h4 class="text-center fw-bold mb-4" style="color: #60a5fa;"><i class="fa-solid fa-gears me-2"></i>SİSTEM YÖNETİM</h4>
+                    <ul class="nav flex-column mb-4">
+                        <li class="nav-item"><a class="nav-link active" id="link-stock" onclick="switchAdminTab('tab-stock')"><i class="fa-solid fa-boxes-stacked me-2"></i> Ürün & Stok Yönetimi</a></li>
+                        <li class="nav-item"><a class="nav-link" id="link-corporate" onclick="switchAdminTab('tab-corporate')"><i class="fa-solid fa-building me-2"></i> Firma Kayıtları</a></li>
+                        <li class="nav-item"><a class="nav-link" id="link-orders" onclick="switchAdminTab('tab-orders')"><i class="fa-solid fa-list-check me-2"></i> Gelen Siparişler</a></li>
+                    </ul>
+                    <button class="btn btn-danger w-100 fw-bold" onclick="logoutSystem()"><i class="fa-solid fa-right-from-bracket me-1"></i> Oturumu Kapat</button>
+                </div>
+
+                <div class="col-md-9 col-lg-10 p-4">
+                    <div id="tab-stock" class="panel-content active">
+                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+                            <h3 class="fw-bold m-0 text-prime">Merkez Depo & Envanter</h3>
+                            <button class="btn text-white fw-bold bg-prime" data-bs-toggle="modal" data-bs-target="#addProductModal" onclick="clearPreview()"><i class="fa-solid fa-plus me-1"></i> Yeni Ürün Tanımla</button>
+                        </div>
+                        <div class="card border-0 shadow-sm p-3 bg-white">
+                            <div class="table-responsive">
+                                <table class="table align-middle mb-0">
+                                    <thead class="table-dark">
+                                        <tr><th>Görsel</th><th>Ürün Detayı</th><th>Kategori</th><th>Birim Fiyat (Matrah)</th><th>Stok Durumu</th><th class="text-end">İşlemler</th></tr>
+                                    </thead>
+                                    <tbody id="admin-stock-table-body"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="tab-corporate" class="panel-content">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h3 class="fw-bold text-primary m-0">Kayıtlı Firma Sistem Tanımlamaları</h3>
+                            <button class="btn btn-primary fw-bold" data-bs-toggle="modal" data-bs-target="#addCorporateModal">Yeni Firma Ekle</button>
+                        </div>
+                        <div class="card border-0 shadow-sm p-3 bg-white">
+                            <table class="table table-striped align-middle mb-0">
+                                <thead class="table-primary"><tr><th>Firma Adı</th><th>Yetkili Sorumlu</th><th>Kullanıcı Adı</th><th>Şifre Kodu</th><th class="text-end">İşlem</th></tr></thead>
+                                <tbody id="corporate-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div id="tab-orders" class="panel-content">
+                        <h3 class="fw-bold text-dark mb-4">Firma Sipariş Havuzu</h3>
+                        <div class="card border-0 shadow-sm p-3 bg-white">
+                            <table class="table align-middle mb-0">
+                                <thead class="table-warning"><tr><th>Alıcı Firma</th><th>İstenen Ürün</th><th>Miktar</th><th>Hesaplama (Matrah / KDV / Toplam)</th><th>Sevkiyat Durumu</th><th class="text-end">Eylem</th></tr></thead>
+                                <tbody id="orders-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="corporate-panel">
+        <div class="container-fluid px-0">
+            <div class="row g-0">
+                <div class="col-md-3 col-lg-2 corp-sidebar">
+                    <h4 class="text-center text-white fw-bold mb-2"><i class="fa-solid fa-store me-2"></i>FİRMA ALANI</h4>
+                    <p class="text-center text-white-50 small mb-4" id="logged-corp-name">Anlaşmalı Partner</p>
+                    <ul class="nav flex-column mb-4">
+                        <li class="nav-item"><a class="nav-link active" id="link-corp-orders" onclick="switchCorpTab('tab-corp-orders')"><i class="fa-solid fa-file-invoice me-2"></i> Sipariş Geçmişimiz</a></li>
+                        <li class="nav-item"><a class="nav-link" id="link-corp-new" onclick="switchCorpTab('tab-corp-new')"><i class="fa-solid fa-cart-plus me-2"></i> Hızlı Sipariş Formu</a></li>
+                    </ul>
+                    <button class="btn btn-danger w-100 fw-bold" onclick="logoutSystem()">Çıkış Yap</button>
+                </div>
+                <div class="col-md-9 col-lg-10 p-4">
+                    <div id="tab-corp-orders" class="panel-content active">
+                        <h3 class="fw-bold mb-4 text-prime">Kurumsal Cari & Sipariş Kayıtları</h3>
+                        <div class="card border-0 shadow-sm p-3 bg-white">
+                            <table class="table align-middle mb-0"><thead class="table-success"><tr><th>Sipariş Edilen Ürün</th><th>Miktar</th><th>Mali Detaylar (KDV Dahil)</th><th>Özel Not</th><th>Teslimat Durumu</th></tr></thead><tbody id="my-orders-table-body"></tbody></table>
+                        </div>
+                    </div>
+                    <div id="tab-corp-new" class="panel-content">
+                        <h3 class="fw-bold mb-4 text-prime">Akıllı Sepet & Sipariş Oluşturma</h3>
+                        <div class="card border-0 shadow-sm p-4 bg-white" style="max-width: 600px;">
+                            <form id="corpSelfOrderForm">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Ürün Seçimi</label>
+                                    <select id="corpSelfProductSelect" class="form-select" onchange="calculateOrderTotalPreview()" required></select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Talep Edilen Miktar (Adet/Koli)</label>
+                                    <input type="number" id="corpSelfQuantity" class="form-control" placeholder="Örn: 250" min="1" oninput="calculateOrderTotalPreview()" required>
+                                </div>
+                                
+                                <div class="mb-3 p-3 bg-light rounded border">
+                                    <div class="d-flex justify-content-between small text-secondary mb-1">
+                                        <span>Ara Toplam (KDV Hariç Matrah):</span>
+                                        <span id="basketSubtotal">0.00 ₺</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between small text-secondary mb-2">
+                                        <span>Hesaplanan KDV (%10):</span>
+                                        <span id="basketTax">0.00 ₺</span>
+                                    </div>
+                                    <hr class="my-2">
+                                    <div class="d-flex justify-content-between fw-bold text-dark">
+                                        <span>Fatura / Sepet Genel Toplamı:</span>
+                                        <span id="basketGrandTotal" class="text-prime">0.00 ₺</span>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Sevkiyat ve Dağıtım Notu</label>
+                                    <textarea id="corpSelfNote" class="form-control" rows="3" placeholder="Örn: Sabah teslimatı rica olunur."></textarea>
+                                </div>
+                                <button type="submit" class="btn text-white w-100 fw-bold bg-prime">Siparişi Onayla ve Gönder</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="service-panel">
+        <div class="container-fluid px-0">
+            <div class="row g-0">
+                <div class="col-md-3 col-lg-2 service-sidebar">
+                    <h4 class="text-center text-white fw-bold mb-4"><i class="fa-solid fa-truck me-2"></i>LOJİSTİK PANELİ</h4>
+                    <button class="btn btn-danger w-100 fw-bold" onclick="logoutSystem()">Sistemden Çık</button>
+                </div>
+                <div class="col-md-9 col-lg-10 p-4">
+                    <h3 class="fw-bold text-warning mb-4"> Dağıtıma Hazır Sevkiyat Listesi</h3>
+                    <div class="card border-0 shadow-sm p-3 bg-white">
+                        <table class="table align-middle mb-0"><thead class="table-dark"><tr><th>Teslim Alacak Firma</th><th>Ürün Adı</th><th>Miktar</th><th>Yönetim Eylemi</th></tr></thead><tbody id="service-orders-table-body"></tbody></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="addProductModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content p-4 border-0 shadow">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold m-0 text-prime">Ürün Kayıt Sistemi</h5>
+                    <button type="button" class="btn-close" data-bs-close="modal" id="closeProductModalBtn"></button>
+                </div>
+                <form id="addProductForm">
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Ürün Adı</label>
+                        <input type="text" id="newProdName" class="form-control" placeholder="Örn: Örnek Ürün Paket (1KG)" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label small fw-bold">Ürün Grubu</label>
+                            <select id="newProdCategory" class="form-select">
+                                <option value="A Grubu">A Grubu</option>
+                                <option value="B Grubu">B Grubu</option>
+                                <option value="C Grubu">C Grubu</option>
+                                <option value="Diğer">Diğer</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label small fw-bold">Birim Fiyat (KDV Hariç ₺)</label>
+                            <input type="number" id="newProdPrice" class="form-control" placeholder="Örn: 85.00" step="0.01" min="0" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Ürün Açıklaması</label>
+                        <input type="text" id="newProdDesc" class="form-control" placeholder="Örn: Ürün detay ve ambalaj bilgisi." required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-success"><i class="fa-solid fa-camera me-1"></i> Ürün Görseli</label>
+                        <input type="file" id="newProdImgFile" class="form-control mb-2" accept="image/*" onchange="previewAndOptimizeImage(event)">
+                        <div class="preview-box" id="imagePreviewContainer">
+                            <span id="previewPlaceholder"><i class="fa-solid fa-image fa-2x d-block mb-1"></i>Görsel Dosyası Seçilmedi</span>
+                        </div>
+                    </div>
+                    
+                    <button type="button" class="btn text-white w-100 fw-bold py-2 bg-prime" onclick="submitOptimizedProduct()">Ürünü Envantere Ekle</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="addCorporateModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content p-4"><h5 class="fw-bold mb-3">Yeni Firma Cari Tanımlama</h5><form id="addCorporateForm"><div class="mb-3"><input type="text" id="corpCompany" class="form-control" placeholder="Firma Ticari Unvanı" required></div><div class="mb-3"><input type="text" id="corpName" class="form-control" placeholder="Firma Yetkilisi Adı Soyadı" required></div><div class="mb-2"><input type="text" id="corpUser" class="form-control" placeholder="Sistem Giriş Kullanıcı Adı" required></div><div class="mb-3"><input type="text" id="corpPass" class="form-control" placeholder="Şifre Belirleyin" required></div><button type="submit" class="btn btn-success w-100 fw-bold">Firma Cari Kartını Oluştur</button></form></div></div></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        // Sayfa açıldığında çalışacak fonksiyonlar
-        window.onload = function() {
-            urunuUrldenAl();  // B telefonu: URL'de veri varsa hafızaya kaydet
-            urunleriListele(); // A ve B telefonu: Hafızadaki ürünleri listele
-        };
+        let globalOptimizedImageBase64 = "";
+        const TAX_RATE = 0.10;
 
-        // 1. Ürünü LocalStorage'a (Yerel Hafıza) Kaydetme
-        function urunEkle() {
-            const urunAdi = document.getElementById("urunGiris").value.trim();
-            if (!urunAdi) return alert("Lütfen bir ürün adı girin!");
+        const BUCKET_ID = "bucket_anon_gida_sync_v2"; 
+        const API_BASE_URL = `https://kvdb.io/4yZpUaCqFj2s7uE9HkmrBv/`; 
 
-            let urunler = JSON.parse(localStorage.getItem("local_urunler")) || [];
-            urunler.push(urunAdi);
-            
-            localStorage.setItem("local_urunler", JSON.stringify(urunler));
-            document.getElementById("urunGiris").value = ""; // Kutuyu temizle
-            urunleriListele();
-        }
+        const defaultProducts = [
+            { id: '1', name: 'Örnek Gıda Paket Ürünü (1 KG)', category: 'A Grubu', desc: 'Standart vakumlu paket envanter kaydı.', price: 95.00, image: '', inStock: true },
+            { id: '2', name: 'Premium Koli Ürünü', category: 'B Grubu', desc: 'Sevkiyata hazır standart ambalajlı ürün grubu.', price: 140.00, image: '', inStock: true }
+        ];
+        const defaultCorporates = [
+            { id: 'c1', company: 'Örnek Dağıtım Pazarlama Ltd.', name: 'Ahmet Yılmaz', user: 'firma_kullanici', pass: '1234' }
+        ];
+        const defaultOrders = [
+            { id: 'o1', company: 'Örnek Dağıtım Pazarlama Ltd.', product: 'Örnek Gıda Paket Ürünü (1 KG)', quantity: 100, price: 95.00, subtotal: 9500.00, tax: 950.00, total: 10450.00, note: 'Merkez depo teslimatı.', status: 'Hazırlanıyor' }
+        ];
 
-        // 2. Hafızadaki Ürünleri Ekranda Listeleme
-        function urunleriListele() {
-            const liste = document.getElementById("urunListesi");
-            liste.innerHTML = "";
-            let urunler = JSON.parse(localStorage.getItem("local_urunler")) || [];
-            
-            if(urunler.length === 0) {
-                liste.innerHTML = "<li>Henüz ürün eklenmemiş.</li>";
-                return;
-            }
+        let products = [...defaultProducts];
+        let corporateAccounts = [...defaultCorporates];
+        let orders = [...defaultOrders];
+        let currentLoggedCorporate = null;
 
-            urunler.forEach(urun => {
-                let li = document.createElement("li");
-                li.textContent = urun;
-                liste.appendChild(li);
-            });
-        }
+        // GİRİŞ KONTROL MOTORU (İstediğiniz şifre ve isim yapısı buraya eklendi)
+        function unifiedLoginEngine() {
+            const loginType = document.getElementById('loginType').value;
+            const userInp = document.getElementById('username').value.trim();
+            const passInp = document.getElementById('password').value;
+            const errorDiv = document.getElementById('loginError');
 
-        // 3. A TELEFONU: Ürünleri Şifreli URL yapıp QR Koda Dönüştürme
-        function paylasimKoduUret() {
-            const qrcodeDiv = document.getElementById("qrcode");
-            qrcodeDiv.innerHTML = ""; // Eski QR kodu temizle
+            errorDiv.classList.add('d-none');
 
-            let urunler = localStorage.getItem("local_urunler");
-            if (!urunler || urunler === "[]") return alert("Paylaşacak ürününüz yok!");
-
-            // Veriyi güvenli transfer için Base64 formatına çeviriyoruz
-            const urlVerisi = btoa(encodeURIComponent(urunler));
-            // Mevcut sayfa linkinin sonuna "?veri=..." ekliyoruz
-            const paylasimUrli = window.location.origin + window.location.pathname + "?veri=" + urlVerisi;
-
-            // QR Kodu ekranda oluştur
-            new QRCode(qrcodeDiv, {
-                text: paylasimUrli,
-                width: 200,
-                height: 200
-            });
-        }
-
-        // 4. B TELEFONU: QR Kod Okunduğunda URL'deki Veriyi Hafızaya Alma
-        function urunuUrldenAl() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const veriParam = urlParams.get('veri');
-
-            if (veriParam) {
-                try {
-                    // URL'deki şifreli veriyi çözüyoruz
-                    const cozulenVeri = decodeURIComponent(atob(veriParam));
-                    const gelenUrunler = JSON.parse(cozulenVeri);
-
-                    // B telefonunun eski ürünleri varsa onlarla birleştir (aynı ürünleri tekrar eklemez)
-                    let mevcutUrunler = JSON.parse(localStorage.getItem("local_urunler")) || [];
-                    let birlesikListe = [...new Set([...mevcutUrunler, ...gelenUrunler])];
-
-                    localStorage.setItem("local_urunler", JSON.stringify(birlesikListe));
-                    
-                    // URL'deki "?veri=..." kısmını temizle (sayfa temiz kalsın diye)
-                    window.history.replaceState({}, document.title, window.location.pathname);
-                    alert("Ürünler başarıyla bu cihaza aktarıldı!");
-                } catch (e) {
-                    console.error("Veri okunurken hata oluştu:", e);
+            if (loginType === 'admin') {
+                // Admin Giriş Bilgileri: admin / admin123
+                if (userInp === 'admin' && passInp === 'admin123') {
+                    proceedLogin('admin-panel');
+                } else {
+                    errorDiv.classList.remove('d-none');
+                }
+            } else if (loginType === 'corporate') {
+                // Kurumsal Partner Giriş Kontrolü
+                const foundCorp = corporateAccounts.find(c => c.user === userInp && c.pass === passInp);
+                if (foundCorp) {
+                    currentLoggedCorporate = foundCorp;
+                    document.getElementById('logged-corp-name').innerText = foundCorp.company;
+                    proceedLogin('corporate-panel');
+                } else {
+                    errorDiv.classList.remove('d-none');
+                }
+            } else if (loginType === 'service') {
+                // Lojistik Görevlisi Giriş Bilgileri: servis / 123
+                if (userInp === 'servis' && passInp === '123') {
+                    proceedLogin('service-panel');
+                } else {
+                    errorDiv.classList.remove('d-none');
                 }
             }
         }
+
+        function proceedLogin(panelId) {
+            document.getElementById('client-interface').style.display = 'none';
+            document.getElementById('admin-panel').style.display = 'none';
+            document.getElementById('corporate-panel').style.display = 'none';
+            document.getElementById('service-panel').style.display = 'none';
+
+            document.getElementById(panelId).style.display = 'block';
+
+            // Modal'ı kapat
+            const loginModalEl = document.getElementById('loginModal');
+            const modalInstance = bootstrap.Modal.getInstance(loginModalEl);
+            if (modalInstance) modalInstance.hide();
+
+            // Form temizleme
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            
+            renderAll();
+        }
+
+        function logoutSystem() {
+            currentLoggedCorporate = null;
+            document.getElementById('admin-panel').style.display = 'none';
+            document.getElementById('corporate-panel').style.display = 'none';
+            document.getElementById('service-panel').style.display = 'none';
+            document.getElementById('client-interface').style.display = 'block';
+        }
+
+        // SEKMELER ARASI GEÇİŞ FONKSİYONLARI
+        function switchAdminTab(tabId) {
+            document.querySelectorAll('#admin-panel .panel-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('#admin-panel .nav-link').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            
+            if(tabId === 'tab-stock') document.getElementById('link-stock').classList.add('active');
+            if(tabId === 'tab-corporate') document.getElementById('link-corporate').classList.add('active');
+            if(tabId === 'tab-orders') document.getElementById('link-orders').classList.add('active');
+        }
+
+        function switchCorpTab(tabId) {
+            document.querySelectorAll('#corporate-panel .panel-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('#corporate-panel .nav-link').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+
+            if(tabId === 'tab-corp-orders') document.getElementById('link-corp-orders').classList.add('active');
+            if(tabId === 'tab-corp-new') document.getElementById('link-corp-new').classList.add('active');
+        }
+
+        // BULUTTAN VERİ ÇEKME FONKSİYONU
+        async function fetchFromCloud(isBackground = false) {
+            if (!isBackground) showSyncIndicator(true);
+            try {
+                const response = await fetch(`${API_BASE_URL}${BUCKET_ID}`);
+                if (response.ok) {
+                    const cloudData = await response.json();
+                    if (cloudData.products) products = cloudData.products;
+                    if (cloudData.corporates) corporateAccounts = cloudData.corporates;
+                    if (cloudData.orders) orders = cloudData.orders;
+                } else if (!isBackground) {
+                    await pushToCloud();
+                }
+            } catch (error) {
+                console.log("Bulut verisi alınamadı, yerel bellek kullanılıyor.", error);
+            }
+            if (!isBackground) showSyncIndicator(false);
+            renderAll();
+        }
+
+        // BULUTA VERİ YÜKLEME FONKSİYONU
+        async function pushToCloud() {
+            showSyncIndicator(true);
+            try {
+                const dataPayload = { products, corporates: corporateAccounts, orders };
+                await fetch(`${API_BASE_URL}${BUCKET_ID}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(dataPayload)
+                });
+            } catch (error) {
+                console.error("Bulut senkronizasyon hatası:", error);
+            }
+            showSyncIndicator(false);
+        }
+
+        function showSyncIndicator(show) {
+            const ind = document.getElementById('sync-indicator');
+            if(ind) ind.style.display = show ? 'block' : 'none';
+        }
+
+        async function saveAndSync() {
+            renderAll();
+            await pushToCloud();
+        }
+
+        function renderAll() {
+            renderClientProducts();
+            renderAdminStockTable();
+            renderCorporateTable();
+            renderOrdersTable();
+            renderServiceOrdersTable();
+            if (currentLoggedCorporate) {
+                renderMyOrdersTable();
+                populateCorpProductSelect();
+            }
+        }
+
+        function previewAndOptimizeImage(event) {
+            const file = event.target.files[0];
+            const container = document.getElementById('imagePreviewContainer');
+            if (!file) { clearPreview(); return; }
+
+            container.innerHTML = `<div class="spinner-border spinner-border-sm text-primary" role="status"></div><span class="ms-2 small">İşleniyor...</span>`;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const max_width = 300; const max_height = 300;
+                    let width = img.width; let height = img.height;
+                    if (width > height) { if (width > max_width) { height *= max_width / width; width = max_width; } } 
+                    else { if (height > max_height) { width *= max_height / height; height = max_height; } }
+                    const canvas = document.createElement('canvas'); canvas.width = width; canvas.height = height;
+                    const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, width, height);
+                    globalOptimizedImageBase64 = canvas.toDataURL('image/jpeg', 0.6);
+                    container.innerHTML = `<img src="${globalOptimizedImageBase64}" alt="Önizleme">`;
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function clearPreview() {
+            globalOptimizedImageBase64 = "";
+            document.getElementById('imagePreviewContainer').innerHTML = `<span id="previewPlaceholder"><i class="fa-solid fa-image fa-2x d-block mb-1"></i>Görsel Dosyası Seçilmedi</span>`;
+            document.getElementById('addProductForm').reset();
+        }
+
+        // GÖRSEL LİSTELEME VE YÖNETİM MODÜLLERİ
+        function renderClientProducts() {
+            const grid = document.getElementById('client-products-grid');
+            const searchVal = document.getElementById('clientSearchInput').value.toLowerCase();
+            grid.innerHTML = '';
+
+            const filtered = products.filter(p => p.name.toLowerCase().includes(searchVal) || p.category.toLowerCase().includes(searchVal));
+
+            if(filtered.length === 0) {
+                grid.innerHTML = `<div class="text-center text-muted py-5">Kriterlere uygun ürün bulunamadı.</div>`;
+                return;
+            }
+
+            filtered.forEach(p => {
+                const imgTag = p.image ? `<img src="${p.image}" alt="${p.name}">` : `<i class="fa-solid fa-box fa-3x text-secondary"></i>`;
+                const stockBadge = p.inStock ? `<span class="badge bg-success">Stokta Var</span>` : `<span class="badge bg-danger">Tükendi</span>`;
+                
+                grid.innerHTML += `
+                    <div class="col-sm-6 col-md-4 col-lg-3">
+                        <div class="product-card">
+                            <div class="img-wrapper">${imgTag}</div>
+                            <div class="p-3">
+                                <span class="badge bg-secondary mb-1 small">${p.category}</span>
+                                <h6 class="fw-bold text-dark text-truncate mb-1">${p.name}</h6>
+                                <p class="text-muted small text-truncate mb-2">${p.desc}</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="fw-bold text-prime">${p.price.toFixed(2)} ₺</span>
+                                    ${stockBadge}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function renderAdminStockTable() {
+            const tbody = document.getElementById('admin-stock-table-body');
+            tbody.innerHTML = '';
+            products.forEach(p => {
+                const img = p.image ? `<img src="${p.image}" style="width:50px; height:50px; object-fit:cover;" class="rounded">` : `<i class="fa-solid fa-box fa-2x text-muted"></i>`;
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${img}</td>
+                        <td><strong>${p.name}</strong><br><small class="text-muted">${p.desc}</small></td>
+                        <td><span class="badge bg-light text-dark border">${p.category}</span></td>
+                        <td>${p.price.toFixed(2)} ₺</td>
+                        <td>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" ${p.inStock ? 'checked' : ''} onchange="toggleStock('${p.id}')">
+                                <label class="form-check-label small">${p.inStock ? 'Aktif' : 'Yok'}</label>
+                            </div>
+                        </td>
+                        <td class="text-end">
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteProduct('${p.id}')"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        async function submitOptimizedProduct() {
+            const name = document.getElementById('newProdName').value;
+            const category = document.getElementById('newProdCategory').value;
+            const price = parseFloat(document.getElementById('newProdPrice').value);
+            const desc = document.getElementById('newProdDesc').value;
+
+            if(!name || isNaN(price)) return;
+
+            const newP = {
+                id: Date.now().toString(),
+                name, category, price, desc,
+                image: globalOptimizedImageBase64,
+                inStock: true
+            };
+
+            products.push(newP);
+            const modalEl = document.getElementById('addProductModal');
+            bootstrap.Modal.getInstance(modalEl).hide();
+            clearPreview();
+            await saveAndSync();
+        }
+
+        async function toggleStock(id) {
+            const p = products.find(prod => prod.id === id);
+            if(p) p.inStock = !p.inStock;
+            await saveAndSync();
+        }
+
+        async function deleteProduct(id) {
+            if(confirm('Bu ürünü silmek istediğinize emin misiniz?')) {
+                products = products.filter(p => p.id !== id);
+                await saveAndSync();
+            }
+        }
+
+        // FİRMA VE SİPARİŞ YÖNETİMİ
+        function renderCorporateTable() {
+            const tbody = document.getElementById('corporate-table-body');
+            if(!tbody) return;
+            tbody.innerHTML = '';
+            corporateAccounts.forEach(c => {
+                tbody.innerHTML += `<tr><td><strong>${c.company}</strong></td><td>${c.name}</td><td><code>${c.user}</code></td><td><code>${c.pass}</code></td><td class="text-end"><button class="btn btn-sm btn-danger" onclick="deleteCorp('${c.id}')">Sil</button></td></tr>`;
+            });
+        }
+
+        document.getElementById('addCorporateForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const company = document.getElementById('corpCompany').value;
+            const name = document.getElementById('corpName').value;
+            const user = document.getElementById('corpUser').value.trim();
+            const pass = document.getElementById('corpPass').value;
+
+            corporateAccounts.push({ id: 'c_' + Date.now(), company, name, user, pass });
+            document.getElementById('addCorporateForm').reset();
+            bootstrap.Modal.getInstance(document.getElementById('addCorporateModal')).hide();
+            await saveAndSync();
+        });
+
+        async function deleteCorp(id) {
+            if(confirm('Firma kaydı silinecektir?')) {
+                corporateAccounts = corporateAccounts.filter(c => c.id !== id);
+                await saveAndSync();
+            }
+        }
+
+        function populateCorpProductSelect() {
+            const sel = document.getElementById('corpSelfProductSelect');
+            if(!sel) return;
+            sel.innerHTML = '<option value="">-- Ürün Seçiniz --</option>';
+            products.filter(p => p.inStock).forEach(p => {
+                sel.innerHTML += `<option value="${p.id}">${p.name} (${p.price.toFixed(2)} ₺)</option>`;
+            });
+        }
+
+        function calculateOrderTotalPreview() {
+            const pId = document.getElementById('corpSelfProductSelect').value;
+            const qty = parseInt(document.getElementById('corpSelfQuantity').value) || 0;
+            const p = products.find(prod => prod.id === pId);
+
+            if(!p || qty <= 0) {
+                document.getElementById('basketSubtotal').innerText = '0.00 ₺';
+                document.getElementById('basketTax').innerText = '0.00 ₺';
+                document.getElementById('basketGrandTotal').innerText = '0.00 ₺';
+                return;
+            }
+
+            const subtotal = p.price * qty;
+            const tax = subtotal * TAX_RATE;
+            const total = subtotal + tax;
+
+            document.getElementById('basketSubtotal').innerText = subtotal.toFixed(2) + ' ₺';
+            document.getElementById('basketTax').innerText = tax.toFixed(2) + ' ₺';
+            document.getElementById('basketGrandTotal').innerText = total.toFixed(2) + ' ₺';
+        }
+
+        document.getElementById('corpSelfOrderForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const pId = document.getElementById('corpSelfProductSelect').value;
+            const qty = parseInt(document.getElementById('corpSelfQuantity').value);
+            const note = document.getElementById('corpSelfNote').value;
+            const p = products.find(prod => prod.id === pId);
+
+            if(!p || !qty) return;
+
+            const subtotal = p.price * qty;
+            const tax = subtotal * TAX_RATE;
+            const total = subtotal + tax;
+
+            orders.push({
+                id: 'o_' + Date.now(),
+                company: currentLoggedCorporate.company,
+                product: p.name,
+                quantity: qty,
+                price: p.price,
+                subtotal, tax, total, note,
+                status: 'Hazırlanıyor'
+            });
+
+            document.getElementById('corpSelfOrderForm').reset();
+            calculateOrderTotalPreview();
+            switchCorpTab('tab-corp-orders');
+            await saveAndSync();
+        });
+
+        function renderOrdersTable() {
+            const tbody = document.getElementById('orders-table-body');
+            if(!tbody) return;
+            tbody.innerHTML = '';
+            orders.forEach(o => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${o.company}</strong></td>
+                        <td>${o.product}</td>
+                        <td><span class="badge bg-dark">${o.quantity} Adet</span></td>
+                        <td><small>Matrah: ${o.subtotal.toFixed(2)} ₺<br>KDV: ${o.tax.toFixed(2)} ₺<br><strong>Toplam: ${o.total.toFixed(2)} ₺</strong></small></td>
+                        <td><span class="badge bg-info text-dark">${o.status}</span></td>
+                        <td class="text-end">
+                            <button class="btn btn-sm btn-success" onclick="updateOrderStatus('${o.id}', 'Yolda / Dağıtımda')">Dağıtıma Çıkar</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function renderMyOrdersTable() {
+            const tbody = document.getElementById('my-orders-table-body');
+            if(!tbody || !currentLoggedCorporate) return;
+            tbody.innerHTML = '';
+            orders.filter(o => o.company === currentLoggedCorporate.company).forEach(o => {
+                tbody.innerHTML += `<tr><td>${o.product}</td><td>${o.quantity}</td><td><strong>${o.total.toFixed(2)} ₺</strong></td><td><small>${o.note || '-'}</small></td><td><span class="badge bg-warning text-dark">${o.status}</span></td></tr>`;
+            });
+        }
+
+        function renderServiceOrdersTable() {
+            const tbody = document.getElementById('service-orders-table-body');
+            if(!tbody) return;
+            tbody.innerHTML = '';
+            orders.filter(o => o.status === 'Yolda / Dağıtımda').forEach(o => {
+                tbody.innerHTML += `<tr><td><strong>${o.company}</strong></td><td>${o.product}</td><td>${o.quantity}</td><td><button class="btn btn-sm btn-success" onclick="updateOrderStatus('${o.id}', 'Teslim Edildi')">Teslim Edildi İşaretle</button></td></tr>`;
+            });
+        }
+
+        async function updateOrderStatus(id, newStatus) {
+            const o = orders.find(ord => ord.id === id);
+            if(o) o.status = newStatus;
+            await saveAndSync();
+        }
+
+        // SAYFA YÜKLENDİĞİNDE ÇALIŞACAK MOTOR
+        window.addEventListener('DOMContentLoaded', () => {
+            fetchFromCloud();
+            // 20 saniyede bir verileri arka planda eşitle
+            setInterval(() => { fetchFromCloud(true); }, 20000);
+        });
     </script>
 </body>
 </html>
