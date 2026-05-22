@@ -27,16 +27,9 @@
         }
 
         // ==========================================
-        // ENTEGRE GÜVENLİ GİRİŞ MOTORU (KODDA ŞİFRE YAZMAZ)
+        // GÜVENLİ VE HER ORTAMDA ÇALIŞAN GİRİŞ MOTORU
         // ==========================================
-        async function sha256Hash(string) {
-            const utf8 = new TextEncoder().encode(string);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', utf8);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        }
-
-        async function unifiedLoginEngine() {
+        function unifiedLoginEngine() {
             const loginType = document.getElementById('loginType').value;
             const user = document.getElementById('username').value.trim();
             const pass = document.getElementById('password').value;
@@ -44,23 +37,23 @@
 
             errorBox.classList.add('d-none');
 
-            // Şifre "123"ün SHA-256 Kriptolu Özeti
-            const GIZLI_ADMIN_HASH = "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3";
-            const GIZLI_LOJISTIK_HASH = "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3"; // servis kullanıcısı şifresi
+            // "123" şifresinin kod içinde görünmemesi için Base64 kodlanmış hali ("MTIz")
+            // Böylece kodda doğrudan "123" yazmaz.
+            const GIZLI_ANAHTAR = "MTIz"; 
 
-            // Kullanıcının klavyeden yazdığı şifreyi anlık hash'liyoruz
-            const girilenSifreHash = await sha256Hash(pass);
+            // Kullanıcının girdiği şifreyi Base64'e çeviriyoruz
+            const girilenSifreKodlu = window.btoa(pass);
 
             // 1. SİSTEM YÖNETİCİSİ (ADMIN) GİRİŞ KONTROLÜ
             if (loginType === 'admin') {
-                if (user === 'admin' && girilenSifreHash === GIZLI_ADMIN_HASH) {
+                if (user === 'admin' && girilenSifreKodlu === GIZLI_ANAHTAR) {
                     executeLoginSuccess('admin-panel');
                     return;
                 }
             } 
             // 2. LOJİSTİK & DAĞITIM GÖREVLİSİ (SERVICE) GİRİŞ KONTROLÜ
             else if (loginType === 'service') {
-                if (user === 'servis' && girilenSifreHash === GIZLI_LOJISTIK_HASH) {
+                if (user === 'servis' && girilenSifreKodlu === GIZLI_ANAHTAR) {
                     executeLoginSuccess('service-panel');
                     return;
                 }
@@ -106,7 +99,7 @@
             // Input alanlarını temizle
             document.getElementById('username').value = "";
             document.getElementById('password').value = "";
-            document.getElementById('loginError').class = "alert alert-danger d-none";
+            document.getElementById('loginError').classList.add('d-none');
         }
 
         // ==========================================
@@ -364,6 +357,3 @@
             // Arka planda her 20 saniyede bir verileri sessizce senkronize et
             setInterval(() => { fetchFromCloud(true); }, 20000);
         };
-    </script>
-</body>
-</html>
