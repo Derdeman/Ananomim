@@ -33,14 +33,21 @@
             border: 1px solid #e2e8f0;
             background: white;
             overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
         }
-        .product-card .icon-wrapper {
-            height: 120px;
+        .product-card .img-wrapper {
+            height: 160px;
             background-color: #f0fdf4;
             display: flex;
             align-items: center;
             justify-content: center;
             color: #198754;
+            overflow: hidden;
+        }
+        .product-card .img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
         
         .about-section {
@@ -182,7 +189,7 @@
                 <div class="text-center mb-4">
                     <h3 class="fw-bold text-dark">Ürün Kataloğu ve Canlı Stok Durumu</h3>
                 </div>
-                <div class="row g-3 justify-content-center" id="client-products-grid"></div>
+                <div class="row g-4 justify-content-center" id="client-products-grid"></div>
             </div>
         </section>
     </div>
@@ -247,7 +254,12 @@
                             <button class="btn btn-success btn-sm fw-bold" data-bs-toggle="modal" data-bs-target="#addProductModal">Yeni Ürün Ekle</button>
                         </div>
                         <div class="card border-0 shadow-sm p-3 bg-white">
-                            <table class="table align-middle mb-0"><thead class="table-dark"><tr><th>Ürün</th><th>Açıklama</th><th>Stok</th><th class="text-end">İşlem</th></tr></thead><tbody id="admin-stock-table-body"></tbody></table>
+                            <table class="table align-middle mb-0">
+                                <thead class="table-dark">
+                                    <tr><th>Görsel</th><th>Ürün</th><th>Açıklama</th><th>Stok</th><th class="text-end">İşlem</th></tr>
+                                </thead>
+                                <tbody id="admin-stock-table-body"></tbody>
+                            </table>
                         </div>
                     </div>
 
@@ -364,7 +376,26 @@
     </div>
 
 
-    <div class="modal fade" id="addProductModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content p-4"><h5 class="fw-bold mb-3">Yeni Ürün Ekle</h5><form id="addProductForm"><div class="mb-3"><input type="text" id="newProdName" class="form-control" placeholder="Ürün Adı" required></div><div class="mb-3"><input type="text" id="newProdDesc" class="form-control" placeholder="Açıklama" required></div><button type="submit" class="btn btn-success w-100 fw-bold text-white">Kaydet</button></form></div></div></div>
+    <div class="modal fade" id="addProductModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content p-4">
+                <h5 class="fw-bold mb-3">Yeni Ürün Ekle</h5>
+                <form id="addProductForm">
+                    <div class="mb-3">
+                        <input type="text" id="newProdName" class="form-control" placeholder="Ürün Adı" required>
+                    </div>
+                    <div class="mb-3">
+                        <input type="text" id="newProdDesc" class="form-control" placeholder="Açıklama" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small text-muted">Ürün Resim Linki (URL) - Boş bırakılabilir</label>
+                        <input type="url" id="newProdImg" class="form-control" placeholder="https://ornek.com/resim.jpg">
+                    </div>
+                    <button type="submit" class="btn btn-success w-100 fw-bold text-white">Kaydet</button>
+                </form>
+            </div>
+        </div>
+    </div>
     
     <div class="modal fade" id="addCorporateModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content p-4"><h5 class="fw-bold mb-3">Yeni Bayi Tanımla</h5><form id="addCorporateForm"><div class="mb-3"><input type="text" id="corpCompany" class="form-control" placeholder="Şirket Adı" required></div><div class="mb-3"><input type="text" id="corpName" class="form-control" placeholder="Yetkili" required></div><div class="mb-3"><input type="text" id="corpPhone" class="form-control" placeholder="Telefon" required></div><hr><div class="mb-2"><input type="text" id="corpUser" class="form-control" placeholder="Giriş Kullanıcı Adı" required></div><div class="mb-3"><input type="text" id="corpPass" class="form-control" placeholder="Şifre" required></div><button type="submit" class="btn btn-primary w-100 fw-bold">Firmayı Kaydet</button></form></div></div></div>
     
@@ -375,14 +406,14 @@
 
     <script>
         // ESKİ SİSTEM ALTYAPISINI KONTROL ET VE BAŞLAT
-        if(!localStorage.getItem('system_v5_initialized')) {
-            // Sadece ilk kurulumda burası çalışır, verileri bozmaz
-            localStorage.setItem('system_v5_initialized', 'true');
+        if(!localStorage.getItem('system_v6_initialized')) {
+            localStorage.setItem('system_v6_initialized', 'true');
         }
 
+        // Örnek resim olarak telifsiz gıda ve paket görselleri yerleştirildi
         const defaultProducts = [
-            { id: '1', name: 'Standart Ürün Paketi A', desc: '1000 gr standart paketleme.', icon: 'fa-box', inStock: true },
-            { id: '2', name: 'Özel Üretim Seri B', desc: '700 gr mukavemetli koruma ambalajı.', icon: 'fa-box', inStock: true }
+            { id: '1', name: 'Premium Un Paket A', desc: '1000 gr standart fırınlık un paketleme.', image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400', inStock: true },
+            { id: '2', name: 'Özel Bakliyat Serisi B', desc: '700 gr korumalı ambalajlı kuru gıda.', image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400', inStock: true }
         ];
 
         const defaultCorporates = [
@@ -390,8 +421,8 @@
         ];
 
         const defaultOrders = [
-            { id: 'o1', company: 'Örnek Dağıtım Marketleri', product: 'Standart Ürün Paketi A', quantity: '150 Paket', note: 'İlk sevkiyat dönemi teslim.', status: 'Hazırlanıyor' },
-            { id: 'o2', company: 'Örnek Dağıtım Marketleri', product: 'Özel Üretim Seri B', quantity: '40 Koli', note: 'Acil teslimat kurye bekliyor.', status: 'Hazır' }
+            { id: 'o1', company: 'Örnek Dağıtım Marketleri', product: 'Premium Un Paket A', quantity: '150 Paket', note: 'İlk sevkiyat dönemi teslim.', status: 'Hazırlanıyor' },
+            { id: 'o2', company: 'Örnek Dağıtım Marketleri', product: 'Özel Bakliyat Serisi B', quantity: '40 Koli', note: 'Acil teslimat kurye bekliyor.', status: 'Hazır' }
         ];
 
         let products = JSON.parse(localStorage.getItem('ym_products')) || defaultProducts;
@@ -418,9 +449,21 @@
             const grid = document.getElementById('client-products-grid');
             if(!grid) return; grid.innerHTML = '';
             products.forEach(p => {
-                const col = document.createElement('div'); col.className = 'col-6 col-md-4';
+                const col = document.createElement('div'); col.className = 'col-12 col-sm-6 col-md-4';
                 const badge = p.inStock ? `<span class="badge bg-success small">Stokta Var</span>` : `<span class="badge bg-danger small">Tükendi</span>`;
-                col.innerHTML = `<div class="card h-100 product-card shadow-sm border-0"><div class="icon-wrapper"><i class="fa-solid ${p.icon} fa-2x"></i></div><div class="card-body p-2 text-center"><h6>${p.name}</h6><p class="text-muted small">${p.desc}</p>${badge}</div></div>`;
+                
+                // Resim kontrolü (Eğer link varsa resmi yükler yoksa şık bir kutu ikonu basar)
+                const imgTag = p.image ? `<img src="${p.image}" alt="${p.name}">` : `<i class="fa-solid fa-box fa-3x"></i>`;
+                
+                col.innerHTML = `
+                    <div class="card h-100 product-card shadow-sm border-0">
+                        <div class="img-wrapper">${imgTag}</div>
+                        <div class="card-body p-3 text-center">
+                            <h5 class="fw-bold text-dark mb-1" style="font-size:16px;">${p.name}</h5>
+                            <p class="text-muted small mb-2">${p.desc}</p>
+                            ${badge}
+                        </div>
+                    </div>`;
                 grid.appendChild(col);
             });
         }
@@ -429,7 +472,14 @@
             const tbody = document.getElementById('admin-stock-table-body');
             if(!tbody) return; tbody.innerHTML = '';
             products.forEach(p => {
-                tbody.innerHTML += `<tr><td><b class="small">${p.name}</b></td><td class="small text-muted">${p.desc}</td><td>${p.inStock?'<span class="badge bg-success">Var</span>':'<span class="badge bg-danger">Yok</span>'}</td><td class="text-end"><button class="btn btn-sm btn-dark p-1 px-2" style="font-size:11px;" onclick="toggleStock('${p.id}')">Durum Değiştir</button></td></tr>`;
+                const imgContent = p.image ? `<img src="${p.image}" style="width:40px; height:40px; object-fit:cover; border-radius:4px;">` : `<i class="fa-solid fa-box fa-lg text-secondary"></i>`;
+                tbody.innerHTML += `<tr>
+                    <td>${imgContent}</td>
+                    <td><b class="small">${p.name}</b></td>
+                    <td class="small text-muted">${p.desc}</td>
+                    <td>${p.inStock?'<span class="badge bg-success">Var</span>':'<span class="badge bg-danger">Yok</span>'}</td>
+                    <td class="text-end"><button class="btn btn-sm btn-dark p-1 px-2" style="font-size:11px;" onclick="toggleStock('${p.id}')">Durum Değiştir</button></td>
+                </tr>`;
             });
         }
 
@@ -591,7 +641,6 @@
             }
         }
 
-        // SAYFA YÜKLENDİĞİNDE BENİ HATIRLA VERİLERİNİ DOLDUR
         function checkRememberedUser() {
             const isChecked = localStorage.getItem('remembered_check');
             if (isChecked === 'true') {
@@ -616,9 +665,16 @@
             switchCorpTab('tab-corp-orders');
         });
 
+        // ÜRÜN EKLEME FORMUNA RESİM URL ALANI ENTEGRASYONU
         document.getElementById('addProductForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            products.push({ id: 'p_'+Date.now(), name: document.getElementById('newProdName').value, desc: document.getElementById('newProdDesc').value, icon: 'fa-box', inStock: true });
+            products.push({ 
+                id: 'p_'+Date.now(), 
+                name: document.getElementById('newProdName').value, 
+                desc: document.getElementById('newProdDesc').value, 
+                image: document.getElementById('newProdImg').value || "", 
+                inStock: true 
+            });
             saveToLocalStorage(); renderAll(); document.getElementById('addProductForm').reset();
             closeModal('addProductModal');
         });
@@ -686,7 +742,6 @@
             document.getElementById('service-panel').style.display = 'none';
             document.getElementById('client-interface').style.display = 'block';
             
-            // Çıkış yapıldığında şifre temizlenir ama beni hatırla aktifse kullanıcı adı kalır
             document.getElementById('password').value = '';
             checkRememberedUser();
             
@@ -701,5 +756,3 @@
     </script>
 </body>
 </html>
-
-```
