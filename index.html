@@ -388,11 +388,11 @@
                         <input type="text" id="newProdDesc" class="form-control" placeholder="Açıklama" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label small text-muted">Ürün Resim Linki (URL) - Boş bırakılabilir</label>
-                        <input type="url" id="newProdImg" class="form-control" placeholder="https://ornek.com/resim.jpg">
+                        <label class="form-label small fw-bold text-success"><i class="fa-solid fa-image me-1"></i> Ürün Fotoğrafı Seçin</label>
+                        <input type="file" id="newProdImgFile" class="form-control" accept="image/*">
                     </div>
-                    <button type="submit" class="btn btn-success w-100 fw-bold text-white">Kaydet</button>
                 </form>
+                <button type="button" class="btn btn-success w-100 fw-bold text-white" onclick="handleNewProductSubmit()">Kaydet</button>
             </div>
         </div>
     </div>
@@ -405,14 +405,13 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        // ESKİ SİSTEM ALTYAPISINI KONTROL ET VE BAŞLAT
-        if(!localStorage.getItem('system_v6_initialized')) {
-            localStorage.setItem('system_v6_initialized', 'true');
+        if(!localStorage.getItem('system_v7_initialized')) {
+            localStorage.setItem('system_v7_initialized', 'true');
         }
 
-        // Örnek resim olarak telifsiz gıda ve paket görselleri yerleştirildi
+        // İlk açılışta güzel görünmesi için örnek varsayılan görseller (Değiştirilebilir)
         const defaultProducts = [
-            { id: '1', name: 'Premium Un Paket A', desc: '1000 gr standart fırınlık un paketleme.', image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400', inStock: true },
+            { id: '1', name: 'Premium Un Paket A', desc: '1000 gr fırınlık un paketleme.', image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400', inStock: true },
             { id: '2', name: 'Özel Bakliyat Serisi B', desc: '700 gr korumalı ambalajlı kuru gıda.', image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400', inStock: true }
         ];
 
@@ -452,7 +451,6 @@
                 const col = document.createElement('div'); col.className = 'col-12 col-sm-6 col-md-4';
                 const badge = p.inStock ? `<span class="badge bg-success small">Stokta Var</span>` : `<span class="badge bg-danger small">Tükendi</span>`;
                 
-                // Resim kontrolü (Eğer link varsa resmi yükler yoksa şık bir kutu ikonu basar)
                 const imgTag = p.image ? `<img src="${p.image}" alt="${p.name}">` : `<i class="fa-solid fa-box fa-3x"></i>`;
                 
                 col.innerHTML = `
@@ -620,7 +618,6 @@
             if (isSuccess) {
                 err.classList.add('d-none');
                 
-                // BENI HATIRLA YÖNETİMİ
                 if (rememberMe) {
                     localStorage.setItem('remembered_user', u);
                     localStorage.setItem('remembered_type', type);
@@ -665,19 +662,51 @@
             switchCorpTab('tab-corp-orders');
         });
 
-        // ÜRÜN EKLEME FORMUNA RESİM URL ALANI ENTEGRASYONU
-        document.getElementById('addProductForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            products.push({ 
-                id: 'p_'+Date.now(), 
-                name: document.getElementById('newProdName').value, 
-                desc: document.getElementById('newProdDesc').value, 
-                image: document.getElementById('newProdImg').value || "", 
-                inStock: true 
-            });
-            saveToLocalStorage(); renderAll(); document.getElementById('addProductForm').reset();
-            closeModal('addProductModal');
-        });
+        // BİLGİSAYARDAN VEYA TELEFONDAN RESİM SEÇİLİP YÜKLENMESİNİ SAĞLAYAN ASENKRON FONKSİYON
+        function handleNewProductSubmit() {
+            const name = document.getElementById('newProdName').value.trim();
+            const desc = document.getElementById('newProdDesc').value.trim();
+            const fileInput = document.getElementById('newProdImgFile');
+
+            if (!name || !desc) {
+                alert("Lütfen ürün adı ve açıklama alanlarını doldurun.");
+                return;
+            }
+
+            const file = fileInput.files[0];
+            
+            if (file) {
+                // Eğer bir dosya seçildiyse base64 formatına çevirip yerel hafızaya kaydeder
+                const reader = new FileReader();
+                reader.onloadend = function() {
+                    products.push({
+                        id: 'p_' + Date.now(),
+                        name: name,
+                        desc: desc,
+                        image: reader.result, // Resmin kendisi buraya kaydedilir
+                        inStock: true
+                    });
+                    saveToLocalStorage();
+                    renderAll();
+                    document.getElementById('addProductForm').reset();
+                    closeModal('addProductModal');
+                };
+                reader.readAsDataURL(file);
+            } else {
+                // Dosya seçilmediyse resimsiz (varsayılan kutu ikonuyla) ekler
+                products.push({
+                    id: 'p_' + Date.now(),
+                    name: name,
+                    desc: desc,
+                    image: "",
+                    inStock: true
+                });
+                saveToLocalStorage();
+                renderAll();
+                document.getElementById('addProductForm').reset();
+                closeModal('addProductModal');
+            }
+        }
 
         document.getElementById('addCorporateForm').addEventListener('submit', function(e) {
             e.preventDefault();
