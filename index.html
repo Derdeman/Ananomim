@@ -480,7 +480,13 @@
             const tbody = document.getElementById('orders-table-body');
             if(!tbody) return; tbody.innerHTML = '';
             orders.forEach(o => {
-                let badgeColor = o.status === 'Hazır (Teslimata Uygun)' ? 'bg-success' : 'bg-warning text-dark';
+                let badgeColor = 'bg-warning text-dark';
+                if(o.status === 'Hazır (Teslimata Uygun)') {
+                    badgeColor = 'bg-primary text-white';
+                } else if(o.status === 'Teslim Edildi') {
+                    badgeColor = 'bg-success text-white';
+                }
+                
                 tbody.innerHTML += `<tr>
                     <td class="fw-bold small text-primary">${o.company}</td>
                     <td class="small">${o.product}</td>
@@ -489,7 +495,8 @@
                     <td><span class="badge ${badgeColor}">${o.status}</span></td>
                     <td class="text-end">
                         <button class="btn btn-xs btn-warning p-1 text-dark fw-bold mb-1 mb-md-0" style="font-size:10px;" onclick="changeOrderStatus('${o.id}', 'Hazırlanıyor')">Hazırlanıyor</button>
-                        <button class="btn btn-xs btn-success p-1 text-white fw-bold" style="font-size:10px;" onclick="changeOrderStatus('${o.id}', 'Hazır (Teslimata Uygun)')">Hazır</button>
+                        <button class="btn btn-xs btn-primary p-1 text-white fw-bold mb-1 mb-md-0" style="font-size:10px;" onclick="changeOrderStatus('${o.id}', 'Hazır (Teslimata Uygun)')">Hazır</button>
+                        <button class="btn btn-xs btn-success p-1 text-white fw-bold" style="font-size:10px;" onclick="changeOrderStatus('${o.id}', 'Teslim Edildi')"><i class="fa-solid fa-check"></i> Teslim Et</button>
                     </td>
                 </tr>`;
             });
@@ -520,7 +527,12 @@
             const tbody = document.getElementById('my-orders-table-body');
             tbody.innerHTML = '';
             orders.filter(o => o.company === currentLoggedCorporate.company).forEach(o => {
-                let badgeColor = o.status === 'Hazır (Teslimata Uygun)' ? 'bg-success' : 'bg-warning text-dark';
+                let badgeColor = 'bg-warning text-dark';
+                if(o.status === 'Hazır (Teslimata Uygun)') {
+                    badgeColor = 'bg-primary text-white';
+                } else if(o.status === 'Teslim Edildi') {
+                    badgeColor = 'bg-success text-white';
+                }
                 tbody.innerHTML += `<tr><td class="fw-bold small">${o.product}</td><td class="small fw-bold text-success">${o.quantity}</td><td class="small text-muted">${o.note}</td><td><span class="badge ${badgeColor}">${o.status}</span></td></tr>`;
             });
 
