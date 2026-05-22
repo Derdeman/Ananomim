@@ -1,3 +1,14 @@
+İstediğin kdv dahil sepet mantığını sisteme entegre ettim.
+
+**Yapılan Güncellemeler:**
+
+* **KDV Hesaplama Modülü:** Sipariş formunda veya sepette ürünlerin fiyatı üzerinden **%10 KDV** otomatik olarak hesaplanır (Sektörel unlu mamul kdv oranı baz alınmıştır).
+* **Dinamik Sepet Özeti:** Bayi, ürünü seçip miktarı girdiğinde **Ara Toplam**, **KDV Tutarı (%10)** ve **Genel Toplam (KDV Dahil)** alanlarını anlık olarak net bir şekilde görür.
+* **Geçmiş Siparişlerde Detaylandırma:** Bayinin verdiği eski siparişler ve yöneticinin gördüğü paneldeki sipariş tutarları da KDV dahil olacak şekilde güncellendi.
+
+Tamamen anonim, fiyat ve KDV entegrasyonlu güncel tek parça HTML kodun aşağıdadır:
+
+```html
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -901,3 +912,5 @@
     </script>
 </body>
 </html>
+
+```
