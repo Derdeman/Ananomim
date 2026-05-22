@@ -1,35 +1,1132 @@
-# Verileri geçici olarak tutacak boş bir liste (Bellekte saklanır)
-kullanici_listesi = []
+sana bir kod vercem buna yönetici paneline giriş yapmak için şifre ve isim oluştur ve ekle <!DOCTYPE html>
 
-def kullanici_ekle(isim, eposta):
-    """Yeni bir kullanıcıyı listeye ekler."""
-    yeni_kullanici = {
-        "id": len(kullanici_listesi) + 1,
-        "isim": isim,
-        "eposta": eposta
-    }
-    kullanici_listesi.append(yeni_kullanici)
-    print(f" Başarılı: {isim} sisteme eklendi.")
+<html lang="tr">
 
-def kullanicilari_listele():
-    """Listede kayıtlı tüm kullanıcıları ekrana yazar."""
-    if not kullanici_listesi:
-        print("Sistemde henüz kayıtlı kullanıcı yok.")
-        return
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Sipariş & Stok Yönetim Sistemi (Bulut Senkronizasyonlu)</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
     
-    print("\n--- Kayıtlı Kullanıcılar ---")
-    for kullanici in kullanici_listesi:
-        print(f"ID: {kullanici['id']} | İsim: {kullanici['isim']} | E-posta: {kullanici['eposta']}")
-    print("----------------------------\n")
 
-# ---- KODU TEST EDELİM ----
+    <style>
 
-# 1. Henüz kimse yokken listeyi kontrol edelim
-kullanicilari_listele()
+        body {
 
-# 2. Yeni kullanıcılar ekleyelim
-kullanici_ekle("Ahmet Yılmaz", "ahmet@mail.com")
-kullanici_ekle("Zeynep Kaya", "zeynep@mail.com")
+            font-family: 'Poppins', sans-serif;
 
-# 3. Kullanıcıları tekrar listeleyelim
-kullanicilari_listele()
+            color: #333;
+
+            background-color: #f8fafc;
+
+            margin: 0;
+
+            padding: 0;
+
+        }
+
+        .text-prime { color: #1e40af !important; }
+
+        .bg-prime { background-color: #1e40af !important; }
+
+        
+
+        .navbar-nav .nav-link {
+
+            transition: color 0.3s ease;
+
+        }
+
+        .navbar-nav .nav-link:hover, .navbar-nav .nav-link.active {
+
+            color: #1e40af !important;
+
+        }
+
+        .hero-section {
+
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+
+            padding: 60px 0;
+
+            color: white;
+
+            text-align: center;
+
+        }
+
+        .product-card {
+
+            border-radius: 12px;
+
+            border: 1px solid #e2e8f0;
+
+            background: white;
+
+            overflow: hidden;
+
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+
+            transition: transform 0.2s, box-shadow 0.2s;
+
+        }
+
+        .product-card:hover {
+
+            transform: translateY(-5px);
+
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+
+        }
+
+        .product-card .img-wrapper {
+
+            height: 180px;
+
+            background-color: #f1f5f9;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            color: #94a3b8;
+
+            overflow: hidden;
+
+            border-bottom: 1px solid #e2e8f0;
+
+        }
+
+        .product-card .img-wrapper img {
+
+            width: 100%;
+
+            height: 100%;
+
+            object-fit: cover;
+
+        }
+
+        
+
+        .preview-box {
+
+            width: 100%;
+
+            height: 150px;
+
+            border: 2px dashed #cbd5e1;
+
+            border-radius: 8px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            overflow: hidden;
+
+            background-color: #f8fafc;
+
+            color: #64748b;
+
+        }
+
+        .preview-box img {
+
+            width: 100%;
+
+            height: 100%;
+
+            object-fit: contain;
+
+        }
+
+
+
+        /* SYNC LOADING INDICATION ELEMENT */
+
+        #sync-indicator {
+
+            position: fixed;
+
+            bottom: 20px;
+
+            right: 20px;
+
+            z-index: 9999;
+
+            background: #1e293b;
+
+            color: #fff;
+
+            padding: 8px 15px;
+
+            border-radius: 30px;
+
+            font-size: 12px;
+
+            display: none;
+
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+
+        }
+
+
+
+        /* ARAYÜZ GÖRÜNÜRLÜK KONTROLLERİ */
+
+        #client-interface { display: block; }
+
+        #admin-panel { display: none; background-color: #f4f6f9; min-height: 100vh; }
+
+        #corporate-panel { display: none; background-color: #eff6ff; min-height: 100vh; }
+
+        #service-panel { display: none; background-color: #fffbeb; min-height: 100vh; }
+
+
+
+        .sidebar, .corp-sidebar, .service-sidebar {
+
+            background-color: #1e293b;
+
+            color: white;
+
+            padding: 20px 15px;
+
+        }
+
+        .corp-sidebar { background-color: #1e3a8a; }
+
+        .service-sidebar { background-color: #d97706; }
+
+        
+
+        @media (min-width: 768px) {
+
+            .sidebar, .corp-sidebar, .service-sidebar { min-height: 100vh; }
+
+        }
+
+        .sidebar .nav-link, .corp-sidebar .nav-link, .service-sidebar .nav-link {
+
+            color: #cbd5e1;
+
+            padding: 12px 20px;
+
+            border-radius: 8px;
+
+            margin-bottom: 5px;
+
+            cursor: pointer;
+
+            display: block;
+
+            text-decoration: none;
+
+        }
+
+        .sidebar .nav-link:hover, .sidebar .nav-link.active { background-color: #334155; color: white !important; }
+
+        .corp-sidebar .nav-link:hover, .corp-sidebar .nav-link.active { background-color: #2563eb; color: white !important; }
+
+        .service-sidebar .nav-link:hover, .service-sidebar .nav-link.active { background-color: #b45309; color: white !important; }
+
+        
+
+        .panel-content { display: none; }
+
+        .panel-content.active { display: block; }
+
+    </style>
+
+</head>
+
+<body>
+
+
+
+    <div id="sync-indicator">
+
+        <i class="fa-solid fa-cloud-arrow-down fa-spin me-2"></i> Bulut verileri güncelleniyor...
+
+    </div>
+
+
+
+    <div id="client-interface">
+
+        <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm">
+
+            <div class="container">
+
+                <a class="navbar-brand fw-bold d-flex align-items-center" href="#">
+
+                    <i class="fa-solid fa-cubes text-prime me-2 fs-3"></i>
+
+                    <span class="text-dark">Sipariş Sistemi <span class="text-prime" style="font-size: 12px; display:block; font-weight:400; margin-top: 1px;">Ortak Canlı Altyapı</span></span>
+
+                </a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+
+                    <span class="navbar-toggler-icon"></span>
+
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarNav">
+
+                    <ul class="navbar-nav ms-auto fw-semibold align-items-center pt-2 pt-lg-0">
+
+                        <li class="nav-item"><a class="nav-link active" href="#home">Ana Sayfa</a></li>
+
+                        <li class="nav-item"><a class="nav-link" href="#about">Hakkımızda</a></li>
+
+                        <li class="nav-item"><a class="nav-link" href="#products">Ürün Kataloğu & Stok</a></li>
+
+                        <li class="nav-item ms-lg-3 mt-2 mt-lg-0 w-100 w-lg-auto">
+
+                            <button class="btn fw-bold text-white w-100 bg-prime" data-bs-toggle="modal" data-bs-target="#loginModal">
+
+                                <i class="fa-solid fa-right-to-bracket me-1"></i> Sistem Girişi
+
+                            </button>
+
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </nav>
+
+
+
+        <section id="home" class="hero-section">
+
+            <div class="container">
+
+                <h1 class="display-6 fw-bold mb-3">Güvenilir Ürün Tedariği & Dağıtım Ağı</h1>
+
+                <p class="lead mb-4 text-white-50 small">Tüm telefon ve bilgisayarlarda anlık envanter eşitlemeli akıllı sepet sistemi.</p>
+
+            </div>
+
+        </section>
+
+
+
+        <section id="about" class="py-5 bg-white border-bottom">
+
+            <div class="container">
+
+                <div class="row align-items-center">
+
+                    <div class="col-lg-6 mb-4 mb-lg-0">
+
+                        <span class="fw-bold text-uppercase small text-prime">Canlı Veri Havuzu</span>
+
+                        <h2 class="fw-bold text-dark mt-1 mb-3">Cihazlar Arası Eş Zamanlı Yönetim</h2>
+
+                        <p class="text-muted">Bu sistem, internet bulut veri tabanı altyapısına doğrudan bağlıdır. Bir telefondan yapılan stok güncellemesi, yeni ürün kaydı veya sepet siparişi, sayfayı kullanan diğer tüm cihazlara eş zamanlı olarak iletilir.</p>
+
+                        <p class="text-muted m-0">Gelişmiş sepet modülü sayesinde faturalandırma öncesi yasal %10 KDV oranını dinamik olarak hesaplayabilir, lojistik havuzuna anında veri aktarabilirsiniz.</p>
+
+                    </div>
+
+                    <div class="col-lg-6">
+
+                        <div class="row g-3">
+
+                            <div class="col-6">
+
+                                <div class="p-3 bg-light rounded shadow-sm text-center">
+
+                                    <i class="fa-solid fa-cloud text-prime mb-2 fa-2x"></i>
+
+                                    <h6 class="fw-bold mb-1">Ortak Havuz</h6>
+
+                                    <p class="text-muted small mb-0">Cihaz bağımsız tek veri tabanı</p>
+
+                                </div>
+
+                            </div>
+
+                            <div class="col-6">
+
+                                <div class="p-3 bg-light rounded shadow-sm text-center">
+
+                                    <i class="fa-solid fa-calculator fa-2x text-success mb-2"></i>
+
+                                    <h6 class="fw-bold mb-1">%10 KDV</h6>
+
+                                    <p class="text-muted small mb-0">Yasal mevzuata uygun hesaplama</p>
+
+                                </div>
+
+                            </div>
+
+                            <div class="col-6">
+
+                                <div class="p-3 bg-light rounded shadow-sm text-center">
+
+                                    <i class="fa-solid fa-mobile-screen fa-2x text-primary mb-2"></i>
+
+                                    <h6 class="fw-bold mb-1">Çoklu Cihaz</h6>
+
+                                    <p class="text-muted small mb-0">Her telefondan aynı anlık erişim</p>
+
+                                </div>
+
+                            </div>
+
+                            <div class="col-6">
+
+                                <div class="p-3 bg-light rounded shadow-sm text-center">
+
+                                    <i class="fa-solid fa-truck-moving fa-2x text-danger mb-2"></i>
+
+                                    <h6 class="fw-bold mb-1">Anlık Dağıtım</h6>
+
+                                    <p class="text-muted small mb-0">Lojistik koordinasyon ekranı</p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <section id="products" class="py-5 bg-light">
+
+            <div class="container">
+
+                <div class="row mb-4 align-items-center">
+
+                    <div class="col-md-6">
+
+                        <h3 class="fw-bold text-dark m-0">Ürün Kataloğu</h3>
+
+                    </div>
+
+                    <div class="col-md-6 mt-3 mt-md-0">
+
+                        <div class="input-group">
+
+                            <span class="input-group-text bg-white border-end-0"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
+
+                            <input type="text" id="clientSearchInput" class="form-control border-start-0" placeholder="Ürün adı veya kategori ara..." oninput="renderClientProducts()">
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="row g-4 justify-content-center" id="client-products-grid"></div>
+
+            </div>
+
+        </section>
+
+    </div>
+
+
+
+
+
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+
+        <div class="modal-dialog modal-dialog-centered">
+
+            <div class="modal-content border-0 shadow">
+
+                <div class="modal-header text-white bg-prime">
+
+                    <h5 class="modal-title fw-bold"><i class="fa-solid fa-lock me-2"></i>Sistem Giriş Paneli</h5>
+
+                    <button type="button" class="btn-close btn-close-white" data-bs-close="modal"></button>
+
+                </div>
+
+                <div class="modal-body p-4 bg-white">
+
+                    <div id="loginError" class="alert alert-danger d-none">Hatalı kullanıcı bilgileri!</div>
+
+                    <div class="mb-3">
+
+                        <label class="form-label fw-semibold text-dark">Erişim Türü</label>
+
+                        <select id="loginType" class="form-select">
+
+                            <option value="admin">Sistem Yöneticisi / Merkez</option>
+
+                            <option value="corporate">Kayıtlı Anlaşmalı Firma</option>
+
+                            <option value="service">Lojistik & Dağıtım Görevlisi (servis / 123)</option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label class="form-label fw-semibold text-dark">Kullanıcı Adı</label>
+
+                        <input type="text" id="username" class="form-control text-dark" placeholder="Kullanıcı adınız">
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label class="form-label fw-semibold text-dark">Şifre</label>
+
+                        <input type="password" id="password" class="form-control text-dark" placeholder="••••••••">
+
+                    </div>
+
+                    <button type="button" class="btn w-100 fw-bold py-2 text-white bg-prime" onclick="unifiedLoginEngine()">Sisteme Bağlan</button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+
+
+    <div id="admin-panel">
+
+        <div class="container-fluid px-0">
+
+            <div class="row g-0">
+
+                <div class="col-md-3 col-lg-2 sidebar">
+
+                    <h4 class="text-center fw-bold mb-4" style="color: #60a5fa;"><i class="fa-solid fa-gears me-2"></i>SİSTEM YÖNETİM</h4>
+
+                    <ul class="nav flex-column mb-4">
+
+                        <li class="nav-item"><a class="nav-link active" id="link-stock" onclick="switchAdminTab('tab-stock')"><i class="fa-solid fa-boxes-stacked me-2"></i> Ürün & Stok Yönetimi</a></li>
+
+                        <li class="nav-item"><a class="nav-link" id="link-corporate" onclick="switchAdminTab('tab-corporate')"><i class="fa-solid fa-building me-2"></i> Firma Kayıtları</a></li>
+
+                        <li class="nav-item"><a class="nav-link" id="link-orders" onclick="switchAdminTab('tab-orders')"><i class="fa-solid fa-list-check me-2"></i> Gelen Siparişler</a></li>
+
+                    </ul>
+
+                    <button class="btn btn-danger w-100 fw-bold" onclick="logoutSystem()"><i class="fa-solid fa-right-from-bracket me-1"></i> Oturumu Kapat</button>
+
+                </div>
+
+
+
+                <div class="col-md-9 col-lg-10 p-4">
+
+                    <div id="tab-stock" class="panel-content active">
+
+                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+
+                            <h3 class="fw-bold m-0 text-prime">Merkez Depo & Envanter</h3>
+
+                            <button class="btn text-white fw-bold bg-prime" data-bs-toggle="modal" data-bs-target="#addProductModal" onclick="clearPreview()"><i class="fa-solid fa-plus me-1"></i> Yeni Ürün Tanımla</button>
+
+                        </div>
+
+                        <div class="card border-0 shadow-sm p-3 bg-white">
+
+                            <div class="table-responsive">
+
+                                <table class="table align-middle mb-0">
+
+                                    <thead class="table-dark">
+
+                                        <tr><th>Görsel</th><th>Ürün Detayı</th><th>Kategori</th><th>Birim Fiyat (Matrah)</th><th>Stok Durumu</th><th class="text-end">İşlemler</th></tr>
+
+                                    </thead>
+
+                                    <tbody id="admin-stock-table-body"></tbody>
+
+                                </table>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div id="tab-corporate" class="panel-content">
+
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+
+                            <h3 class="fw-bold text-primary m-0">Kayıtlı Firma Sistem Tanımlamaları</h3>
+
+                            <button class="btn btn-primary fw-bold" data-bs-toggle="modal" data-bs-target="#addCorporateModal">Yeni Firma Ekle</button>
+
+                        </div>
+
+                        <div class="card border-0 shadow-sm p-3 bg-white">
+
+                            <table class="table table-striped align-middle mb-0">
+
+                                <thead class="table-primary"><tr><th>Firma Adı</th><th>Yetkili Sorumlu</th><th>Kullanıcı Adı</th><th>Şifre Kodu</th><th class="text-end">İşlem</th></tr></thead>
+
+                                <tbody id="corporate-table-body"></tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div id="tab-orders" class="panel-content">
+
+                        <h3 class="fw-bold text-dark mb-4">Firma Sipariş Havuzu</h3>
+
+                        <div class="card border-0 shadow-sm p-3 bg-white">
+
+                            <table class="table align-middle mb-0">
+
+                                <thead class="table-warning"><tr><th>Alıcı Firma</th><th>İstenen Ürün</th><th>Miktar</th><th>Hesaplama (Matrah / KDV / Toplam)</th><th>Sevkiyat Durumu</th><th class="text-end">Eylem</th></tr></thead>
+
+                                <tbody id="orders-table-body"></tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <div id="corporate-panel">
+
+        <div class="container-fluid px-0">
+
+            <div class="row g-0">
+
+                <div class="col-md-3 col-lg-2 corp-sidebar">
+
+                    <h4 class="text-center text-white fw-bold mb-2"><i class="fa-solid fa-store me-2"></i>FİRMA ALANI</h4>
+
+                    <p class="text-center text-white-50 small mb-4" id="logged-corp-name">Anlaşmalı Partner</p>
+
+                    <ul class="nav flex-column mb-4">
+
+                        <li class="nav-item"><a class="nav-link active" id="link-corp-orders" onclick="switchCorpTab('tab-corp-orders')"><i class="fa-solid fa-file-invoice me-2"></i> Sipariş Geçmişimiz</a></li>
+
+                        <li class="nav-item"><a class="nav-link" id="link-corp-new" onclick="switchCorpTab('tab-corp-new')"><i class="fa-solid fa-cart-plus me-2"></i> Hızlı Sipariş Formu</a></li>
+
+                    </ul>
+
+                    <button class="btn btn-danger w-100 fw-bold" onclick="logoutSystem()">Çıkış Yap</button>
+
+                </div>
+
+                <div class="col-md-9 col-lg-10 p-4">
+
+                    <div id="tab-corp-orders" class="panel-content active">
+
+                        <h3 class="fw-bold mb-4 text-prime">Kurumsal Cari & Sipariş Kayıtları</h3>
+
+                        <div class="card border-0 shadow-sm p-3 bg-white">
+
+                            <table class="table align-middle mb-0"><thead class="table-success"><tr><th>Sipariş Edilen Ürün</th><th>Miktar</th><th>Mali Detaylar (KDV Dahil)</th><th>Özel Not</th><th>Teslimat Durumu</th></tr></thead><tbody id="my-orders-table-body"></tbody></table>
+
+                        </div>
+
+                    </div>
+
+                    <div id="tab-corp-new" class="panel-content">
+
+                        <h3 class="fw-bold mb-4 text-prime">Akıllı Sepet & Sipariş Oluşturma</h3>
+
+                        <div class="card border-0 shadow-sm p-4 bg-white" style="max-width: 600px;">
+
+                            <form id="corpSelfOrderForm">
+
+                                <div class="mb-3">
+
+                                    <label class="form-label fw-bold">Ürün Seçimi</label>
+
+                                    <select id="corpSelfProductSelect" class="form-select" onchange="calculateOrderTotalPreview()" required></select>
+
+                                </div>
+
+                                <div class="mb-3">
+
+                                    <label class="form-label fw-bold">Talep Edilen Miktar (Adet/Koli)</label>
+
+                                    <input type="number" id="corpSelfQuantity" class="form-control" placeholder="Örn: 250" min="1" oninput="calculateOrderTotalPreview()" required>
+
+                                </div>
+
+                                
+
+                                <div class="mb-3 p-3 bg-light rounded border">
+
+                                    <div class="d-flex justify-content-between small text-secondary mb-1">
+
+                                        <span>Ara Toplam (KDV Hariç Matrah):</span>
+
+                                        <span id="basketSubtotal">0.00 ₺</span>
+
+                                    </div>
+
+                                    <div class="d-flex justify-content-between small text-secondary mb-2">
+
+                                        <span>Hesaplanan KDV (%10):</span>
+
+                                        <span id="basketTax">0.00 ₺</span>
+
+                                    </div>
+
+                                    <hr class="my-2">
+
+                                    <div class="d-flex justify-content-between fw-bold text-dark">
+
+                                        <span>Fatura / Sepet Genel Toplamı:</span>
+
+                                        <span id="basketGrandTotal" class="text-prime">0.00 ₺</span>
+
+                                    </div>
+
+                                </div>
+
+
+
+                                <div class="mb-3">
+
+                                    <label class="form-label fw-bold">Sevkiyat ve Dağıtım Notu</label>
+
+                                    <textarea id="corpSelfNote" class="form-control" rows="3" placeholder="Örn: Sabah teslimatı rica olunur."></textarea>
+
+                                </div>
+
+                                <button type="submit" class="btn text-white w-100 fw-bold bg-prime">Siparişi Onayla ve Gönder</button>
+
+                            </form>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <div id="service-panel">
+
+        <div class="container-fluid px-0">
+
+            <div class="row g-0">
+
+                <div class="col-md-3 col-lg-2 service-sidebar">
+
+                    <h4 class="text-center text-white fw-bold mb-4"><i class="fa-solid fa-truck me-2"></i>LOJİSTİK PANELİ</h4>
+
+                    <button class="btn btn-danger w-100 fw-bold" onclick="logoutSystem()">Sistemden Çık</button>
+
+                </div>
+
+                <div class="col-md-9 col-lg-10 p-4">
+
+                    <h3 class="fw-bold text-warning mb-4"> Dağıtıma Hazır Sevkiyat Listesi</h3>
+
+                    <div class="card border-0 shadow-sm p-3 bg-white">
+
+                        <table class="table align-middle mb-0"><thead class="table-dark"><tr><th>Teslim Alacak Firma</th><th>Ürün Adı</th><th>Miktar</th><th>Yönetim Eylemi</th></tr></thead><tbody id="service-orders-table-body"></tbody></table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+
+
+    <div class="modal fade" id="addProductModal" tabindex="-1" aria-hidden="true">
+
+        <div class="modal-dialog modal-dialog-centered">
+
+            <div class="modal-content p-4 border-0 shadow">
+
+                <div class="d-flex justify-content-between align-items-center mb-3">
+
+                    <h5 class="fw-bold m-0 text-prime">Ürün Kayıt Sistemi</h5>
+
+                    <button type="button" class="btn-close" data-bs-close="modal" id="closeProductModalBtn"></button>
+
+                </div>
+
+                <form id="addProductForm">
+
+                    <div class="mb-3">
+
+                        <label class="form-label small fw-bold">Ürün Adı</label>
+
+                        <input type="text" id="newProdName" class="form-control" placeholder="Örn: Örnek Ürün Paket (1KG)" required>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label small fw-bold">Ürün Grubu</label>
+
+                            <select id="newProdCategory" class="form-select">
+
+                                <option value="A Grubu">A Grubu</option>
+
+                                <option value="B Grubu">B Grubu</option>
+
+                                <option value="C Grubu">C Grubu</option>
+
+                                <option value="Diğer">Diğer</option>
+
+                            </select>
+
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label small fw-bold">Birim Fiyat (KDV Hariç ₺)</label>
+
+                            <input type="number" id="newProdPrice" class="form-control" placeholder="Örn: 85.00" step="0.01" min="0" required>
+
+                        </div>
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label class="form-label small fw-bold">Ürün Açıklaması</label>
+
+                        <input type="text" id="newProdDesc" class="form-control" placeholder="Örn: Ürün detay ve ambalaj bilgisi." required>
+
+                    </div>
+
+                    
+
+                    <div class="mb-3">
+
+                        <label class="form-label small fw-bold text-success"><i class="fa-solid fa-camera me-1"></i> Ürün Görseli</label>
+
+                        <input type="file" id="newProdImgFile" class="form-control mb-2" accept="image/*" onchange="previewAndOptimizeImage(event)">
+
+                        <div class="preview-box" id="imagePreviewContainer">
+
+                            <span id="previewPlaceholder"><i class="fa-solid fa-image fa-2x d-block mb-1"></i>Görsel Dosyası Seçilmedi</span>
+
+                        </div>
+
+                    </div>
+
+                    
+
+                    <button type="button" class="btn text-white w-100 fw-bold py-2 bg-prime" onclick="submitOptimizedProduct()">Ürünü Envantere Ekle</button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="modal fade" id="addCorporateModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content p-4"><h5 class="fw-bold mb-3">Yeni Firma Cari Tanımlama</h5><form id="addCorporateForm"><div class="mb-3"><input type="text" id="corpCompany" class="form-control" placeholder="Firma Ticari Unvanı" required></div><div class="mb-3"><input type="text" id="corpName" class="form-control" placeholder="Firma Yetkilisi Adı Soyadı" required></div><div class="mb-2"><input type="text" id="corpUser" class="form-control" placeholder="Sistem Giriş Kullanıcı Adı" required></div><div class="mb-3"><input type="text" id="corpPass" class="form-control" placeholder="Şifre Belirleyin" required></div><button type="submit" class="btn btn-success w-100 fw-bold">Firma Cari Kartını Oluştur</button></form></div></div></div>
+
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+
+    <script>
+
+        let globalOptimizedImageBase64 = "";
+
+        const TAX_RATE = 0.10;
+
+
+
+        // KVdb.io VERİ HAVUZU API LİNKLERİ
+
+        const BUCKET_ID = "bucket_anon_gida_sync_v2"; 
+
+        const API_BASE_URL = `https://kvdb.io/4yZpUaCqFj2s7uE9HkmrBv/`; 
+
+
+
+        const defaultProducts = [
+
+            { id: '1', name: 'Örnek Gıda Paket Ürünü (1 KG)', category: 'A Grubu', desc: 'Standart vakumlu paket envanter kaydı.', price: 95.00, image: '', inStock: true },
+
+            { id: '2', name: 'Premium Koli Ürünü', category: 'B Grubu', desc: 'Sevkiyata hazır standart ambalajlı ürün grubu.', price: 140.00, image: '', inStock: true }
+
+        ];
+
+        const defaultCorporates = [
+
+            { id: 'c1', company: 'Örnek Dağıtım Pazarlama Ltd.', name: 'Ahmet Yılmaz', user: 'firma_kullanici', pass: '1234' }
+
+        ];
+
+        const defaultOrders = [
+
+            { id: 'o1', company: 'Örnek Dağıtım Pazarlama Ltd.', product: 'Örnek Gıda Paket Ürünü (1 KG)', quantity: 100, price: 95.00, subtotal: 9500.00, tax: 950.00, total: 10450.00, note: 'Merkez depo teslimatı.', status: 'Hazırlanıyor' }
+
+        ];
+
+
+
+        let products = [...defaultProducts];
+
+        let corporateAccounts = [...defaultCorporates];
+
+        let orders = [...defaultOrders];
+
+        let currentLoggedCorporate = null;
+
+
+
+        // BULUTTAN VERİ ÇEKME FONKSİYONU
+
+        async function fetchFromCloud(isBackground = false) {
+
+            if (!isBackground) showSyncIndicator(true);
+
+            try {
+
+                const response = await fetch(`${API_BASE_URL}${BUCKET_ID}`);
+
+                if (response.ok) {
+
+                    const cloudData = await response.json();
+
+                    if (cloudData.products) products = cloudData.products;
+
+                    if (cloudData.corporates) corporateAccounts = cloudData.corporates;
+
+                    if (cloudData.orders) orders = cloudData.orders;
+
+                } else if (!isBackground) {
+
+                    await pushToCloud();
+
+                }
+
+            } catch (error) {
+
+                console.log("Bulut verisi alınamadı, yerel bellek kullanılıyor.", error);
+
+            }
+
+            if (!isBackground) showSyncIndicator(false);
+
+            renderAll();
+
+        }
+
+
+
+        // BULUTA VERİ YÜKLEME FONKSİYONU
+
+        async function pushToCloud() {
+
+            showSyncIndicator(true);
+
+            try {
+
+                const dataPayload = { products, corporates: corporateAccounts, orders };
+
+                await fetch(`${API_BASE_URL}${BUCKET_ID}`, {
+
+                    method: 'POST',
+
+                    headers: { 'Content-Type': 'application/json' },
+
+                    body: JSON.stringify(dataPayload)
+
+                });
+
+            } catch (error) {
+
+                console.error("Bulut senkronizasyon hatası:", error);
+
+            }
+
+            showSyncIndicator(false);
+
+        }
+
+
+
+        function showSyncIndicator(show) {
+
+            const ind = document.getElementById('sync-indicator');
+
+            if(ind) ind.style.display = show ? 'block' : 'none';
+
+        }
+
+
+
+        async function saveAndSync() {
+
+            renderAll();
+
+            await pushToCloud();
+
+        }
+
+
+
+        function renderAll() {
+
+            renderClientProducts();
+
+            renderAdminStockTable();
+
+            renderCorporateTable();
+
+            renderOrdersTable();
+
+            renderServiceOrdersTable();
+
+            if (currentLoggedCorporate) {
+
+                renderMyOrdersTable();
+
+                populateCorpProductSelect();
+
+            }
+
+        }
+
+
+
+        function previewAndOptimizeImage(event) {
+
+            const file = event.target.files[0];
+
+            const container = document.getElementById('imagePreviewContainer');
+
+            if (!file) { clearPreview(); return; }
+
+
+
+            container.innerHTML = `<div class="spinner-border spinner-border-sm text-primary" role="status"></div><span class="ms-2 small">İşleniyor...</span>`;
+
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+
+                const img = new Image();
+
+                img.onload = function() {
+
+                    const max_width = 300; const max_height = 300;
+
+                    let width = img.width; let height = img.height;
+
+                    if (width > height) { if (width > max_width) { height *= max_width / width; width = max_width; } } 
+
+                    else { if (height > max_height) { width *= max_height / height; height = max_height; } }
+
+                    const canvas = document.createElement('canvas'); canvas.width = width; canvas.height = height;
+
+                    const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, width, height);
+
+                    globalOptimizedImageBase64 = canvas.toDataURL('image/jpeg', 0.6);
+
+                    container.innerHTML = `<img src="${globalOptimizedImageBase64}" alt="Önizleme">`;
+
+                };
+
+                img.src = e.target.result;
+
+            };
+
+            reader.readAsDataURL(file);
+
+        }
+
+
+
+        function clearPreview() {
+
+            globalOptimizedImageBase64 = "";
+
+            document.getElementById('imagePreviewContainer').innerHTML = `<span id="previewPlaceholder"><i class="fa-solid fa-image fa-2x d-block mb-1"></i>Görsel Dosyası Seçilmedi</span>`;
+
+            document.getElementById('addProductForm').reset();
+
+        }
+
+
+
+        // YENİ ÜRÜN EKLEME MOTORU
+
+        async function submitOptimizedProduct() {
+
+            const name = document.getElementById('newProdName').value;
+
+            const category = document.getElementById('newPro 
+
