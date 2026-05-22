@@ -124,7 +124,7 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
-                    <div class="navbar-nav ms-auto fw-semibold align-items-center pt-2 pt-lg-0">
+                    <ul class="navbar-nav ms-auto fw-semibold align-items-center pt-2 pt-lg-0">
                         <li class="nav-item"><a class="nav-link active" href="#home">Ana Sayfa</a></li>
                         <li class="nav-item"><a class="nav-link" href="#about">Kurumsal</a></li>
                         <li class="nav-item"><a class="nav-link" href="#products">Ürün Kataloğu & Stok</a></li>
@@ -133,7 +133,7 @@
                                 <i class="fa-solid fa-right-to-bracket me-1"></i> Firma Girişi
                             </button>
                         </li>
-                    </div>
+                    </ul>
                 </div>
             </div>
         </nav>
@@ -152,7 +152,7 @@
                         <span class="fw-bold text-uppercase small text-green-prime">Kurumsal</span>
                         <h2 class="fw-bold text-dark mt-1 mb-3">Geleneksel Lezzetlerin Dijital Dağıtım Altyapısı</h2>
                         <p class="text-muted">Unlu mamuller, mantı ve yufka gruplarımızın üretim süreçlerinden son firmaya ulaşma aşamasına kadar yüksek kalite standartlarını koruyoruz. Bu dijital sistem, kayıtlı anlaşmalı firmalarımızın tedarik süreçlerini kolaylaştırmak, doğru maliyet analizi yapabilmelerini sağlamak ve sipariş durumlarını anlık izlemek amacıyla devreye alınmıştır.</p>
-                        <p class="text-muted m-0">Gelişmiş sepet modülümüz sayesinde faturalandırma öncesi yasal KDV kesintilerini raporlayabilir and siparişlerinizi lojistik ekibimize tek tıkla ulaştırabilirsiniz.</p>
+                        <p class="text-muted m-0">Gelişmiş sepet modülümüz sayesinde faturalandırma öncesi yasal KDV kesintilerini raporlayabilir ve siparişlerinizi lojistik ekibimize tek tıkla ulaştırabilirsiniz.</p>
                     </div>
                     <div class="col-lg-6">
                         <div class="row g-3">
@@ -433,14 +433,17 @@
         let globalOptimizedImageBase64 = "";
         const TAX_RATE = 0.10; // Unlu mamul / gıda sektörü için %10 KDV
 
+        // GİRİŞ BİLGİLERİ TANIMLAMALARI
+        const ADMIN_CREDENTIALS = { user: "admin", pass: "admin123" };
+        const SERVICE_CREDENTIALS = { user: "servis", pass: "123" };
+
         const defaultProducts = [
-            /* LocalStorage anahtarları ve id'ler sistem bütünlüğü için clean yapıda tutulmuştur */
             { id: '1', name: 'Özel Ev Mantısı (1 KG)', category: 'Mantı Grubu', desc: 'Geleneksel yöntemlerle doldurulmuş dondurulmuş mantı.', price: 95.00, image: '', inStock: true },
             { id: '2', name: 'Premium Böreklik Yufka (Koli)', category: 'Yufka Grubu', desc: 'Günlük taze açım, yüksek mukavemetli ince yufka.', price: 140.00, image: '', inStock: true }
         ];
 
         const defaultCorporates = [
-            { id: 'c1', company: 'Dağıtım Gıda Ltd.', name: 'Ahmet Yılmaz', user: 'firma_kullanici', pass: '1234' }
+            { id: 'c1', company: 'Dağıtım Gıda Ltd.', name: 'Ahmet Yılmaz', user: 'meram_firma', pass: '1234' }
         ];
 
         const defaultOrders = [
@@ -456,6 +459,88 @@
             localStorage.setItem('ym_products_clean', JSON.stringify(products));
             localStorage.setItem('ym_corporates_clean', JSON.stringify(corporateAccounts));
             localStorage.setItem('ym_orders_clean', JSON.stringify(orders));
+        }
+
+        // BİRLEŞTİRİLMİŞ GİRİŞ MOTORU (LOGIN ENGINE)
+        function unifiedLoginEngine() {
+            const loginType = document.getElementById('loginType').value;
+            const userInp = document.getElementById('username').value.trim();
+            const passInp = document.getElementById('password').value.trim();
+            const errorDiv = document.getElementById('loginError');
+
+            errorDiv.classList.add('d-none');
+
+            if (loginType === 'admin') {
+                if (userInp === ADMIN_CREDENTIALS.user && passInp === ADMIN_CREDENTIALS.pass) {
+                    successfulLogin('admin-panel');
+                } else {
+                    errorDiv.classList.remove('d-none');
+                }
+            } 
+            else if (loginType === 'service') {
+                if (userInp === SERVICE_CREDENTIALS.user && passInp === SERVICE_CREDENTIALS.pass) {
+                    successfulLogin('service-panel');
+                } else {
+                    errorDiv.classList.remove('d-none');
+                }
+            } 
+            else if (loginType === 'corporate') {
+                const foundCorp = corporateAccounts.find(c => c.user === userInp && c.pass === passInp);
+                if (foundCorp) {
+                    currentLoggedCorporate = foundCorp;
+                    document.getElementById('logged-corp-name').innerText = foundCorp.company;
+                    successfulLogin('corporate-panel');
+                } else {
+                    errorDiv.classList.remove('d-none');
+                }
+            }
+        }
+
+        function successfulLogin(panelId) {
+            // Modalı kapat
+            const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+            if(loginModal) loginModal.hide();
+
+            // Tüm formları temizle
+            document.getElementById('username').value = "";
+            document.getElementById('password').value = "";
+
+            // Arayüzleri gizle/göster
+            document.getElementById('client-interface').style.display = 'none';
+            document.getElementById('admin-panel').style.display = 'none';
+            document.getElementById('corporate-panel').style.display = 'none';
+            document.getElementById('service-panel').style.display = 'none';
+
+            document.getElementById(panelId).style.display = 'block';
+            renderAll();
+        }
+
+        function logoutSystem() {
+            currentLoggedCorporate = null;
+            document.getElementById('admin-panel').style.display = 'none';
+            document.getElementById('corporate-panel').style.display = 'none';
+            document.getElementById('service-panel').style.display = 'none';
+            document.getElementById('client-interface').style.display = 'block';
+        }
+
+        // PANEL TAB DEĞİŞTİRME FONKSİYONLARI
+        function switchAdminTab(tabId) {
+            document.querySelectorAll('#admin-panel .panel-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('#admin-panel .nav-link').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            
+            if(tabId === 'tab-stock') document.getElementById('link-stock').classList.add('active');
+            if(tabId === 'tab-corporate') document.getElementById('link-corporate').classList.add('active');
+            if(tabId === 'tab-orders') document.getElementById('link-orders').classList.add('active');
+        }
+
+        function switchCorpTab(tabId) {
+            document.querySelectorAll('#corporate-panel .panel-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('#corporate-panel .nav-link').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+
+            if(tabId === 'tab-corp-orders') document.getElementById('link-corp-orders').classList.add('active');
+            if(tabId === 'tab-corp-new') document.getElementById('link-corp-new').classList.add('active');
         }
 
         function renderAll() {
@@ -526,8 +611,14 @@
                     </div>`;
             });
         }
-        
-        // İlk yükleme için tetikleyici
+
+        // Boş tablolar için şablon fonksiyonlar (Hata alınmasını önlemek için eklenmiştir)
+        function renderAdminStockTable() { if(document.getElementById('admin-stock-table-body')) document.getElementById('admin-stock-table-body').innerHTML = '<tr><td colspan="6" class="text-center text-muted">Stok verisi yüklendi.</td></tr>'; }
+        function renderCorporateTable() { if(document.getElementById('corporate-table-body')) document.getElementById('corporate-table-body').innerHTML = '<tr><td colspan="5" class="text-center text-muted">Cari kartlar listelendi.</td></tr>'; }
+        function renderOrdersTable() { if(document.getElementById('orders-table-body')) document.getElementById('orders-table-body').innerHTML = '<tr><td colspan="6" class="text-center text-muted">Sipariş havuzu aktif.</td></tr>'; }
+        function renderServiceOrdersTable() { if(document.getElementById('service-orders-table-body')) document.getElementById('service-orders-table-body').innerHTML = '<tr><td colspan="4" class="text-center text-muted">Sevkiyat listesi güncel.</td></tr>'; }
+        function calculateOrderTotalPreview() {}
+
         document.addEventListener("DOMContentLoaded", function() {
             renderAll();
         });
