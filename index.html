@@ -1,479 +1,326 @@
-<script>
-// =========================================================================
-// 1. GLOBAL VERİ MODELİ & INITIALIZATION (BAŞLANGIÇ VERİLERİ)
-// =========================================================================
-const defaultState = {
-    products: [
-        { id: 1, name: "El Açması Böreklik Yufka", group: "Yufka", price: 45, stock: 250, img: "" },
-        { id: 2, name: "Geleneksel Tel Kadayıf", group: "Kadayıf", price: 60, stock: 180, img: "" },
-        { id: 3, name: "Ev Usulü Üçgen Yufka", group: "Yufka", price: 35, stock: 400, img: "" }
-    ],
-    corporates: [
-        { id: 101, title: "Meram Gıda Limited", contact: "Ahmet Yılmaz", user: "meramgida", pass: "1234" },
-        { id: 102, title: "Anadolu Süpermarket", contact: "Mehmet Kaya", user: "anadolu", pass: "4321" }
-    ],
-    logistics: [
-        { id: 201, name: "Mustafa Demir", role: "Şehir İçi Dağıtım", user: "mustafa", pass: "1111" },
-        { id: 202, name: "Can Arslan", role: "Çevre İlçeler Lojistik", user: "can", pass: "2222" }
-    ],
-    admins: [
-        { id: 1, name: "Fatih Sultan (Merkez)", role: "Süper Admin", user: "admin", pass: "admin42" }
-    ],
-    orders: [
-        { id: 5001, corpId: 101, corpTitle: "Meram Gıda Limited", productId: 1, productName: "El Açması Böreklik Yufka", quantity: 50, total: 2475, driverId: 201, driverName: "Mustafa Demir", status: "Hazırlanıyor" }
-    ]
-};
-
-// LocalStorage Kontrolü ve Yükleme
-function getSystemData() {
-    let data = localStorage.getItem("meram_automation_db");
-    if (!data) {
-        localStorage.setItem("meram_automation_db", JSON.stringify(defaultState));
-        return defaultState;
-    }
-    return JSON.parse(data);
-}
-
-function saveSystemData(data) {
-    localStorage.setItem("meram_automation_db", JSON.stringify(data));
-}
-
-// Global Oturum Değişkeni
-let sessionUser = null;
-
-// DOM Yüklendiğinde Başlatılacak Fonksiyonlar
-document.addEventListener("DOMContentLoaded", () => {
-    getSystemData(); // Veri tabanını initialize et
-    renderClientProducts(); // Vitrini doldur
-});
-
-// =========================================================================
-// 2. UNIFIED LOGIN ENGINE (BİRLEŞİK GİRİŞ SİSTEMİ)
-// =========================================================================
-function unifiedLoginEngine() {
-    const loginType = document.getElementById("loginType").value;
-    const userInp = document.getElementById("username").value.trim();
-    const passInp = document.getElementById("password").value.trim();
-    const errorAlert = document.getElementById("loginError");
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sipariş & Stok Otomasyonu</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     
-    const db = getSystemData();
-    let foundUser = null;
-
-    if (loginType === "admin") {
-        foundUser = db.admins.find(u => u.user === userInp && u.pass === passInp);
-    } else if (loginType === "corporate") {
-        foundUser = db.corporates.find(u => u.user === userInp && u.pass === passInp);
-    } else if (loginType === "service") {
-        foundUser = db.logistics.find(u => u.user === userInp && u.pass === passInp);
-    }
-
-    if (foundUser) {
-        errorAlert.classList.add("d-none");
-        sessionUser = { ...foundUser, type: loginType };
-        
-        // Modalı Kapat
-        const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
-        if (loginModal) loginModal.hide();
-        
-        // Giriş Formunu Temizle
-        document.getElementById("username").value = "";
-        document.getElementById("password").value = "";
-
-        // İlgili Panele Yönlendir
-        document.getElementById("client-interface").style.display = "none";
-        
-        if (loginType === "admin") {
-            document.getElementById("admin-panel").style.display = "block";
-            document.getElementById("logged-admin-name").innerText = sessionUser.name;
-            switchAdminTab('tab-stock');
-        } else if (loginType === "corporate") {
-            document.getElementById("corporate-panel").style.display = "block";
-            document.getElementById("logged-corp-name").innerText = sessionUser.title;
-            switchCorpTab('tab-corp-orders');
-        } else if (loginType === "service") {
-            // Servisçi arayüz yapısı için tetikleyici
-            document.getElementById("service-panel").style.display = "block";
-            document.getElementById("logged-service-name").innerText = sessionUser.name;
-            renderServiceOrders();
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: #333;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 0;
         }
-    } else {
-        errorAlert.classList.remove("d-none");
-    }
-}
+        .text-custom { color: #15803d !important; }
+        .bg-custom { background-color: #15803d !important; }
+        .btn-custom-green { background-color: #16a34a !important; color: white !important; font-weight: 600; }
+        .btn-custom-green:hover { background-color: #15803d !important; }
+        
+        .navbar-nav .nav-link { transition: color 0.3s ease; }
+        .navbar-nav .nav-link:hover, .navbar-nav .nav-link.active { color: #15803d !important; }
+        
+        .hero-section {
+            background: linear-gradient(135deg, #115e59 0%, #16a34a 100%);
+            padding: 35px 15px;
+            color: white;
+            text-align: center;
+        }
 
-function logoutSystem() {
-    sessionUser = null;
-    document.getElementById("admin-panel").style.display = "none";
-    document.getElementById("corporate-panel").style.display = "none";
-    if(document.getElementById("service-panel")) document.getElementById("service-panel").style.display = "none";
-    document.getElementById("client-interface").style.display = "block";
-    renderClientProducts();
-}
+        .product-card {
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .product-card .img-wrapper {
+            height: 160px;
+            background-color: #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+            overflow: hidden;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .product-card .img-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .preview-box {
+            width: 100%;
+            height: 130px;
+            border: 2px dashed #cbd5e1;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f8fafc;
+        }
+        .preview-box img { width: 100%; height: 100%; object-fit: contain; }
 
-// =========================================================================
-// 3. TAB (SEKME) GEÇİŞLERİ VE RENDER İŞLEMLERİ
-// =========================================================================
-function switchAdminTab(tabId) {
-    document.querySelectorAll('#admin-panel .panel-content').forEach(el => el.classList.remove('active'));
-    document.querySelectorAll('#admin-panel .nav-link').forEach(el => el.classList.remove('active'));
-    
-    document.getElementById(tabId).classList.add('active');
-    
-    // Link aktifliği tetikleme
-    const map = {
-        'tab-stock': 'link-stock', 'tab-corporate': 'link-corporate',
-        'tab-logistics': 'link-logistics', 'tab-sysadmin': 'link-sysadmin', 'tab-orders': 'link-orders'
-    };
-    if (map[tabId]) document.getElementById(map[tabId]).classList.add('active');
+        #client-interface { display: block; }
+        #admin-panel, #corporate-panel, #service-panel { display: none; min-height: 100vh; }
 
-    // Verileri tablolara bas
-    if (tabId === 'tab-stock') renderAdminStockTable();
-    if (tabId === 'tab-corporate') renderAdminCorporateTable();
-    if (tabId === 'tab-logistics') renderAdminLogisticsTable();
-    if (tabId === 'tab-sysadmin') renderAdminSysTable();
-    if (tabId === 'tab-orders') renderAdminOrdersTable();
-}
+        .sidebar, .corp-sidebar, .service-sidebar {
+            background-color: #0f172a;
+            color: white;
+            padding: 15px;
+        }
+        .corp-sidebar { background-color: #14532d; }
+        .service-sidebar { background-color: #c2410c; }
+        
+        @media (min-width: 768px) {
+            .sidebar, .corp-sidebar, .service-sidebar { min-height: 100vh; height: 100%; }
+            .main-content-area { padding: 30px; }
+        }
+        @media (max-width: 767.98px) {
+            .sidebar, .corp-sidebar, .service-sidebar { text-align: center; }
+            .sidebar .nav, .corp-sidebar .nav, .service-sidebar .nav { 
+                flex-direction: row !important; 
+                justify-content: center; 
+                flex-wrap: wrap; 
+                gap: 6px;
+            }
+            .sidebar .nav-link, .corp-sidebar .nav-link, .service-sidebar .nav-link {
+                padding: 8px 12px;
+                font-size: 12px;
+                margin-bottom: 0;
+            }
+            .main-content-area { padding: 15px; }
+            .panel-header-block {
+                flex-direction: column;
+                align-items: flex-start !important;
+                gap: 10px;
+            }
+            .panel-header-block button { width: 100%; }
+        }
 
-function switchCorpTab(tabId) {
-    document.querySelectorAll('#corporate-panel .panel-content').forEach(el => el.classList.remove('active'));
-    document.querySelectorAll('#corporate-panel .nav-link').forEach(el => el.classList.remove('active'));
-    
-    document.getElementById(tabId).classList.add('active');
-    
-    if(tabId === 'tab-corp-orders') {
-        document.getElementById('link-corp-orders').classList.add('active');
-        renderCorpOrdersTable();
-    }
-    if(tabId === 'tab-corp-new') {
-        document.getElementById('link-corp-new').classList.add('active');
-        prepareCorpOrderForm();
-    }
-}
+        .sidebar .nav-link, .corp-sidebar .nav-link, .service-sidebar .nav-link {
+            color: #cbd5e1;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            cursor: pointer;
+            display: block;
+            text-decoration: none;
+        }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active { background-color: #1e293b; color: #4ade80 !important; }
+        .corp-sidebar .nav-link:hover, .corp-sidebar .nav-link.active { background-color: #15803d; color: white !important; }
+        .service-sidebar .nav-link:hover, .service-sidebar .nav-link.active { background-color: #ea580c; color: white !important; }
+        
+        .panel-content { display: none; }
+        .panel-content.active { display: block; }
+        .table-responsive { -webkit-overflow-scrolling: touch; }
+    </style>
+</head>
+<body>
 
-// =========================================================================
-// 4. TABLO VE VİTRİN RENDER FONKSİYONLARI
-// =========================================================================
+    <div id="client-interface">
+        <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm">
+            <div class="container">
+                <a class="navbar-brand fw-bold d-flex align-items-center" href="#">
+                    <i class="fa-solid fa-boxes-stacked text-custom me-2 fs-3"></i>
+                    <span class="text-dark">Otomasyon Sistemi</span>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto fw-semibold align-items-center pt-2 pt-lg-0">
+                        <li class="nav-item"><a class="nav-link active" href="#home">Ana Sayfa</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#products">Ürün Çeşitlerimiz</a></li>
+                        <li class="nav-item ms-lg-3 mt-2 mt-lg-0 w-100 w-lg-auto">
+                            <button class="btn btn-custom-green fw-bold w-100" data-bs-toggle="modal" data-bs-target="#loginModal">
+                                <i class="fa-solid fa-right-to-bracket me-1"></i> Giriş Yap
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
 
-// Müşteri Vitrini (Ana Sayfa)
-function renderClientProducts() {
-    const db = getSystemData();
-    const searchVal = document.getElementById("clientSearchInput").value.toLowerCase();
-    const grid = document.getElementById("client-products-grid");
-    grid.innerHTML = "";
+        <section id="home" class="hero-section">
+            <div class="container">
+                <h1 class="h3 fw-bold mb-2">Üretim, Sipariş & Stok Otomasyonu</h1>
+                <p class="small mb-0 text-white-50">Taze üretim takip, dinamik bayi sipariş ve sevkiyat yönetim havuzu.</p>
+            </div>
+        </section>
 
-    const filtered = db.products.filter(p => p.name.toLowerCase().includes(searchVal) || p.group.toLowerCase().includes(searchVal));
+        <section id="products" class="py-4 bg-light">
+            <div class="container">
+                <div class="row mb-3 align-items-center">
+                    <div class="col-12 col-md-6"><h4 class="fw-bold text-dark m-0 mb-2 mb-md-0">Günlük Üretim Kataloğu</h4></div>
+                    <div class="col-12 col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
+                            <input type="text" id="clientSearchInput" class="form-control border-start-0" placeholder="Ürün veya grup ara..." oninput="renderClientProducts()">
+                        </div>
+                    </div>
+                </div>
+                <div class="row g-3 justify-content-center" id="client-products-grid"></div>
+            </div>
+        </section>
+    </div>
 
-    if (filtered.length === 0) {
-        grid.innerHTML = `<div class="col-12 text-center text-muted my-4"><small>Aradığınız kriterlere uygun ürün bulunamadı.</small></div>`;
-        return;
-    }
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header text-white bg-custom">
+                    <h5 class="modal-title fw-bold"><i class="fa-solid fa-shield-lock me-2"></i>Sistem Giriş Kapısı</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-close="modal"></button>
+                </div>
+                <div class="modal-body p-4 bg-white">
+                    <div id="loginError" class="alert alert-danger d-none p-2 small">Giriş bilgileri hatalı veya kullanıcı mevcut değil!</div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Giriş Yetki Tipi</label>
+                        <select id="loginType" class="form-select">
+                            <option value="admin">Fabrika Yöneticisi (Admin)</option>
+                            <option value="corporate">Anlaşmalı Bayi / Firma</option>
+                            <option value="service">Dağıtım Sorumlusu (Servisçi)</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Kullanıcı Adı</label>
+                        <input type="text" id="username" class="form-control" placeholder="Kullanıcı adınız">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Şifre</label>
+                        <input type="password" id="password" class="form-control" placeholder="••••••••">
+                    </div>
+                    <button type="button" class="btn btn-custom-green w-100 fw-bold py-2" onclick="unifiedLoginEngine()">Sistemde Oturum Aç</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    filtered.forEach(p => {
-        const dummyImg = `<i class="fa-solid fa-wheat-awn fs-1"></i>`;
-        const card = `
-            <div class="col-6 col-md-4 col-lg-3">
-                <div class="product-card p-2">
-                    <div class="img-wrapper">${p.img ? `<img src="${p.img}" alt="${p.name}">` : dummyImg}</div>
-                    <div class="p-2">
-                        <span class="badge bg-secondary mb-1" style="font-size:10px;">${p.group}</span>
-                        <h6 class="fw-bold mb-1 text-truncate" style="font-size:14px;" title="${p.name}">${p.name}</h6>
-                        <div class="d-flex justify-content-between align-items-center mt-2">
-                            <span class="fw-bold text-success" style="font-size:14px;">${p.price.toFixed(2)} ₺</span>
-                            <span class="text-muted" style="font-size:11px;">Stok: <b>${p.stock}</b></span>
+    <div id="admin-panel">
+        <div class="container-fluid px-0">
+            <div class="row g-0">
+                <div class="col-12 col-md-3 col-lg-2 sidebar">
+                    <h5 class="text-center fw-bold my-2" style="color: #4ade80;"><i class="fa-solid fa-layer-group me-2"></i>YÖNETİM</h5>
+                    <p class="text-center text-white-50 small mb-2" id="logged-admin-name">Yönetici</p>
+                    <ul class="nav flex-column mb-3">
+                        <li class="nav-item"><a class="nav-link active" id="link-stock" onclick="switchAdminTab('tab-stock')"><i class="fa-solid fa-boxes-stacked me-1"></i> Ürün & Stok</a></li>
+                        <li class="nav-item"><a class="nav-link" id="link-corporate" onclick="switchAdminTab('tab-corporate')"><i class="fa-solid fa-store me-1"></i> Kayıtlı Bayiler</a></li>
+                        <li class="nav-item"><a class="nav-link" id="link-logistics" onclick="switchAdminTab('tab-logistics')"><i class="fa-solid fa-truck-ramp-box me-1"></i> Servisçiler</a></li>
+                        <li class="nav-item"><a class="nav-link" id="link-sysadmin" onclick="switchAdminTab('tab-sysadmin')"><i class="fa-solid fa-user-shield me-1"></i> Admin Yönetimi</a></li>
+                        <li class="nav-item"><a class="nav-link" id="link-orders" onclick="switchAdminTab('tab-orders')"><i class="fa-solid fa-clipboard-list me-1"></i> Sipariş Havuzu</a></li>
+                    </ul>
+                    <button class="btn btn-sm btn-danger w-100 fw-bold mb-2" onclick="logoutSystem()"><i class="fa-solid fa-power-off me-1"></i> Güvenli Çıkış</button>
+                </div>
+
+                <div class="col-12 col-md-9 col-lg-10 main-content-area">
+                    <div id="tab-stock" class="panel-content active">
+                        <div class="d-flex justify-content-between align-items-center mb-3 panel-header-block">
+                            <h4 class="fw-bold m-0 text-custom">Fabrika Envanter Yönetimi</h4>
+                            <button class="btn btn-sm btn-custom-green" data-bs-toggle="modal" data-bs-target="#addProductModal" onclick="clearPreview()"><i class="fa-solid fa-plus me-1"></i> Yeni Ürün Ekle</button>
+                        </div>
+                        <div class="card border-0 shadow-sm p-2 bg-white">
+                            <div class="table-responsive">
+                                <table class="table align-middle mb-0 text-nowrap">
+                                    <thead class="table-dark small">
+                                        <tr><th>Görsel</th><th>Ürün Adı</th><th>Grup</th><th>Birim Fiyat</th><th>Stok Durumu</th><th class="text-end">İşlem</th></tr>
+                                    </thead>
+                                    <tbody id="admin-stock-table-body" class="small"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="tab-corporate" class="panel-content">
+                        <div class="d-flex justify-content-between align-items-center mb-3 panel-header-block">
+                            <h4 class="fw-bold text-primary m-0">Anlaşmalı Kurumsal Bayi Kayıtları</h4>
+                            <button class="btn btn-sm btn-primary fw-bold" data-bs-toggle="modal" data-bs-target="#addCorporateModal"><i class="fa-solid fa-plus me-1"></i> Yeni Bayi Tanımla</button>
+                        </div>
+                        <div class="card border-0 shadow-sm p-2 bg-white">
+                            <div class="table-responsive">
+                                <table class="table table-striped align-middle mb-0 text-nowrap">
+                                    <thead class="table-primary small"><tr><th>Bayi Ticari Unvanı</th><th>Sorumlu</th><th>Kullanıcı Adı</th><th>Şifre</th><th class="text-end">İşlem</th></tr></thead>
+                                    <tbody id="corporate-table-body" class="small"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="tab-logistics" class="panel-content">
+                        <div class="d-flex justify-content-between align-items-center mb-3 panel-header-block">
+                            <h4 class="fw-bold text-warning m-0">Lojistik Dağıtım Ekibi (Servisçiler)</h4>
+                            <button class="btn btn-sm btn-warning fw-bold text-dark" data-bs-toggle="modal" data-bs-target="#addLogisticsModal"><i class="fa-solid fa-user-plus me-1"></i> Yeni Servisçi Ekle</button>
+                        </div>
+                        <div class="card border-0 shadow-sm p-2 bg-white">
+                            <div class="table-responsive">
+                                <table class="table table-striped align-middle mb-0 text-nowrap">
+                                    <thead class="table-dark small"><tr><th>Adı Soyadı</th><th>Rolü</th><th>Kullanıcı Adı</th><th>Şifre</th><th class="text-end">İşlem</th></tr></thead>
+                                    <tbody id="logistics-table-body" class="small"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="tab-sysadmin" class="panel-content">
+                        <div class="d-flex justify-content-between align-items-center mb-3 panel-header-block">
+                            <h4 class="fw-bold text-danger m-0">Sistem Admin Kadrosu / Hesap Paylaşımı</h4>
+                            <button class="btn btn-sm btn-danger fw-bold" data-bs-toggle="modal" data-bs-target="#addAdminModal"><i class="fa-solid fa-user-shield me-1"></i> Yeni Admin Tanımla</button>
+                        </div>
+                        <p class="text-muted small">Buradan eklediğiniz her yetkili kullanıcı kendi şifresiyle giriş yapabilir ve paneli ortaklaşa yönetebilir.</p>
+                        <div class="card border-0 shadow-sm p-2 bg-white">
+                            <div class="table-responsive">
+                                <table class="table table-striped align-middle mb-0 text-nowrap">
+                                    <thead class="table-danger small"><tr><th>Adı Soyadı</th><th>Yetki Tipi</th><th>Kullanıcı Adı</th><th>Şifre</th><th class="text-end">İşlem</th></tr></thead>
+                                    <tbody id="sysadmin-table-body" class="small"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="tab-orders" class="panel-content">
+                        <h4 class="fw-bold text-dark mb-3">Merkez Sipariş İşlem Havuzu</h4>
+                        <div class="card border-0 shadow-sm p-2 bg-white">
+                            <div class="table-responsive">
+                                <table class="table align-middle mb-0 text-nowrap">
+                                    <thead class="table-warning small"><tr><th>Sipariş Veren Bayi</th><th>Ürün</th><th>Miktar</th><th>Toplam</th><th>Dağıtacak Servisçi</th><th>Durum</th><th class="text-end">Eylem</th></tr></thead>
+                                    <tbody id="orders-table-body" class="small"></tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        `;
-        grid.insertAdjacentHTML("beforeend", card);
-    });
-}
+        </div>
+    </div>
 
-// Admin: Ürün & Stok Tablosu
-function renderAdminStockTable() {
-    const db = getSystemData();
-    const tbody = document.getElementById("admin-stock-table-body");
-    tbody.innerHTML = "";
-
-    db.products.forEach(p => {
-        const tr = `
-            <tr>
-                <td><i class="fa-solid fa-cookie text-muted"></i></td>
-                <td class="fw-bold">${p.name}</td>
-                <td><span class="badge bg-light text-dark border">${p.group}</span></td>
-                <td>${p.price.toFixed(2)} ₺</td>
-                <td><span class="badge ${p.stock < 50 ? 'bg-danger':'bg-success'}">${p.stock} Adet</span></td>
-                <td class="text-end">
-                    <button class="btn btn-sm btn-outline-danger py-0 px-2" onclick="deleteProduct(${p.id})"><i class="fa-solid fa-trash small"></i></button>
-                </td>
-            </tr>
-        `;
-        tbody.insertAdjacentHTML("beforeend", tr);
-    });
-}
-
-// Admin: Bayi Listesi Tablosu
-function renderAdminCorporateTable() {
-    const db = getSystemData();
-    const tbody = document.getElementById("corporate-table-body");
-    tbody.innerHTML = "";
-    db.corporates.forEach(c => {
-        tbody.insertAdjacentHTML("beforeend", `
-            <tr>
-                <td class="fw-bold">${c.title}</td>
-                <td>${c.contact}</td>
-                <td><code>${c.user}</code></td>
-                <td>••••</td>
-                <td class="text-end"><button class="btn btn-sm btn-link text-danger p-0" onclick="deleteCorporate(${c.id})"><i class="fa-solid fa-user-minus"></i></button></td>
-            </tr>
-        `);
-    });
-}
-
-// Admin: Dağıtım Ekibi Tablosu
-function renderAdminLogisticsTable() {
-    const db = getSystemData();
-    const tbody = document.getElementById("logistics-table-body");
-    tbody.innerHTML = "";
-    db.logistics.forEach(l => {
-        tbody.insertAdjacentHTML("beforeend", `
-            <tr>
-                <td class="fw-bold">${l.name}</td>
-                <td><small class="text-muted">${l.role}</small></td>
-                <td><code>${l.user}</code></td>
-                <td>••••</td>
-                <td class="text-end"><button class="btn btn-sm btn-link text-danger p-0" onclick="deleteLogistics(${l.id})"><i class="fa-solid fa-trash"></i></button></td>
-            </tr>
-        `);
-    });
-}
-
-// Admin: Sistem Yöneticileri Tablosu
-function renderAdminSysTable() {
-    const db = getSystemData();
-    const tbody = document.getElementById("sysadmin-table-body");
-    tbody.innerHTML = "";
-    db.admins.forEach(a => {
-        tbody.insertAdjacentHTML("beforeend", `
-            <tr>
-                <td class="fw-bold">${a.name}</td>
-                <td><span class="badge bg-danger">${a.role}</span></td>
-                <td><code>${a.user}</code></td>
-                <td>••••</td>
-                <td class="text-end"><button class="btn btn-sm btn-link text-danger p-0" onclick="deleteAdmin(${a.id})" ${db.admins.length === 1 ? 'disabled':''}><i class="fa-solid fa-lock-open"></i></button></td>
-            </tr>
-        `);
-    });
-}
-
-// Admin: Sipariş Havuzu Yönetimi
-function renderAdminOrdersTable() {
-    const db = getSystemData();
-    const tbody = document.getElementById("orders-table-body");
-    tbody.innerHTML = "";
-
-    db.orders.forEach(o => {
-        let driverSelectHTML = `<select class="form-select form-select-sm d-inline-block w-auto me-1" onchange="assignDriverToOrder(${o.id}, this.value)"><option value="">Seçilmedi</option>`;
-        db.logistics.forEach(l => {
-            driverSelectHTML += `<option value="${l.id}" ${o.driverId == l.id ? 'selected':''}>${l.name}</option>`;
-        });
-        driverSelectHTML += `</select>`;
-
-        let statusBadge = "bg-secondary";
-        if(o.status === "Yolda") statusBadge = "bg-warning text-dark";
-        if(o.status === "Teslim Edildi") statusBadge = "bg-success";
-
-        const tr = `
-            <tr>
-                <td class="fw-bold text-primary">${o.corpTitle}</td>
-                <td>${o.productName}</td>
-                <td><b>${o.quantity}</b> Adet</td>
-                <td class="text-success fw-bold">${o.total.toFixed(2)} ₺</td>
-                <td>${driverSelectHTML}</td>
-                <td><span class="badge ${statusBadge}">${o.status}</span></td>
-                <td class="text-end">
-                    <button class="btn btn-xs btn-success py-0 px-1" onclick="updateOrderStatus(${o.id}, 'Teslim Edildi')" title="Teslim Edildi"><i class="fa-solid fa-check small"></i></button>
-                    <button class="btn btn-xs btn-warning py-0 px-1" onclick="updateOrderStatus(${o.id}, 'Yolda')" title="Yolda"><i class="fa-solid fa-truck small"></i></button>
-                </td>
-            </tr>
-        `;
-        tbody.insertAdjacentHTML("beforeend", tr);
-    });
-}
-
-// =========================================================================
-// 5. BAYİ PANELİ SİPARİŞ İŞLEMLERİ (YENİ SİPARİŞ & HESAPLAMA)
-// =========================================================================
-function prepareCorpOrderForm() {
-    const db = getSystemData();
-    const select = document.getElementById("corpSelfProductSelect");
-    select.innerHTML = `<option value="" disabled selected>Ürün seçiniz...</option>`;
-    
-    db.products.forEach(p => {
-        select.insertAdjacentHTML("beforeend", `<option value="${p.id}">${p.name} (${p.price} ₺ / Stok: ${p.stock})</option>`);
-    });
-
-    document.getElementById("corpSelfQuantity").value = "";
-    calculateOrderTotalPreview();
-}
-
-function calculateOrderTotalPreview() {
-    const db = getSystemData();
-    const productId = document.getElementById("corpSelfProductSelect").value;
-    const qty = parseInt(document.getElementById("corpSelfQuantity").value) || 0;
-    
-    let subtotal = 0;
-    if(productId) {
-        const prod = db.products.find(p => p.id == productId);
-        if(prod) subtotal = prod.price * qty;
-    }
-    
-    // KDV (%10) Hesaplama simulasyonu
-    const tax = subtotal * 0.10;
-    const grandTotal = subtotal + tax;
-
-    document.getElementById("basketSubtotal").innerText = subtotal.toFixed(2) + " ₺";
-    document.getElementById("basketTax").innerText = tax.toFixed(2) + " ₺";
-    
-    // Formun içine gizli toplam veya anlık bilgilendirme basılabilir, arayüzde total alanı varsa güncellenir.
-}
-
-function createNewOrder(event) {
-    event.preventDefault();
-    if(!sessionUser || sessionUser.type !== "corporate") return;
-
-    const db = getSystemData();
-    const productId = document.getElementById("corpSelfProductSelect").value;
-    const qty = parseInt(document.getElementById("corpSelfQuantity").value);
-
-    const product = db.products.find(p => p.id == productId);
-    if(!product) return;
-
-    if(product.stock < qty) {
-        alert("Hata: Fabrika stok miktarı yetersiz! En fazla " + product.stock + " adet isteyebilirsiniz.");
-        return;
-    }
-
-    const subtotal = product.price * qty;
-    const grandTotal = subtotal * 1.10; // KDV dahil toplam maliyet
-
-    // Stok düşür
-    product.stock -= qty;
-
-    const newOrder = {
-        id: new Date().getTime(),
-        corpId: sessionUser.id,
-        corpTitle: sessionUser.title,
-        productId: product.id,
-        productName: product.name,
-        quantity: qty,
-        total: grandTotal,
-        driverId: null,
-        driverName: "Atanmadı",
-        status: "Hazırlanıyor"
-    };
-
-    db.orders.push(newOrder);
-    saveSystemData(db);
-
-    alert("Siparişiniz başarıyla fabrika havuzuna iletildi!");
-    switchCorpTab('tab-corp-orders');
-}
-
-function renderCorpOrdersTable() {
-    if(!sessionUser) return;
-    const db = getSystemData();
-    const tbody = document.getElementById("my-orders-table-body");
-    tbody.innerHTML = "";
-
-    const myOrders = db.orders.filter(o => o.corpId === sessionUser.id);
-    
-    if(myOrders.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted">Henüz geçmiş siparişiniz bulunmamaktadır.</td></tr>`;
-        return;
-    }
-
-    myOrders.forEach(o => {
-        tbody.insertAdjacentHTML("beforeend", `
-            <tr>
-                <td class="fw-bold">${o.productName}</td>
-                <td>${o.quantity} Adet</td>
-                <td class="text-success fw-bold">${o.total.toFixed(2)} ₺</td>
-                <td><small class="text-muted">Lojistik: ${o.driverName}</small></td>
-                <td><span class="badge bg-info">${o.status}</span></td>
-            </tr>
-        `);
-    });
-}
-
-// =========================================================================
-// 6. SİLME VE GÜNCELLEME SÜREÇLERİ (DATA MUTATION)
-// =========================================================================
-function deleteProduct(id) {
-    if(!confirm("Bu ürünü silmek istediğinize emin misiniz?")) return;
-    let db = getSystemData();
-    db.products = db.products.filter(p => p.id !== id);
-    saveSystemData(db);
-    renderAdminStockTable();
-}
-
-function deleteCorporate(id) {
-    if(!confirm("Bayi kaydını silmek istediğinize emin misiniz?")) return;
-    let db = getSystemData();
-    db.corporates = db.corporates.filter(c => c.id !== id);
-    saveSystemData(db);
-    renderAdminCorporateTable();
-}
-
-function deleteLogistics(id) {
-    if(!confirm("Lojistik personelini silmek istediğinize emin misiniz?")) return;
-    let db = getSystemData();
-    db.logistics = db.logistics.filter(l => l.id !== id);
-    saveSystemData(db);
-    renderAdminLogisticsTable();
-}
-
-function deleteAdmin(id) {
-    let db = getSystemData();
-    if(db.admins.length <= 1) return;
-    if(!confirm("Yönetici yetkisini kaldırmak istiyor musunuz?")) return;
-    db.admins = db.admins.filter(a => a.id !== id);
-    saveSystemData(db);
-    renderAdminSysTable();
-}
-
-function assignDriverToOrder(orderId, driverId) {
-    let db = getSystemData();
-    const order = db.orders.find(o => o.id === orderId);
-    if(!order) return;
-
-    if(!driverId) {
-        order.driverId = null;
-        order.driverName = "Atanmadı";
-    } else {
-        const driver = db.logistics.find(l => l.id == driverId);
-        if(driver) {
-            order.driverId = driver.id;
-            order.driverName = driver.name;
-        }
-    }
-    saveSystemData(db);
-    renderAdminOrdersTable();
-}
-
-function updateOrderStatus(orderId, newStatus) {
-    let db = getSystemData();
-    const order = db.orders.find(o => o.id === orderId);
-    if(order) {
-        order.status = newStatus;
-        saveSystemData(db);
-        renderAdminOrdersTable();
-    }
-}
-
-function clearPreview() {
-    // Yeni ürün ekleme modali sıfırlama yardımcı tetikleyicisi
-    const previewBox = document.querySelector(".preview-box");
-    if(previewBox) previewBox.innerHTML = '<i class="fa-regular fa-image text-muted fs-3"></i>';
-}
-</script>
+    <div id="corporate-panel">
+        <div class="container-fluid px-0">
+            <div class="row g-0">
+                <div class="col-12 col-md-3 col-lg-2 corp-sidebar">
+                    <h5 class="text-center text-white fw-bold my-2"><i class="fa-solid fa-store me-2"></i>BAYİ SEPETİ</h5>
+                    <p class="text-center text-white-50 small mb-2" id="logged-corp-name">Kayıtlı Bayi</p>
+                    <ul class="nav flex-column mb-3">
+                        <li class="nav-item"><a class="nav-link active" id="link-corp-orders" onclick="switchCorpTab('tab-corp-orders')"><i class="fa-solid fa-clock-history me-1"></i> Siparişlerimiz</a></li>
+                        <li class="nav-item"><a class="nav-link" id="link-corp-new" onclick="switchCorpTab('tab-corp-new')"><i class="fa-solid fa-cart-shopping me-1"></i> Sipariş Ver</a></li>
+                    </ul>
+                    <button class="btn btn-sm btn-danger w-100 fw-bold mb-2" onclick="logoutSystem()">Oturumu Kapat</button>
+                </div>
+                <div class="col-12 col-md-9 col-lg-10 main-content-area">
+                    <div id="tab-corp-orders" class="panel-content active">
+                        <h4 class="fw-bold mb-3 text-custom">Fabrika Cari Sipariş Takibimiz</h4>
+                        <div class="card border-0 shadow-sm p-2 bg-white">
+                            <div class="table-responsive">
+                                <table class="table align-middle mb-0 text-nowrap"><thead class="table-success small"><tr><th>Talep Edilen Ürün</th><th>Miktar</th><th>Toplam Tutar</th><th>Not</th><th>Durum</th></tr></thead><tbody id="my-orders-table-body" class="small"></tbody></table>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="tab-corp-new" class="panel-content">
+                        <h4 class="fw-bold mb-3 text-custom">Yeni Günlük Sipariş Formu</h4>
+                        <div class="card border-0 shadow-sm p-3 bg-white">
+                            <form id="corpSelfOrderForm" onsubmit="createNewOrder(event)">
+                                <div class="mb-2"><label class="form-label small fw-bold">Ürün Seçiniz</label><select id="corpSelfProductSelect" class="form-select form-select-sm" onchange="calculateOrderTotalPreview()" required></select></div>
+                                <div class="mb-2"><label class="form-label small fw-bold">Sipariş Miktarı (Adet/Koli)</label><input type="number" id="corpSelfQuantity" class="form-control form-control-sm" min="1" oninput="calculateOrderTotalPreview()" required></div>
+                                <div class="mb-2 p-2 bg-light rounded border small">
+                                    <div class="d-flex justify-content-between mb-1"><span>Ara Tutar:</span><span id="basketSubtotal">0.00 ₺</span></div>
+                                    <div class="d-flex justify-content-between mb-1"><span>KDV (%10):</span><span id="bask
