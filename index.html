@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sipariş & Stok Otomasyonu</title>
+    <title> - Sipariş & Stok Otomasyonu</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -16,10 +16,10 @@
             margin: 0;
             padding: 0;
         }
-        .text-custom { color: #15803d !important; }
-        .bg-custom { background-color: #15803d !important; }
-        .btn-custom-green { background-color: #16a34a !important; color: white !important; font-weight: 600; }
-        .btn-custom-green:hover { background-color: #15803d !important; }
+        .text-{ color: #15803d !important; }
+        .bg-{ background-color: #15803d !important; }
+        .btn-meram { background-color: #16a34a !important; color: white !important; font-weight: 600; }
+        .btn-meram:hover { background-color: #15803d !important; }
         
         .navbar-nav .nav-link { transition: color 0.3s ease; }
         .navbar-nav .nav-link:hover, .navbar-nav .nav-link.active { color: #15803d !important; }
@@ -124,8 +124,8 @@
         <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm">
             <div class="container">
                 <a class="navbar-brand fw-bold d-flex align-items-center" href="#">
-                    <i class="fa-solid fa-boxes-stacked text-custom me-2 fs-3"></i>
-                    <span class="text-dark">Otomasyon Sistemi</span>
+                    <i class="fa-solid fa-wheat-awn text-meram-green me-2 fs-3"></i>
+                    <span class="text-dark"></span>
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                     <span class="navbar-toggler-icon"></span>
@@ -135,7 +135,7 @@
                         <li class="nav-item"><a class="nav-link active" href="#home">Ana Sayfa</a></li>
                         <li class="nav-item"><a class="nav-link" href="#products">Ürün Çeşitlerimiz</a></li>
                         <li class="nav-item ms-lg-3 mt-2 mt-lg-0 w-100 w-lg-auto">
-                            <button class="btn btn-custom-green fw-bold w-100" data-bs-toggle="modal" data-bs-target="#loginModal">
+                            <button class="btn btn-meram fw-bold w-100" data-bs-toggle="modal" data-bs-target="#loginModal">
                                 <i class="fa-solid fa-right-to-bracket me-1"></i> Giriş Yap
                             </button>
                         </li>
@@ -146,7 +146,7 @@
 
         <section id="home" class="hero-section">
             <div class="container">
-                <h1 class="h3 fw-bold mb-2">Üretim, Sipariş & Stok Otomasyonu</h1>
+                <h1 class="h3 fw-bold mb-2">Yeşil Meram Yufka & Kadayıf Otomasyonu</h1>
                 <p class="small mb-0 text-white-50">Taze üretim takip, dinamik bayi sipariş ve sevkiyat yönetim havuzu.</p>
             </div>
         </section>
@@ -170,7 +170,7 @@
     <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow">
-                <div class="modal-header text-white bg-custom">
+                <div class="modal-header text-white bg-meram-green">
                     <h5 class="modal-title fw-bold"><i class="fa-solid fa-shield-lock me-2"></i>Sistem Giriş Kapısı</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-close="modal"></button>
                 </div>
@@ -192,7 +192,7 @@
                         <label class="form-label small fw-semibold">Şifre</label>
                         <input type="password" id="password" class="form-control" placeholder="••••••••">
                     </div>
-                    <button type="button" class="btn btn-custom-green w-100 fw-bold py-2" onclick="unifiedLoginEngine()">Sistemde Oturum Aç</button>
+                    <button type="button" class="btn btn-meram w-100 fw-bold py-2" onclick="unifiedLoginEngine()">Sistemde Oturum Aç</button>
                 </div>
             </div>
         </div>
@@ -202,7 +202,7 @@
         <div class="container-fluid px-0">
             <div class="row g-0">
                 <div class="col-12 col-md-3 col-lg-2 sidebar">
-                    <h5 class="text-center fw-bold my-2" style="color: #4ade80;"><i class="fa-solid fa-layer-group me-2"></i>YÖNETİM</h5>
+                    <h5 class="text-center fw-bold my-2" style="color: #4ade80;"><i class="fa-solid fa-wheat-awn me-2"></i>MERAM MERKEZ</h5>
                     <p class="text-center text-white-50 small mb-2" id="logged-admin-name">Yönetici</p>
                     <ul class="nav flex-column mb-3">
                         <li class="nav-item"><a class="nav-link active" id="link-stock" onclick="switchAdminTab('tab-stock')"><i class="fa-solid fa-boxes-stacked me-1"></i> Ürün & Stok</a></li>
@@ -217,8 +217,8 @@
                 <div class="col-12 col-md-9 col-lg-10 main-content-area">
                     <div id="tab-stock" class="panel-content active">
                         <div class="d-flex justify-content-between align-items-center mb-3 panel-header-block">
-                            <h4 class="fw-bold m-0 text-custom">Fabrika Envanter Yönetimi</h4>
-                            <button class="btn btn-sm btn-custom-green" data-bs-toggle="modal" data-bs-target="#addProductModal" onclick="clearPreview()"><i class="fa-solid fa-plus me-1"></i> Yeni Ürün Ekle</button>
+                            <h4 class="fw-bold m-0 text-meram-green">Fabrika Envanter Yönetimi</h4>
+                            <button class="btn btn-sm btn-meram" data-bs-toggle="modal" data-bs-target="#addProductModal" onclick="clearPreview()"><i class="fa-solid fa-plus me-1"></i> Yeni Ürün Ekle</button>
                         </div>
                         <div class="card border-0 shadow-sm p-2 bg-white">
                             <div class="table-responsive">
@@ -299,7 +299,7 @@
             <div class="row g-0">
                 <div class="col-12 col-md-3 col-lg-2 corp-sidebar">
                     <h5 class="text-center text-white fw-bold my-2"><i class="fa-solid fa-store me-2"></i>BAYİ SEPETİ</h5>
-                    <p class="text-center text-white-50 small mb-2" id="logged-corp-name">Kayıtlı Bayi</p>
+                    <p class="text-center text-white-50 small mb-2" id="logged-corp-name">Yufka Bayisi</p>
                     <ul class="nav flex-column mb-3">
                         <li class="nav-item"><a class="nav-link active" id="link-corp-orders" onclick="switchCorpTab('tab-corp-orders')"><i class="fa-solid fa-clock-history me-1"></i> Siparişlerimiz</a></li>
                         <li class="nav-item"><a class="nav-link" id="link-corp-new" onclick="switchCorpTab('tab-corp-new')"><i class="fa-solid fa-cart-shopping me-1"></i> Sipariş Ver</a></li>
@@ -308,7 +308,7 @@
                 </div>
                 <div class="col-12 col-md-9 col-lg-10 main-content-area">
                     <div id="tab-corp-orders" class="panel-content active">
-                        <h4 class="fw-bold mb-3 text-custom">Fabrika Cari Sipariş Takibimiz</h4>
+                        <h4 class="fw-bold mb-3 text-meram-green">Fabrika Cari Sipariş Takibimiz</h4>
                         <div class="card border-0 shadow-sm p-2 bg-white">
                             <div class="table-responsive">
                                 <table class="table align-middle mb-0 text-nowrap"><thead class="table-success small"><tr><th>Talep Edilen Ürün</th><th>Miktar</th><th>Toplam Tutar</th><th>Not</th><th>Durum</th></tr></thead><tbody id="my-orders-table-body" class="small"></tbody></table>
@@ -316,11 +316,11 @@
                         </div>
                     </div>
                     <div id="tab-corp-new" class="panel-content">
-                        <h4 class="fw-bold mb-3 text-custom">Yeni Günlük Sipariş Formu</h4>
+                        <h4 class="fw-bold mb-3 text-meram-green">Yeni Günlük Yufka/Mantı Siparişi</h4>
                         <div class="card border-0 shadow-sm p-3 bg-white">
                             <form id="corpSelfOrderForm" onsubmit="createNewOrder(event)">
                                 <div class="mb-2"><label class="form-label small fw-bold">Ürün Seçiniz</label><select id="corpSelfProductSelect" class="form-select form-select-sm" onchange="calculateOrderTotalPreview()" required></select></div>
                                 <div class="mb-2"><label class="form-label small fw-bold">Sipariş Miktarı (Adet/Koli)</label><input type="number" id="corpSelfQuantity" class="form-control form-control-sm" min="1" oninput="calculateOrderTotalPreview()" required></div>
                                 <div class="mb-2 p-2 bg-light rounded border small">
                                     <div class="d-flex justify-content-between mb-1"><span>Ara Tutar:</span><span id="basketSubtotal">0.00 ₺</span></div>
-                                    <div class="d-flex justify-content-between mb-1"><span>KDV (%10):</span><span id="bask
+                                    <div class="d-flex justify-content-between mb-1"><span>KDV (%10):</span><span id="basketTax">0.00 ₺</span></div>
