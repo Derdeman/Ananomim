@@ -1,683 +1,532 @@
-
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kurumsal Sipariş & Envanter Otomasyonu (A.Ş.)</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<title>Canım Eşşek Gözlüm Lale'ye Özel 💖</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Great+Vibes&family=Mali:wght@500;700&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            color: #1e293b;
-            background-color: #f8fafc;
-            margin: 0;
-            padding: 0;
-        }
-        /* Kurumsal Renk Paleti (A.Ş. Konsepti) */
-        .text-corp-blue { color: #1e3a8a !important; }
-        .bg-corp-blue { background-color: #1e3a8a !important; }
-        .btn-corp { background-color: #0284c7 !important; color: white !important; font-weight: 600; }
-        .btn-corp:hover { background-color: #0369a1 !important; }
-        
-        .navbar-nav .nav-link { transition: color 0.3s ease; }
-        .navbar-nav .nav-link:hover, .navbar-nav .nav-link.active { color: #0284c7 !important; }
-        
-        .hero-section {
-            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
-            padding: 40px 15px;
-            color: white;
-            text-align: center;
-        }
-
-        .product-card {
-            border-radius: 8px;
-            border: 1px solid #e2e8f0;
-            background: white;
-            overflow: hidden;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
-        }
-        .product-card .img-wrapper {
-            height: 160px;
-            background-color: #f1f5f9;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #94a3b8;
-            border-bottom: 1px solid #e2e8f0;
-        }
-        .product-card .img-wrapper img { width: 100%; height: 100%; object-fit: cover; }
-        
-        .preview-box {
-            width: 100%;
-            height: 130px;
-            border: 2px dashed #cbd5e1;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #f8fafc;
-        }
-        .preview-box img { width: 100%; height: 100%; object-fit: contain; }
-
-        #client-interface { display: block; }
-        #admin-panel, #corporate-panel, #service-panel { display: none; min-height: 100vh; }
-
-        /* RESPONSIVE YAN MENÜ DÜZENİ */
-        .sidebar, .corp-sidebar, .service-sidebar {
-            background-color: #0f172a;
-            color: white;
-            padding: 15px;
-        }
-        .corp-sidebar { background-color: #1e3a8a; }
-        .service-sidebar { background-color: #334155; }
-        
-        @media (min-width: 768px) {
-            .sidebar, .corp-sidebar, .service-sidebar { min-height: 100vh; height: 100%; }
-            .main-content-area { padding: 30px; }
-        }
-        @media (max-width: 767.98px) {
-            .sidebar, .corp-sidebar, .service-sidebar { text-align: center; }
-            .sidebar .nav, .corp-sidebar .nav, .service-sidebar .nav { 
-                flex-direction: row !important; 
-                justify-content: center; 
-                flex-wrap: wrap; 
-                gap: 6px;
-            }
-            .sidebar .nav-link, .corp-sidebar .nav-link, .service-sidebar .nav-link {
-                padding: 8px 12px;
-                font-size: 12px;
-                margin-bottom: 0;
-            }
-            .main-content-area { padding: 15px; }
-            .panel-header-block {
-                flex-direction: column;
-                align-items: flex-start !important;
-                gap: 10px;
-            }
-            .panel-header-block button { width: 100%; }
-        }
-
-        .sidebar .nav-link, .corp-sidebar .nav-link, .service-sidebar .nav-link {
-            color: #94a3b8;
-            padding: 12px 20px;
-            border-radius: 6px;
-            margin-bottom: 5px;
-            cursor: pointer;
-            display: block;
-            text-decoration: none;
-        }
-        .sidebar .nav-link:hover, .sidebar .nav-link.active { background-color: #1e293b; color: #38bdf8 !important; }
-        .corp-sidebar .nav-link:hover, .corp-sidebar .nav-link.active { background-color: #0284c7; color: white !important; }
-        .service-sidebar .nav-link:hover, .service-sidebar .nav-link.active { background-color: #475569; color: white !important; }
-        
-        .panel-content { display: none; }
-        .panel-content.active { display: block; }
-        .table-responsive { -webkit-overflow-scrolling: touch; }
-    </style>
-</head>
-<body>
-
-    <div id="client-interface">
-        <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm">
-            <div class="container">
-                <a class="navbar-brand fw-bold d-flex align-items-center" href="#">
-                    <i class="fa-solid fa-building text-corp-blue me-2 fs-4"></i>
-                    <span class="text-dark">Şirket Otomasyonu A.Ş.</span>
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto fw-semibold align-items-center pt-2 pt-lg-0">
-                        <li class="nav-item"><a class="nav-link active" href="#home">Ana Sayfa</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#products">Ürün Portföyü</a></li>
-                        <li class="nav-item ms-lg-3 mt-2 mt-lg-0 w-100 w-lg-auto">
-                            <button class="btn btn-corp fw-bold w-100" data-bs-toggle="modal" data-bs-target="#loginModal">
-                                <i class="fa-solid fa-lock me-1"></i> Sistem Girişi
-                            </button>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-
-        <section id="home" class="hero-section">
-            <div class="container">
-                <h1 class="h3 fw-bold mb-2">B2B Sipariş & Tedarik Yönetim Sistemi</h1>
-                <p class="small mb-0 text-white-50">Kurumsal paydaşlar, departmanlar ve lojistik ağları için entegre takip merkezi.</p>
-            </div>
-        </section>
-
-        <section id="products" class="py-4 bg-light">
-            <div class="container">
-                <div class="row mb-3 align-items-center">
-                    <div class="col-12 col-md-6"><h4 class="fw-bold text-dark m-0 mb-2 mb-md-0">Aktif Ürün Kataloğu</h4></div>
-                    <div class="col-12 col-md-6">
-                        <div class="input-group">
-                            <span class="input-group-text bg-white border-end-0"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
-                            <input type="text" id="clientSearchInput" class="form-control border-start-0" placeholder="Katalogda ara..." oninput="renderClientProducts()">
-                        </div>
-                    </div>
-                </div>
-                <div class="row g-3 justify-content-center" id="client-products-grid"></div>
-            </div>
-        </section>
-    </div>
-
-    <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow">
-                <div class="modal-header text-white bg-corp-blue">
-                    <h5 class="modal-title fw-bold"><i class="fa-solid fa-shield-lock me-2"></i>Kurumsal Yetkilendirme</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-close="modal"></button>
-                </div>
-                <div class="modal-body p-4 bg-white">
-                    <div id="loginError" class="alert alert-danger d-none p-2 small">Giriş yetkisi doğrulanamadı. Lütfen bilgileri kontrol edin!</div>
-                    <div class="mb-3">
-                        <label class="form-label small fw-semibold">Erişim Departmanı / Rolü</label>
-                        <select id="loginType" class="form-select">
-                            <option value="admin">Sistem Yöneticisi / Admin (Ortak Hesap)</option>
-                            <option value="corporate">Kayıtlı Bayi / Cari Firma</option>
-                            <option value="service">Lojistik Sorumlusu / Dağıtım</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label small fw-semibold">Kullanıcı Adı</label>
-                        <input type="text" id="username" class="form-control" placeholder="Kullanıcı adınız">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label small fw-semibold">Şifre</label>
-                        <input type="password" id="password" class="form-control" placeholder="••••••••">
-                    </div>
-                    <button type="button" class="btn btn-corp w-100 fw-bold py-2" onclick="unifiedLoginEngine()">Güvenli Giriş Yap</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="admin-panel">
-        <div class="container-fluid px-0">
-            <div class="row g-0">
-                <div class="col-12 col-md-3 col-lg-2 sidebar">
-                    <h5 class="text-center fw-bold my-2" style="color: #38bdf8;"><i class="fa-solid fa-building me-2"></i>YÖNETİM MERKEZİ</h5>
-                    <p class="text-center text-white-50 small mb-2" id="logged-admin-name">Yönetici</p>
-                    <ul class="nav flex-column mb-3">
-                        <li class="nav-item"><a class="nav-link active" id="link-stock" onclick="switchAdminTab('tab-stock')"><i class="fa-solid fa-boxes-stacked me-1"></i> Ürün & Envanter</a></li>
-                        <li class="nav-item"><a class="nav-link" id="link-corporate" onclick="switchAdminTab('tab-corporate')"><i class="fa-solid fa-handshake me-1"></i> Cari Bayiler</a></li>
-                        <li class="nav-item"><a class="nav-link" id="link-logistics" onclick="switchAdminTab('tab-logistics')"><i class="fa-solid fa-truck me-1"></i> Lojistik / Dağıtım</a></li>
-                        <li class="nav-item"><a class="nav-link" id="link-sysadmin" onclick="switchAdminTab('tab-sysadmin')"><i class="fa-solid fa-user-gear me-1"></i> Yönetici Hesapları</a></li>
-                        <li class="nav-item"><a class="nav-link" id="link-orders" onclick="switchAdminTab('tab-orders')"><i class="fa-solid fa-receipt me-1"></i> Sipariş Havuzu</a></li>
-                    </ul>
-                    <button class="btn btn-sm btn-danger w-100 fw-bold mb-2" onclick="logoutSystem()"><i class="fa-solid fa-power-off me-1"></i> Çıkış Yap</button>
-                </div>
-
-                <div class="col-12 col-md-9 col-lg-10 main-content-area">
-                    <div id="tab-stock" class="panel-content active">
-                        <div class="d-flex justify-content-between align-items-center mb-3 panel-header-block">
-                            <h4 class="fw-bold m-0 text-corp-blue">Merkez Envanter Yönetimi</h4>
-                            <button class="btn btn-sm btn-corp" data-bs-toggle="modal" data-bs-target="#addProductModal" onclick="clearPreview()"><i class="fa-solid fa-plus me-1"></i> Yeni Ürün Tanımla</button>
-                        </div>
-                        <div class="card border-0 shadow-sm p-2 bg-white">
-                            <div class="table-responsive">
-                                <table class="table align-middle mb-0 text-nowrap">
-                                    <thead class="table-dark small">
-                                        <tr><th>Görsel</th><th>Ürün / Hizmet Adı</th><th>Kategori</th><th>Birim Fiyat</th><th>Stok Durumu</th><th class="text-end">İşlem</th></tr>
-                                    </thead>
-                                    <tbody id="admin-stock-table-body" class="small"></tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="tab-corporate" class="panel-content">
-                        <div class="d-flex justify-content-between align-items-center mb-3 panel-header-block">
-                            <h4 class="fw-bold text-primary m-0">Kayıtlı Bayi & Cari Hesaplar</h4>
-                            <button class="btn btn-sm btn-primary fw-bold" data-bs-toggle="modal" data-bs-target="#addCorporateModal"><i class="fa-solid fa-plus me-1"></i> Yeni Cari Kart Oluştur</button>
-                        </div>
-                        <div class="card border-0 shadow-sm p-2 bg-white">
-                            <div class="table-responsive">
-                                <table class="table table-striped align-middle mb-0 text-nowrap">
-                                    <thead class="table-primary small"><tr><th>Ticari Unvan</th><th>Yetkili</th><th>Kullanıcı Adı</th><th>Şifre</th><th class="text-end">İşlem</th></tr></thead>
-                                    <tbody id="corporate-table-body" class="small"></tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="tab-logistics" class="panel-content">
-                        <div class="d-flex justify-content-between align-items-center mb-3 panel-header-block">
-                            <h4 class="fw-bold text-warning m-0">Lojistik Sorumluları ve Sürücüler</h4>
-                            <button class="btn btn-sm btn-warning fw-bold text-dark" data-bs-toggle="modal" data-bs-target="#addLogisticsModal"><i class="fa-solid fa-user-plus me-1"></i> Lojistik Personeli Ekle</button>
-                        </div>
-                        <div class="card border-0 shadow-sm p-2 bg-white">
-                            <div class="table-responsive">
-                                <table class="table table-striped align-middle mb-0 text-nowrap">
-                                    <thead class="table-dark small"><tr><th>Adı Soyadı</th><th>Rol</th><th>Kullanıcı Adı</th><th>Şifre</th><th class="text-end">İşlem</th></tr></thead>
-                                    <tbody id="logistics-table-body" class="small"></tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="tab-sysadmin" class="panel-content">
-                        <div class="d-flex justify-content-between align-items-center mb-3 panel-header-block">
-                            <h4 class="fw-bold text-danger m-0">Sistem Admin Yönetimi (Hesap Paylaşımı)</h4>
-                            <button class="btn btn-sm btn-danger fw-bold" data-bs-toggle="modal" data-bs-target="#addAdminModal"><i class="fa-solid fa-user-shield me-1"></i> Yeni Yetkili Hesap Ekle</button>
-                        </div>
-                        <p class="text-muted small">Buradan eklediğiniz yöneticiler kendi bilgileriyle panele girip işlem yapabilir. Mevcut şifreleri herkesle paylaşabilir ya da kişiye özel atayabilirsiniz.</p>
-                        <div class="card border-0 shadow-sm p-2 bg-white">
-                            <div class="table-responsive">
-                                <table class="table table-striped align-middle mb-0 text-nowrap">
-                                    <thead class="table-danger small"><tr><th>Adı Soyadı</th><th>Yetki Grubu</th><th>Kullanıcı Adı</th><th>Şifre</th><th class="text-end">İşlem</th></tr></thead>
-                                    <tbody id="sysadmin-table-body" class="small"></tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="tab-orders" class="panel-content">
-                        <h4 class="fw-bold text-dark mb-3">Gelen Tedarik ve Sipariş Emirleri</h4>
-                        <div class="card border-0 shadow-sm p-2 bg-white">
-                            <div class="table-responsive">
-                                <table class="table align-middle mb-0 text-nowrap">
-                                    <thead class="table-warning small"><tr><th>Talep Eden Cari</th><th>Ürün</th><th>Miktar</th><th>Toplam</th><th>Atanan Dağıtıcı</th><th>Durum</th><th class="text-end">Eylem</th></tr></thead>
-                                    <tbody id="orders-table-body" class="small"></tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="corporate-panel">
-        <div class="container-fluid px-0">
-            <div class="row g-0">
-                <div class="col-12 col-md-3 col-lg-2 corp-sidebar">
-                    <h5 class="text-center text-white fw-bold my-2"><i class="fa-solid fa-wallet me-2"></i>BAYİ CARİ</h5>
-                    <p class="text-center text-white-50 small mb-2" id="logged-corp-name">Yufka Bayisi</p>
-                    <ul class="nav flex-column mb-3">
-                        <li class="nav-item"><a class="nav-link active" id="link-corp-orders" onclick="switchCorpTab('tab-corp-orders')"><i class="fa-solid fa-history me-1"></i> Geçmiş Siparişler</a></li>
-                        <li class="nav-item"><a class="nav-link" id="link-corp-new" onclick="switchCorpTab('tab-corp-new')"><i class="fa-solid fa-plus-circle me-1"></i> Malzeme Talep Et</a></li>
-                    </ul>
-                    <button class="btn btn-sm btn-danger w-100 fw-bold mb-2" onclick="logoutSystem()">Oturumu Kapat</button>
-                </div>
-                <div class="col-12 col-md-9 col-lg-10 main-content-area">
-                    <div id="tab-corp-orders" class="panel-content active">
-                        <h4 class="fw-bold mb-3 text-corp-blue">Cari Sipariş Ekstremiz</h4>
-                        <div class="card border-0 shadow-sm p-2 bg-white">
-                            <div class="table-responsive">
-                                <table class="table align-middle mb-0 text-nowrap"><thead class="table-success small"><tr><th>Talep Edilen Ürün</th><th>Miktar</th><th>Toplam Tutar</th><th>Departman Notu</th><th>Durum</th></tr></thead><tbody id="my-orders-table-body" class="small"></tbody></table>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="tab-corp-new" class="panel-content">
-                        <h4 class="fw-bold mb-3 text-corp-blue">Yeni Malzeme Tedarik Emri Girişi</h4>
-                        <div class="card border-0 shadow-sm p-3 bg-white">
-                            <form id="corpSelfOrderForm" onsubmit="createNewOrder(event)">
-                                <div class="mb-2"><label class="form-label small fw-bold">Ürün / Malzeme Seçimi</label><select id="corpSelfProductSelect" class="form-select form-select-sm" onchange="calculateOrderTotalPreview()" required></select></div>
-                                <div class="mb-2"><label class="form-label small fw-bold">Talep Miktarı</label><input type="number" id="corpSelfQuantity" class="form-control form-control-sm" min="1" oninput="calculateOrderTotalPreview()" required></div>
-                                <div class="mb-2 p-2 bg-light rounded border small">
-                                    <div class="d-flex justify-content-between mb-1"><span>Matrah:</span><span id="basketSubtotal">0.00 ₺</span></div>
-                                    <div class="d-flex justify-content-between mb-1"><span>KDV (%10):</span><span id="basketTax">0.00 ₺</span></div>
-                                    <hr class="my-1">
-                                    <div class="d-flex justify-content-between fw-bold text-dark"><span>Genel Toplam:</span><span id="basketGrandTotal" class="text-corp-blue">0.00 ₺</span></div>
-                                </div>
-                                <div class="mb-3"><label class="form-label small fw-bold">Sevkiyat / Teslimat Notu</label><textarea id="corpSelfNote" class="form-control form-control-sm" rows="2"></textarea></div>
-                                <button type="submit" class="btn btn-sm text-white w-100 fw-bold bg-corp-blue py-2">Tedarik Emrini Gönder</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="service-panel">
-        <div class="container-fluid px-0">
-            <div class="row g-0">
-                <div class="col-12 col-md-3 col-lg-2 service-sidebar">
-                    <h5 class="text-center text-white fw-bold my-2"><i class="fa-solid fa-truck-moving me-2"></i>LOJİSTİK ROTA</h5>
-                    <p class="text-center text-white-50 small mb-2" id="logged-service-name">Sürücü Personel</p>
-                    <button class="btn btn-sm btn-danger w-100 fw-bold mb-2" onclick="logoutSystem()">Çıkış</button>
-                </div>
-                <div class="col-12 col-md-9 col-lg-10 main-content-area">
-                    <h4 class="fw-bold text-secondary mb-3">Zimmetli Sevkiyat ve Teslimat Görevleri</h4>
-                    <div class="card border-0 shadow-sm p-2 bg-white">
-                        <div class="table-responsive">
-                            <table class="table align-middle mb-0 text-nowrap"><thead class="table-dark small"><tr><th>Alıcı Firma / Cari</th><th>Ürün</th><th>Miktar</th><th>Talep Notu</th><th>İşlem</th></tr></thead><tbody id="service-orders-table-body" class="small"></tbody></table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="addProductModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content p-3">
-                <h6 class="fw-bold mb-2 text-corp-blue">Kurumsal Envanter Kartı Tanımlama</h6>
-                <form id="addProductForm">
-                    <div class="mb-2"><label class="form-label small mb-1">Ürün / Hizmet Adı</label><input type="text" id="newProdName" class="form-control form-control-sm" required></div>
-                    <div class="row g-2">
-                        <div class="col-6 mb-2">
-                            <label class="form-label small mb-1">Kategori Grubu</label>
-                            <select id="newProdCategory" class="form-select form-select-sm">
-                                <option value="A Grubu Ürünler">A Grubu Ürünler</option>
-                                <option value="B Grubu Ürünler">B Grubu Ürünler</option>
-                                <option value="Hammadde / Diğer">Hammadde / Diğer</option>
-                            </select>
-                        </div>
-                        <div class="col-6 mb-2"><label class="form-label small mb-1">Birim Fiyat (₺)</label><input type="number" id="newProdPrice" class="form-control form-control-sm" step="0.01" required></div>
-                    </div>
-                    <div class="mb-2"><label class="form-label small mb-1">Paket / Ambalaj Özelliği</label><input type="text" id="newProdDesc" class="form-control form-control-sm" placeholder="Örn: Palet bazlı veya 50'lik koli" required></div>
-                    <div class="mb-2">
-                        <label class="form-label small mb-1">Ürün Görseli</label>
-                        <input type="file" id="newProdImgFile" class="form-control form-control-sm mb-1" accept="image/*" onchange="previewAndOptimizeImage(event)">
-                        <div class="preview-box" id="imagePreviewContainer"><span class="text-muted small">Görsel Yok</span></div>
-                    </div>
-                    <button type="button" class="btn btn-sm text-white w-100 fw-bold bg-corp-blue py-2" onclick="submitOptimizedProduct()">Kartı Kaydet</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="addCorporateModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content p-3">
-                <h6 class="fw-bold mb-2 text-primary">Yeni Cari Bayi Hesabı Açılışı</h6>
-                <form id="addCorporateForm" onsubmit="createNewCorporate(event)">
-                    <div class="mb-2"><input type="text" id="corpCompany" class="form-control form-control-sm" placeholder="Firma Resmi Unvanı" required></div>
-                    <div class="mb-2"><input type="text" id="corpName" class="form-control form-control-sm" placeholder="İrtibat Kurulacak Yetkili" required></div>
-                    <div class="mb-2"><input type="text" id="corpUser" class="form-control form-control-sm" placeholder="Bayi Cari Kullanıcı Adı" required></div>
-                    <div class="mb-2"><input type="text" id="corpPass" class="form-control form-control-sm" placeholder="Cari Şifre" required></div>
-                    <button type="submit" class="btn btn-sm btn-primary w-100 fw-bold py-2">Cari Hesabı Onayla</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="addLogisticsModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content p-3">
-                <h6 class="fw-bold mb-2 text-warning">Yeni Lojistik Personel Tanımı</h6>
-                <form id="addLogisticsForm" onsubmit="createNewLogistics(event)">
-                    <div class="mb-2"><input type="text" id="logName" class="form-control form-control-sm" placeholder="Personel İsim Soyisim" required></div>
-                    <div class="mb-2"><input type="text" id="logUser" class="form-control form-control-sm" placeholder="Lojistik Giriş Kullanıcı Adı" required></div>
-                    <div class="mb-2"><input type="text" id="logPass" class="form-control form-control-sm" placeholder="Lojistik Giriş Şifresi" required></div>
-                    <button type="submit" class="btn btn-sm btn-warning w-100 fw-bold text-dark py-2">Personeli Listeye Yaz</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="addAdminModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content p-3">
-                <h6 class="fw-bold mb-2 text-danger">Yeni Sistem Yöneticisi (Admin) Yetkilendirme</h6>
-                <form id="addAdminForm" onsubmit="createNewAdmin(event)">
-                    <div class="mb-2"><input type="text" id="admName" class="form-control form-control-sm" placeholder="Yönetici İsim Soyisim" required></div>
-                    <div class="mb-2"><input type="text" id="admUser" class="form-control form-control-sm" placeholder="Yönetici Kullanıcı Adı" required></div>
-                    <div class="mb-2"><input type="text" id="admPass" class="form-control form-control-sm" placeholder="Yönetici Şifresi" required></div>
-                    <button type="submit" class="btn btn-sm btn-danger w-100 fw-bold py-2">Admin Hesabını Aktif Et</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <script>
-        let globalOptimizedImageBase64 = "";
-        const TAX_RATE = 0.10;
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cutePink: '#ffb6c1',
+                        softPink: '#fff0f5',
+                        deepPink: '#ff2a8d',
+                        gold: '#ffd700',
+                        pastelPurple: '#e6e6fa'
+                    },
+                    fontFamily: {
+                        cute: ['Fredoka', 'sans-serif'],
+                        hand: ['Mali', 'cursive'],
+                        romantic: ['Great Vibes', 'cursive'],
+                        sans: ['Nunito', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
 
-        // VERİTABANI BAŞLANGIÇ DEĞERLERİ
-        const defaultAdmins = [
-            { id: 'a1', name: 'Şirket Müdürü / Genel Merkez', user: 'admin', pass: 'admin123' },
-            { id: 'a2', name: 'Finans Departmanı', user: 'finans', pass: 'finans42' }
-        ];
-        const defaultLogistics = [{ id: 'l1', name: 'Lojistik Araç 1', user: 'lojistik', pass: '123' }];
-        const defaultCorporates = [{ id: 'c1', company: 'Merkez Distribütör Ltd. Şti.', name: 'Mehmet Can', user: 'dist_cari', pass: '1234' }];
-        const defaultProducts = [
-            { id: '1', name: 'A Kalite Endüstriyel Ürün (Koli)', category: 'A Grubu Ürünler', desc: 'Paletli sevkiyat', price: 450.00, image: '', inStock: true },
-            { id: '2', name: 'B Tipi Tamamlayıcı Malzeme', category: 'B Grubu Ürünler', desc: 'Standart kutu ambalaj', price: 210.00, image: '', inStock: true }
-        ];
-        const defaultOrders = [{ id: 'o1', company: 'Merkez Distribütör Ltd. Şti.', product: 'A Kalite Endüstriyel Ürün (Koli)', quantity: 10, price: 450.00, subtotal: 4500.00, tax: 450.00, total: 4950.00, note: 'Öncelikli sevkiyat.', status: 'Hazırlanıyor', courierId: '', courierName: 'Atanmadı' }];
-
-        // KALICI VE PAYLAŞIMLI VERİTABANI MOTORU (LOCALSTORAGE)
-        let adminAccounts = JSON.parse(localStorage.getItem('corp_admins_v1')) || defaultAdmins;
-        let logisticsStaff = JSON.parse(localStorage.getItem('corp_logistics_v1')) || defaultLogistics;
-        let corporateAccounts = JSON.parse(localStorage.getItem('corp_corporates_v1')) || defaultCorporates;
-        let products = JSON.parse(localStorage.getItem('corp_products_v1')) || defaultProducts;
-        let orders = JSON.parse(localStorage.getItem('corp_orders_v1')) || defaultOrders;
-
-        let currentLoggedAdmin = null;
-        let currentLoggedCorporate = null;
-        let currentLoggedService = null;
-
-        function saveToLocalStorage() {
-            localStorage.setItem('corp_admins_v1', JSON.stringify(adminAccounts));
-            localStorage.setItem('corp_logistics_v1', JSON.stringify(logisticsStaff));
-            localStorage.setItem('corp_corporates_v1', JSON.stringify(corporateAccounts));
-            localStorage.setItem('corp_products_v1', JSON.stringify(products));
-            localStorage.setItem('corp_orders_v1', JSON.stringify(orders));
+    <style>
+        body {
+            background: linear-gradient(135deg, #ffe6f0 0%, #ffd1dc 50%, #fff0f5 100%);
+            min-height: 100vh;
+            font-family: 'Nunito', sans-serif;
+            overflow-x: hidden;
+            user-select: none;
         }
 
-        // DEPARTMAN BAZLI GİRİŞ YAPISI
-        function unifiedLoginEngine() {
-            const loginType = document.getElementById('loginType').value;
-            const userInp = document.getElementById('username').value.trim();
-            const passInp = document.getElementById('password').value.trim();
-            const errorDiv = document.getElementById('loginError');
-            errorDiv.classList.add('d-none');
+        /* Speech Bubble Style */
+        .speech-bubble {
+            position: relative;
+            background: #ffffff;
+            border-radius: 25px;
+            border: 3px solid #ff69b4;
+            box-shadow: 0 10px 25px rgba(255, 105, 180, 0.3);
+        }
+        .speech-bubble:after {
+            content: '';
+            position: absolute;
+            bottom: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 18px 15px 0;
+            border-style: solid;
+            border-color: #ffffff transparent;
+            display: block;
+            width: 0;
+        }
+        .speech-bubble:before {
+            content: '';
+            position: absolute;
+            bottom: -22px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 20px 17px 0;
+            border-style: solid;
+            border-color: #ff69b4 transparent;
+            display: block;
+            width: 0;
+        }
 
-            if (loginType === 'admin') {
-                const found = adminAccounts.find(a => a.user === userInp && a.pass === passInp);
-                if (found) {
-                    currentLoggedAdmin = found;
-                    document.getElementById('logged-admin-name').innerText = found.name;
-                    successfulLogin('admin-panel'); 
-                } else errorDiv.classList.remove('d-none');
-            } 
-            else if (loginType === 'service') {
-                const found = logisticsStaff.find(l => l.user === userInp && l.pass === passInp);
-                if (found) {
-                    currentLoggedService = found;
-                    document.getElementById('logged-service-name').innerText = found.name;
-                    successfulLogin('service-panel');
-                } else errorDiv.classList.remove('d-none');
-            } 
-            else if (loginType === 'corporate') {
-                const found = corporateAccounts.find(c => c.user === userInp && c.pass === passInp);
-                if (found) {
-                    currentLoggedCorporate = found;
-                    document.getElementById('logged-corp-name').innerText = found.company;
-                    successfulLogin('corporate-panel');
-                } else errorDiv.classList.remove('d-none');
+        /* Glassmorphism Card Style */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 3px solid rgba(255, 182, 193, 0.85);
+            box-shadow: 0 20px 40px rgba(255, 105, 180, 0.25);
+        }
+
+        /* Button Hover Effects */
+        .flower-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .flower-card:hover {
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 15px 30px rgba(255, 42, 141, 0.35);
+        }
+
+        /* Floating & Shimmer Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-12px) rotate(2deg); }
+        }
+        .animate-float {
+            animation: float 3.5s ease-in-out infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { filter: drop-shadow(0 0 15px rgba(255, 105, 180, 0.6)); transform: scale(1); }
+            50% { filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.9)); transform: scale(1.03); }
+        }
+        .animate-glow {
+            animation: pulseGlow 2.5s ease-in-out infinite;
+        }
+
+        @keyframes rotateSparkle {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .animate-spin-slow {
+            animation: rotateSparkle 18s linear infinite;
+        }
+
+        /* Neon Glow Text */
+        .neon-title {
+            text-shadow: 0 0 10px #ff69b4, 0 0 20px #ff1493, 0 0 30px #ffd700, 0 0 40px #ff007f;
+        }
+    </style>
+</head>
+<body class="relative flex flex-col items-center justify-between min-h-screen p-4 md:p-8">
+
+    <!-- Floating Background Hearts Container -->
+    <div id="bg-hearts" class="fixed inset-0 pointer-events-none z-0 overflow-hidden"></div>
+
+    <!-- Music Control Button -->
+    <button id="musicToggleBtn" onclick="toggleAudio()" class="fixed top-4 right-4 z-50 p-3 px-5 rounded-full bg-white/95 text-pink-600 border-2 border-pink-400 shadow-xl hover:scale-110 active:scale-95 transition-all flex items-center gap-2 font-cute text-sm">
+        <i id="musicIcon" class="fas fa-music text-lg animate-bounce text-pink-500"></i>
+        <span id="musicStatus" class="font-bold">Müzik Çal</span>
+    </button>
+
+    <!-- ========================================== -->
+    <!-- SECTION 1: HOME PAGE WITH CUTE KITTEN -->
+    <!-- ========================================== -->
+    <main id="homeScreen" class="relative z-10 w-full max-w-xl my-auto flex flex-col items-center text-center transition-all duration-500">
+        
+        <!-- Top Badge -->
+        <div class="inline-block bg-white/95 border-2 border-pink-400 px-6 py-2 rounded-full shadow-lg mb-6 animate-bounce">
+            <span class="font-hand text-pink-600 font-bold text-lg md:text-xl flex items-center gap-2">
+                <i class="fas fa-sparkles text-amber-400"></i> CANIM EŞŞEK GÖZLÜM <i class="fas fa-heart text-red-500"></i>
+            </span>
+        </div>
+
+        <!-- Speech Bubble -->
+        <div class="speech-bubble px-8 py-4 mb-6 max-w-xs sm:max-w-sm">
+            <h1 class="font-cute text-2xl sm:text-3xl text-pink-600 font-bold tracking-wide">
+                Çiçek sever misin? 🌸
+            </h1>
+        </div>
+
+        <!-- Animated White Kitten Vector -->
+        <div class="relative w-48 h-48 md:w-56 md:h-56 my-2 animate-float">
+            <!-- Glowing Aura -->
+            <div class="absolute inset-0 bg-pink-300/50 rounded-full blur-xl transform scale-110"></div>
+            
+            <svg viewBox="0 0 200 200" class="w-full h-full drop-shadow-2xl relative z-10">
+                <!-- Big Heart behind Kitten -->
+                <path d="M 100 35 C 80 5, 35 5, 35 45 C 35 75, 70 105, 100 135 C 130 105, 165 75, 165 45 C 165 5, 120 5, 100 35 Z" fill="#ff7aa2" opacity="0.9"/>
+                
+                <!-- Kitten Body -->
+                <ellipse cx="100" cy="142" rx="42" ry="38" fill="#ffffff" stroke="#5a3d28" stroke-width="3"/>
+                
+                <!-- Ears -->
+                <polygon points="62,85 45,50 80,72" fill="#ffffff" stroke="#5a3d28" stroke-width="3" stroke-linejoin="round"/>
+                <polygon points="62,82 52,58 75,73" fill="#ffb6c1"/>
+                
+                <polygon points="138,85 155,50 120,72" fill="#ffffff" stroke="#5a3d28" stroke-width="3" stroke-linejoin="round"/>
+                <polygon points="138,82 148,58 125,73" fill="#ffb6c1"/>
+
+                <!-- Kitten Head -->
+                <ellipse cx="100" cy="100" rx="52" ry="44" fill="#ffffff" stroke="#5a3d28" stroke-width="3.5"/>
+                
+                <!-- Cheeks -->
+                <ellipse cx="70" cy="112" rx="10" ry="6" fill="#ff8da1" opacity="0.8"/>
+                <ellipse cx="130" cy="112" rx="10" ry="6" fill="#ff8da1" opacity="0.8"/>
+
+                <!-- Cute Big Eyes -->
+                <circle cx="78" cy="100" r="7.5" fill="#4a2e1b"/>
+                <circle cx="76" cy="98" r="2.5" fill="#ffffff"/>
+                
+                <circle cx="122" cy="100" r="7.5" fill="#4a2e1b"/>
+                <circle cx="120" cy="98" r="2.5" fill="#ffffff"/>
+
+                <!-- Cute Mouth & Nose -->
+                <path d="M 93 108 Q 96.5 113, 100 108 Q 103.5 113, 107 108" fill="none" stroke="#5a3d28" stroke-width="3" stroke-linecap="round"/>
+                <polygon points="98,104 102,104 100,107" fill="#ff8da1"/>
+
+                <!-- Paws -->
+                <ellipse cx="84" cy="168" rx="10" ry="7" fill="#ffffff" stroke="#5a3d28" stroke-width="2.5"/>
+                <ellipse cx="116" cy="168" rx="10" ry="7" fill="#ffffff" stroke="#5a3d28" stroke-width="2.5"/>
+            </svg>
+        </div>
+
+        <p class="font-hand text-pink-700 text-base md:text-lg mb-6 font-semibold">
+            Birini seç bakalım eşşek gözlüm... 💕
+        </p>
+
+        <!-- 3 Interactive Flower Selection Buttons -->
+        <div class="grid grid-cols-3 gap-3 md:gap-4 w-full">
+            
+            <!-- LALE Button -->
+            <button onclick="selectFlower('lale')" class="flower-card glass-card p-4 rounded-3xl flex flex-col items-center border-2 border-pink-400 group">
+                <span class="text-4xl sm:text-5xl mb-1 transform group-hover:scale-125 transition-transform duration-300">🌷</span>
+                <h3 class="font-cute text-base sm:text-lg font-bold text-pink-600">LALE</h3>
+            </button>
+
+            <!-- GÜL Button -->
+            <button onclick="selectFlower('gul')" class="flower-card glass-card p-4 rounded-3xl flex flex-col items-center border-2 border-red-400 group">
+                <span class="text-4xl sm:text-5xl mb-1 transform group-hover:scale-125 transition-transform duration-300">🌹</span>
+                <h3 class="font-cute text-base sm:text-lg font-bold text-red-500">GÜL</h3>
+            </button>
+
+            <!-- ORKİDE Button -->
+            <button onclick="selectFlower('orkide')" class="flower-card glass-card p-4 rounded-3xl flex flex-col items-center border-2 border-purple-400 group">
+                <span class="text-4xl sm:text-5xl mb-1 transform group-hover:scale-125 transition-transform duration-300">🌸</span>
+                <h3 class="font-cute text-base sm:text-lg font-bold text-purple-600">ORKİDE</h3>
+            </button>
+
+        </div>
+    </main>
+
+    <!-- ========================================== -->
+    <!-- SECTION 2: GLAMOROUS FLOWER SHOWCASE PAGE -->
+    <!-- ========================================== -->
+    <main id="flowerScreen" class="hidden relative z-10 w-full max-w-2xl my-auto flex flex-col items-center text-center transition-all duration-500">
+        
+        <div class="w-full glass-card p-6 md:p-8 rounded-3xl relative overflow-hidden border-4 border-pink-300 shadow-2xl flex flex-col items-center">
+            
+            <!-- Top Neon Title -->
+            <h1 class="font-cute text-3xl sm:text-5xl font-black text-pink-600 tracking-wider my-2 neon-title">
+                EŞŞEK GÖZLÜME
+            </h1>
+            
+            <p class="font-hand text-pink-500 text-lg sm:text-xl font-bold mb-4">
+                Sana Özel Şatafatlı Çiçeğin ✨
+            </p>
+
+            <!-- FLOWER RENDER DISPLAY BOX -->
+            <div class="relative w-full h-72 sm:h-80 my-2 flex items-center justify-center">
+                
+                <!-- Rotating Golden Sparkle Background Ring -->
+                <div class="absolute inset-0 flex items-center justify-center animate-spin-slow pointer-events-none opacity-80">
+                    <svg viewBox="0 0 300 300" class="w-72 h-72 sm:w-80 sm:h-80">
+                        <circle cx="150" cy="150" r="130" fill="none" stroke="#ffd700" stroke-width="2" stroke-dasharray="8 12" />
+                        <circle cx="150" cy="150" r="110" fill="none" stroke="#ff69b4" stroke-width="1.5" stroke-dasharray="5 10" />
+                    </svg>
+                </div>
+
+                <!-- FLOWER CONTAINER (Dynamic SVG Rendered Here) -->
+                <div id="flowerDisplay" class="relative z-10 w-64 h-64 sm:w-72 sm:h-72 flex items-center justify-center animate-glow">
+                    <!-- SVG gets injected dynamically -->
+                </div>
+            </div>
+
+            <!-- Romantic Message Box -->
+            <div class="bg-white/80 border-2 border-pink-300 p-5 rounded-2xl shadow-inner my-4 w-full">
+                <p id="flowerMessage" class="font-cute text-lg sm:text-xl text-pink-700 leading-relaxed font-bold">
+                    "Canım Lale'm, Eşşek Gözlüm... Dünyanın en güzel çiçeği sensin! ❤️"
+                </p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-wrap justify-center gap-3 mt-3 w-full">
+                <button onclick="toggleAudio()" class="bg-gradient-to-r from-amber-400 to-pink-500 hover:from-amber-500 hover:to-pink-600 text-white font-cute font-bold py-3 px-5 rounded-full shadow-lg transition-transform hover:scale-105 active:scale-95 flex items-center gap-2 text-sm sm:text-base">
+                    <i class="fas fa-music"></i> Romantik Melodi
+                </button>
+                <button onclick="triggerHeartShower()" class="bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 text-white font-cute font-bold py-3 px-5 rounded-full shadow-lg transition-transform hover:scale-105 active:scale-95 flex items-center gap-2 text-sm sm:text-base">
+                    <i class="fas fa-heart"></i> Kalp Yağmuru
+                </button>
+                <button onclick="goBackHome()" class="bg-gray-100 hover:bg-pink-100 text-pink-600 font-cute font-bold py-3 px-5 rounded-full border-2 border-pink-300 shadow transition-transform hover:scale-105 active:scale-95 flex items-center gap-2 text-sm sm:text-base">
+                    <i class="fas fa-rotate-left"></i> Başka Çiçek Seç
+                </button>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="relative z-10 text-center py-4 text-xs font-cute text-pink-700 font-bold">
+        Eşşek Gözlüme Sonsuz Aşkla Hazırlandı 💕
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // --- 1. FLOATING BACKGROUND HEARTS ---
+        function createBgHearts() {
+            const container = document.getElementById('bg-hearts');
+            container.innerHTML = '';
+            for (let i = 0; i < 25; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'absolute text-pink-300/40 text-xl md:text-3xl animate-float';
+                heart.style.left = `${Math.random() * 100}%`;
+                heart.style.top = `${Math.random() * 100}%`;
+                heart.style.animationDuration = `${Math.random() * 3 + 3}s`;
+                heart.style.animationDelay = `${Math.random() * 2}s`;
+                heart.innerHTML = '<i class="fas fa-heart"></i>';
+                container.appendChild(heart);
+            }
+        }
+        createBgHearts();
+
+        // --- 2. HIGH QUALITY SVG FLOWERS ---
+        const FLOWER_SVGS = {
+            // HIGHLY SHAFATLI LALE (TULIP)
+            lale: `
+            <svg viewBox="0 0 200 240" class="w-full h-full drop-shadow-2xl">
+                <defs>
+                    <linearGradient id="stemGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#4caf50"/>
+                        <stop offset="100%" stop-color="#1b5e20"/>
+                    </linearGradient>
+                    <linearGradient id="tulipMain" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stop-color="#ff1493"/>
+                        <stop offset="50%" stop-color="#ff69b4"/>
+                        <stop offset="100%" stop-color="#c71585"/>
+                    </linearGradient>
+                    <linearGradient id="tulipGold" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#ffd700"/>
+                        <stop offset="100%" stop-color="#ff8c00"/>
+                    </linearGradient>
+                    <filter id="glow">
+                        <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                        <feMerge>
+                            <feMergeNode in="coloredBlur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                </defs>
+
+                <!-- Stem & Leaves -->
+                <path d="M 100 230 Q 90 170 100 120" stroke="url(#stemGrad)" stroke-width="10" fill="none" stroke-linecap="round"/>
+                <path d="M 100 190 Q 50 160 40 120 Q 70 140 100 170" fill="url(#stemGrad)"/>
+                <path d="M 100 180 Q 150 150 160 110 Q 130 130 100 160" fill="url(#stemGrad)"/>
+
+                <!-- Golden Aura Back Petals -->
+                <ellipse cx="100" cy="85" rx="45" ry="55" fill="url(#tulipGold)" filter="url(#glow)"/>
+
+                <!-- Main Tulip Petals -->
+                <!-- Left Petal -->
+                <path d="M 100 125 C 50 110 40 60 70 35 C 90 55 95 90 100 125 Z" fill="url(#tulipMain)"/>
+                <!-- Right Petal -->
+                <path d="M 100 125 C 150 110 160 60 130 35 C 110 55 105 90 100 125 Z" fill="url(#tulipMain)"/>
+                <!-- Center Glowing Petal -->
+                <path d="M 100 130 C 70 110 65 50 100 25 C 135 50 130 110 100 130 Z" fill="#ff2a8d" filter="url(#glow)"/>
+
+                <!-- Crown & Sparkles -->
+                <circle cx="100" cy="25" r="7" fill="#ffd700"/>
+                <circle cx="75" cy="40" r="5" fill="#ffffff" opacity="0.9"/>
+                <circle cx="125" cy="40" r="5" fill="#ffffff" opacity="0.9"/>
+                <!-- Diamond center -->
+                <polygon points="100,60 106,72 100,84 94,72" fill="#ffffff"/>
+            </svg>`,
+
+            // GLAMOROUS RED ROSE
+            gul: `
+            <svg viewBox="0 0 200 240" class="w-full h-full drop-shadow-2xl">
+                <defs>
+                    <linearGradient id="roseStem" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stop-color="#388e3c"/>
+                        <stop offset="100%" stop-color="#1b5e20"/>
+                    </linearGradient>
+                    <radialGradient id="roseRed" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="#ff1744"/>
+                        <stop offset="70%" stop-color="#d50000"/>
+                        <stop offset="100%" stop-color="#880e4f"/>
+                    </radialGradient>
+                </defs>
+
+                <!-- Stem -->
+                <path d="M 100 230 Q 110 170 100 110" stroke="url(#roseStem)" stroke-width="9" fill="none" stroke-linecap="round"/>
+                <!-- Leaves -->
+                <path d="M 102 180 Q 140 170 150 140 Q 120 150 102 175" fill="url(#roseStem)"/>
+                <path d="M 98 160 Q 60 150 50 120 Q 80 130 98 155" fill="url(#roseStem)"/>
+
+                <!-- Outer Petals -->
+                <circle cx="100" cy="80" r="55" fill="#880e4f"/>
+                <circle cx="85" cy="80" r="45" fill="#c2185b"/>
+                <circle cx="115" cy="80" r="45" fill="#d32f2f"/>
+                <circle cx="100" cy="68" r="42" fill="#e53935"/>
+                <circle cx="100" cy="88" r="38" fill="url(#roseRed)"/>
+                
+                <!-- Inner Spiral Layer -->
+                <path d="M 85 75 Q 100 50 115 75 Q 100 105 85 75 Z" fill="#ff1744"/>
+                <path d="M 90 75 Q 100 62 110 75 Q 100 90 90 75 Z" fill="#ffd700"/>
+
+                <!-- Sparkle Dots -->
+                <circle cx="70" cy="60" r="3" fill="#ffffff"/>
+                <circle cx="130" cy="60" r="4" fill="#ffffff"/>
+                <circle cx="100" cy="40" r="3" fill="#ffd700"/>
+            </svg>`,
+
+            // ELEGANT PURPLE ORCHID
+            orkide: `
+            <svg viewBox="0 0 200 240" class="w-full h-full drop-shadow-2xl">
+                <defs>
+                    <linearGradient id="orchidGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#e1bee7"/>
+                        <stop offset="50%" stop-color="#ba68c8"/>
+                        <stop offset="100%" stop-color="#7b1fa2"/>
+                    </linearGradient>
+                    <radialGradient id="orchidCenter" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="#ffd700"/>
+                        <stop offset="100%" stop-color="#ff1493"/>
+                    </radialGradient>
+                </defs>
+
+                <!-- Curved Stem -->
+                <path d="M 100 230 Q 70 160 100 100" stroke="#4caf50" stroke-width="8" fill="none" stroke-linecap="round"/>
+
+                <!-- 5 Large Petals -->
+                <!-- Top Petal -->
+                <ellipse cx="100" cy="50" rx="25" ry="42" fill="url(#orchidGrad)"/>
+                <!-- Bottom Left Petal -->
+                <ellipse cx="65" cy="125" rx="26" ry="42" fill="url(#orchidGrad)" transform="rotate(-30 65 125)"/>
+                <!-- Bottom Right Petal -->
+                <ellipse cx="135" cy="125" rx="26" ry="42" fill="url(#orchidGrad)" transform="rotate(30 135 125)"/>
+                <!-- Side Left Petal -->
+                <ellipse cx="55" cy="85" rx="30" ry="45" fill="url(#orchidGrad)" transform="rotate(-65 55 85)"/>
+                <!-- Side Right Petal -->
+                <ellipse cx="145" cy="85" rx="30" ry="45" fill="url(#orchidGrad)" transform="rotate(65 145 85)"/>
+
+                <!-- Orchid Labellum / Center Lip -->
+                <path d="M 100 80 Q 75 110 100 125 Q 125 110 100 80 Z" fill="#ff1493"/>
+                <circle cx="100" cy="92" r="12" fill="url(#orchidCenter)"/>
+                <circle cx="100" cy="92" r="5" fill="#ffffff"/>
+            </svg>`
+        };
+
+        // --- 3. FLOWER SELECTION NAVIGATION ---
+        let currentSelected = 'lale';
+
+        function selectFlower(type) {
+            currentSelected = type;
+
+            document.getElementById('homeScreen').classList.add('hidden');
+            document.getElementById('flowerScreen').classList.remove('hidden');
+
+            const displayDiv = document.getElementById('flowerDisplay');
+            const messageP = document.getElementById('flowerMessage');
+
+            // Set dynamic SVG
+            displayDiv.innerHTML = FLOWER_SVGS[type] || FLOWER_SVGS['lale'];
+
+            // Set Message based on choice
+            if (type === 'lale') {
+                messageP.innerHTML = `"Canım Lale'm, Eşşek Gözlüm... Dünyanın en güzel ve en özel çiçeği sensin! ❤️"`;
+            } else if (type === 'gul') {
+                messageP.innerHTML = `"Tüm kırmızı güller bir araya gelse bile senin o güzel eşşek gözlerinin yanında sönük kalır! 🌹"`;
+            } else if (type === 'orkide') {
+                messageP.innerHTML = `"Orkide kadar asil, zarif ve eşsizsin eşşek gözlüm. Seni her şeyden çok seviyorum! 🌸"`;
+            }
+
+            triggerHeartShower();
+        }
+
+        function goBackHome() {
+            document.getElementById('flowerScreen').classList.add('hidden');
+            document.getElementById('homeScreen').classList.remove('hidden');
+        }
+
+        // --- 4. HEART & SPARKLE CONFETTI SHOWER ---
+        function triggerHeartShower() {
+            if (typeof confetti === 'function') {
+                const heart = confetti.shapeFromText({ text: '❤️', scalar: 2 });
+                const flowerIcon = confetti.shapeFromText({ 
+                    text: currentSelected === 'lale' ? '🌷' : (currentSelected === 'gul' ? '🌹' : '🌸'), 
+                    scalar: 2 
+                });
+                const sparkle = confetti.shapeFromText({ text: '✨', scalar: 1.8 });
+
+                confetti({
+                    shapes: [heart, flowerIcon, sparkle],
+                    particleCount: 40,
+                    spread: 90,
+                    origin: { y: 0.6 }
+                });
             }
         }
 
-        function successfulLogin(panelId) {
-            const modalInstance = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
-            if(modalInstance) modalInstance.hide();
-            document.getElementById('username').value = "";
-            document.getElementById('password').value = "";
-            document.getElementById('client-interface').style.display = 'none';
-            document.getElementById('admin-panel').style.display = 'none';
-            document.getElementById('corporate-panel').style.display = 'none';
-            document.getElementById('service-panel').style.display = 'none';
-            document.getElementById(panelId).style.display = 'block';
-            renderAll();
+        // --- 5. WEB AUDIO API ROMANTIC MELODY ---
+        let audioCtx = null;
+        let isAudioPlaying = false;
+        let melodyInterval = null;
+
+        function playRomanticNote() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            const scale = [261.63, 329.63, 392.00, 523.25, 659.25, 783.99]; // C, E, G, C5, E5, G5
+            const note = scale[Math.floor(Math.random() * scale.length)];
+
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(note, audioCtx.currentTime);
+
+            gain.gain.setValueAtTime(0.01, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.15, audioCtx.currentTime + 0.1);
+            gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1.8);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc.start();
+            osc.stop(audioCtx.currentTime + 1.8);
         }
 
-        function logoutSystem() {
-            currentLoggedAdmin = null; currentLoggedCorporate = null; currentLoggedService = null;
-            document.getElementById('admin-panel').style.display = 'none';
-            document.getElementById('corporate-panel').style.display = 'none';
-            document.getElementById('service-panel').style.display = 'none';
-            document.getElementById('client-interface').style.display = 'block';
-            renderAll();
-        }
+        function toggleAudio() {
+            const statusText = document.getElementById('musicStatus');
+            const musicIcon = document.getElementById('musicIcon');
 
-        function switchAdminTab(tabId) {
-            document.querySelectorAll('#admin-panel .panel-content').forEach(el => { el.classList.remove('active'); el.style.display = 'none'; });
-            document.querySelectorAll('#admin-panel .sidebar .nav-link').forEach(el => el.classList.remove('active'));
-            const target = document.getElementById(tabId);
-            if(target) { target.classList.add('active'); target.style.display = 'block'; }
-            if(tabId === 'tab-stock') document.getElementById('link-stock').classList.add('active');
-            if(tabId === 'tab-corporate') document.getElementById('link-corporate').classList.add('active');
-            if(tabId === 'tab-logistics') document.getElementById('link-logistics').classList.add('active');
-            if(tabId === 'tab-sysadmin') document.getElementById('link-sysadmin').classList.add('active');
-            if(tabId === 'tab-orders') document.getElementById('link-orders').classList.add('active');
+            if (!isAudioPlaying) {
+                isAudioPlaying = true;
+                statusText.innerText = 'Müzik Durdur';
+                musicIcon.className = 'fas fa-pause text-lg text-pink-600';
+                playRomanticNote();
+                melodyInterval = setInterval(playRomanticNote, 700);
+            } else {
+                isAudioPlaying = false;
+                statusText.innerText = 'Müzik Çal';
+                musicIcon.className = 'fas fa-music text-lg text-pink-500 animate-bounce';
+                clearInterval(melodyInterval);
+            }
         }
-
-        function switchCorpTab(tabId) {
-            document.querySelectorAll('#corporate-panel .panel-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('#corporate-panel .nav-link').forEach(el => el.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            if(tabId === 'tab-corp-orders') document.getElementById('link-corp-orders').classList.add('active');
-            if(tabId === 'tab-corp-new') document.getElementById('link-corp-new').classList.add('active');
-        }
-
-        // ADMİN HESAPLARI YÖNETİMİ
-        function renderSysAdminTable() {
-            const tbody = document.getElementById('sysadmin-table-body'); if(!tbody) return; tbody.innerHTML = '';
-            adminAccounts.forEach(a => {
-                tbody.innerHTML += `<tr><td><strong>${a.name}</strong></td><td><span class="badge bg-danger">Sistem Yöneticisi</span></td><td><code>${a.user}</code></td><td><code>${a.pass}</code></td><td class="text-end"><button class="btn btn-sm btn-outline-danger" onclick="deleteAdmin('${a.id}')" ${adminAccounts.length===1?'disabled':''}>Sil</button></td></tr>`;
-            });
-        }
-        function createNewAdmin(e) {
-            e.preventDefault();
-            adminAccounts.push({ id: Date.now().toString(), name: document.getElementById('admName').value.trim(), user: document.getElementById('admUser').value.trim(), pass: document.getElementById('admPass').value.trim() });
-            saveToLocalStorage(); renderAll(); document.getElementById('addAdminForm').reset();
-            bootstrap.Modal.getInstance(document.getElementById('addAdminModal')).hide();
-        }
-        function deleteAdmin(id) { if(adminAccounts.length > 1) { adminAccounts = adminAccounts.filter(a => a.id !== id); saveToLocalStorage(); renderAll(); } }
-
-        // LOJİSTİK VE CARİ YÖNETİMİ
-        function renderLogisticsTable() {
-            const tbody = document.getElementById('logistics-table-body'); if(!tbody) return; tbody.innerHTML = '';
-            logisticsStaff.forEach(l => {
-                tbody.innerHTML += `<tr><td><strong>${l.name}</strong></td><td><span class="badge bg-secondary">Sevkiyat Sürücüsü</span></td><td><code>${l.user}</code></td><td><code>${l.pass}</code></td><td class="text-end"><button class="btn btn-sm btn-outline-danger" onclick="deleteLogistics('${l.id}')">Sil</button></td></tr>`;
-            });
-        }
-        function createNewLogistics(e) {
-            e.preventDefault();
-            logisticsStaff.push({ id: Date.now().toString(), name: document.getElementById('logName').value.trim(), user: document.getElementById('logUser').value.trim(), pass: document.getElementById('logPass').value.trim() });
-            saveToLocalStorage(); renderAll(); document.getElementById('addLogisticsForm').reset();
-            bootstrap.Modal.getInstance(document.getElementById('addLogisticsModal')).hide();
-        }
-        function deleteLogistics(id) { logisticsStaff = logisticsStaff.filter(l => l.id !== id); saveToLocalStorage(); renderAll(); }
-
-        function renderCorporateTable() {
-            const tbody = document.getElementById('corporate-table-body'); if(!tbody) return; tbody.innerHTML = '';
-            corporateAccounts.forEach(c => {
-                tbody.innerHTML += `<tr><td><strong>${c.company}</strong></td><td>${c.name}</td><td><code>${c.user}</code></td><td><code>${c.pass}</code></td><td class="text-end"><button class="btn btn-sm btn-outline-danger" onclick="deleteCorporate('${c.id}')">Sil</button></td></tr>`;
-            });
-        }
-        function createNewCorporate(e) {
-            e.preventDefault();
-            corporateAccounts.push({ id: Date.now().toString(), company: document.getElementById('corpCompany').value.trim(), name: document.getElementById('corpName').value.trim(), user: document.getElementById('corpUser').value.trim(), pass: document.getElementById('corpPass').value.trim() });
-            saveToLocalStorage(); renderAll(); document.getElementById('addCorporateForm').reset();
-            bootstrap.Modal.getInstance(document.getElementById('addCorporateModal')).hide();
-        }
-        function deleteCorporate(id) { corporateAccounts = corporateAccounts.filter(c => c.id !== id); saveToLocalStorage(); renderAll(); }
-
-        // ENVANTER VE SİPARİŞ HAREKETLERİ
-        function renderAdminStockTable() {
-            const tbody = document.getElementById('admin-stock-table-body'); if(!tbody) return; tbody.innerHTML = '';
-            products.forEach(p => {
-                const img = p.image ? `<img src="${p.image}" style="width:35px;height:35px;object-fit:cover;border-radius:4px;">` : `<i class="fa-solid fa-box text-muted"></i>`;
-                tbody.innerHTML += `<tr><td>${img}</td><td><strong>${p.name}</strong></td><td>${p.category}</td><td>${p.price.toFixed(2)} ₺</td><td><button class="btn btn-sm ${p.inStock?'btn-success':'btn-danger'}" onclick="toggleStock('${p.id}')">${p.inStock?'Aktif':'Tükendi'}</button></td><td class="text-end"><button class="btn btn-sm text-danger" onclick="deleteProduct('${p.id}')"><i class="fa-solid fa-trash"></i></button></td></tr>`;
-            });
-        }
-        function submitOptimizedProduct() {
-            const name = document.getElementById('newProdName').value.trim();
-            const price = parseFloat(document.getElementById('newProdPrice').value);
-            if(!name || isNaN(price)) return;
-            products.push({ id: Date.now().toString(), name, category: document.getElementById('newProdCategory').value, desc: document.getElementById('newProdDesc').value.trim(), price, image: globalOptimizedImageBase64, inStock: true });
-            saveToLocalStorage(); renderAll(); bootstrap.Modal.getInstance(document.getElementById('addProductModal')).hide();
-        }
-        function deleteProduct(id) { products = products.filter(p => p.id !== id); saveToLocalStorage(); renderAll(); }
-        function toggleStock(id) { const p = products.find(x => x.id === id); if(p) p.inStock = !p.inStock; saveToLocalStorage(); renderAll(); }
-
-        function renderOrdersTable() {
-            const tbody = document.getElementById('orders-table-body'); if(!tbody) return; tbody.innerHTML = '';
-            orders.forEach(o => {
-                let opts = `<option value="">Sürücü Ata...</option>`;
-                logisticsStaff.forEach(l => { opts += `<option value="${l.id}" ${o.courierId===l.id?'selected':''}>${l.name}</option>`; });
-                tbody.innerHTML += `<tr><td><strong>${o.company}</strong></td><td>${o.product}</td><td>${o.quantity} Adet</td><td>${o.total.toFixed(2)} ₺</td><td><select class="form-select form-select-sm" onchange="assignCourier('${o.id}', this.value)" ${o.status.includes('Teslim')?'disabled':''}>${opts}</select></td><td><span class="badge ${o.status==='Hazırlanıyor'?'bg-warning text-dark':'bg-info'}">${o.status}</span></td><td class="text-end">${o.status==='Hazırlanıyor'&&o.courierId?`<button class="btn btn-sm btn-success" onclick="sendToDelivery('${o.id}')">Sevkiyata Çıkar</button>`:''}</td></tr>`;
-            });
-        }
-        function assignCourier(orderId, courierId) { const o = orders.find(x => x.id === orderId); const c = logisticsStaff.find(l => l.id === courierId); if(o) { o.courierId = courierId; o.courierName = c ? c.name : 'Atanmadı'; } saveToLocalStorage(); renderAll(); }
-        function sendToDelivery(id) { const o = orders.find(x => x.id === id); if(o) o.status = 'Yola Çıktı / Dağıtımda'; saveToLocalStorage(); renderAll(); }
-
-        // B2B BAYİ PANEL İŞLEMLERİ
-        function updateCorpProductSelect() {
-            const select = document.getElementById('corpSelfProductSelect'); if(!select) return; select.innerHTML = '';
-            products.filter(p => p.inStock).forEach(p => { select.innerHTML += `<option value="${p.id}">${p.name} (${p.price.toFixed(2)} ₺)</option>`; });
-            calculateOrderTotalPreview();
-        }
-        function calculateOrderTotalPreview() {
-            const select = document.getElementById('corpSelfProductSelect'); const qtyInp = document.getElementById('corpSelfQuantity').value;
-            if(!select || !select.value) return;
-            const prod = products.find(p => p.id === select.value); const qty = parseInt(qtyInp) || 0;
-            const sub = prod.price * qty; const tax = sub * TAX_RATE; const tot = sub + tax;
-            document.getElementById('basketSubtotal').innerText = sub.toFixed(2) + " ₺";
-            document.getElementById('basketTax').innerText = tax.toFixed(2) + " ₺";
-            document.getElementById('basketGrandTotal').innerText = tot.toFixed(2) + " ₺";
-        }
-        function createNewOrder(e) {
-            e.preventDefault(); if(!currentLoggedCorporate) return;
-            const prod = products.find(p => p.id === document.getElementById('corpSelfProductSelect').value);
-            const qty = parseInt(document.getElementById('corpSelfQuantity').value);
-            const sub = prod.price * qty; const tax = sub * TAX_RATE; const tot = sub + tax;
-            orders.push({ id: Date.now().toString(), company: currentLoggedCorporate.company, product: prod.name, quantity: qty, price: prod.price, subtotal: sub, tax, total: tot, note: document.getElementById('corpSelfNote').value.trim(), status: 'Hazırlanıyor', courierId: '', courierName: 'Atanmadı' });
-            saveToLocalStorage(); renderAll(); document.getElementById('corpSelfOrderForm').reset(); calculateOrderTotalPreview(); alert("Tedarik talebi genel merkeze iletildi.");
-        }
-        function renderMyOrdersTable() {
-            const tbody = document.getElementById('my-orders-table-body'); if(!tbody || !currentLoggedCorporate) return; tbody.innerHTML = '';
-            orders.filter(o => o.company === currentLoggedCorporate.company).forEach(o => {
-                tbody.innerHTML += `<tr><td><strong>${o.product}</strong></td><td>${o.quantity}</td><td>${o.total.toFixed(2)} ₺</td><td><small>${o.note||'-'}</small></td><td><span class="badge bg-secondary">${o.status}</span></td></tr>`;
-            });
-        }
-
-        // LOJİSTİK SÜRÜCÜ İŞLEMLERİ
-        function renderServiceOrdersTable() {
-            const tbody = document.getElementById('service-orders-table-body'); if(!tbody || !currentLoggedService) return; tbody.innerHTML = '';
-            const list = orders.filter(o => o.courierId === currentLoggedService.id && o.status.includes('Yola Çıktı'));
-            if(list.length === 0) { tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted small py-3">Rotalandırılmış sevkiyatınız bulunmamaktadır.</td></tr>`; return; }
-            list.forEach(o => {
-                tbody.innerHTML += `<tr><td><strong>${o.company}</strong></td><td>${o.product}</td><td>${o.quantity} Adet</td><td><small>${o.note||'-'}</small></td><td><button class="btn btn-sm btn-success" onclick="completeOrder('${o.id}')">Teslim Edildi</button></td></tr>`;
-            });
-        }
-        function completeOrder(id) { orders = orders.filter(o => o.id !== id); saveToLocalStorage(); renderAll(); alert("Teslimat sistemde arşivlendi."); }
-
-        // VİTRİN LİSTELEME VE GÖRSEL OPTİMİZASYON
-        function renderClientProducts() {
-            const grid = document.getElementById('client-products-grid'); if(!grid) return; grid.innerHTML = '';
-            const s = document.getElementById('clientSearchInput').value.toLowerCase();
-            products.filter(p => p.name.toLowerCase().includes(s) || p.desc.toLowerCase().includes(s)).forEach(p => {
-                const img = p.image ? `<img src="${p.image}">` : `<i class="fa-solid fa-box fa-2x text-muted"></i>`;
-                grid.innerHTML += `<div class="col-6 col-md-4"><div class="card h-100 product-card border-0"><div class="img-wrapper">${img}</div><div class="card-body p-2"><span class="badge bg-secondary mb-1" style="font-size:9px;">${p.category}</span><h6 class="fw-bold m-0 text-truncate" style="font-size:12px;">${p.name}</h6><p class="text-muted small m-0 text-truncate" style="font-size:11px;">${p.desc}</p><div class="d-flex justify-content-between align-items-center mt-2"><span class="fw-bold text-corp-blue small">${p.price.toFixed(2)} ₺</span><span class="badge ${p.inStock?'bg-success':'bg-danger'}" style="font-size:9px;">${p.inStock?'Aktif':'Tükendi'}</span></div></div></div></div>`;
-            });
-        }
-
-        function previewAndOptimizeImage(e) {
-            const file = e.target.files[0]; if (!file) { clearPreview(); return; }
-            const reader = new FileReader(); reader.onload = function(evt) { globalOptimizedImageBase64 = evt.target.result; document.getElementById('imagePreviewContainer').innerHTML = `<img src="${globalOptimizedImageBase64}">`; }; reader.readAsDataURL(file);
-        }
-        function clearPreview() { globalOptimizedImageBase64 = ""; document.getElementById('imagePreviewContainer').innerHTML = '<span class="text-muted small">Görsel Yok</span>'; document.getElementById('addProductForm').reset(); }
-
-        function renderAll() { renderClientProducts(); renderAdminStockTable(); renderCorporateTable(); renderLogisticsTable(); renderSysAdminTable(); renderOrdersTable(); updateCorpProductSelect(); renderMyOrdersTable(); renderServiceOrdersTable(); }
-
-        document.addEventListener("DOMContentLoaded", function() { switchAdminTab('tab-stock'); renderAll(); });
     </script>
 </body>
 </html>
